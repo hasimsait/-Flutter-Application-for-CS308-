@@ -9,6 +9,9 @@ import 'constants.dart';
 import 'custom_route.dart';
 import 'users.dart';
 import 'home_view.dart';
+
+//TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts
+
 class LoginScreen extends StatelessWidget {
   static const routeName = '/auth';
 

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'totallynotinvadingyourprivacy',
-      home: LoginScreen()//HomeView()
+      home: LoginScreen()//which then redirects the user to HomeView()
     );
   }
 }
