@@ -11,11 +11,11 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String _currentPage = "Feed";
-  List<String> pageKeys = ["Feed", "Page2", "Page3"];
+  List<String> pageKeys = ["Feed", "Search", "Profile"];
   Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
     "Feed": GlobalKey<NavigatorState>(),
-    "Page2": GlobalKey<NavigatorState>(),
-    "Page3": GlobalKey<NavigatorState>(),
+    "Search": GlobalKey<NavigatorState>(),
+    "Profile": GlobalKey<NavigatorState>(),
   };
   int _selectedIndex = 0;
 
@@ -49,8 +49,8 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         body: Stack(children: <Widget>[
           _buildOffstageNavigator("Feed"),
-          _buildOffstageNavigator("Page2"),
-          _buildOffstageNavigator("Page3"),
+          _buildOffstageNavigator("Search"),
+          _buildOffstageNavigator("Profile"),
         ]),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: Colors.blueAccent,
@@ -60,16 +60,16 @@ class _HomeViewState extends State<HomeView> {
           currentIndex: _selectedIndex,
           items: [
             BottomNavigationBarItem(
-              icon: new Icon(Icons.looks_one),
+              icon: new Icon(Icons.home),
               title: new Text('Feed'),
             ),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.looks_two),
-              title: new Text('Page2'),
+              icon: new Icon(Icons.search),
+              title: new Text('Search'),
             ),
             BottomNavigationBarItem(
-              icon: new Icon(Icons.looks_3),
-              title: new Text('Page3'),
+              icon: new Icon(Icons.account_circle),
+              title: new Text('Profile'),
             ),
           ],
           type: BottomNavigationBarType.fixed,

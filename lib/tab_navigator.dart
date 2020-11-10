@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'feed.dart';
+import 'search.dart';
+import 'profile.dart';
 class TabNavigatorRoutes {
   static const String root = '/';
   static const String detail = '/detail';
@@ -15,11 +17,11 @@ class TabNavigator extends StatelessWidget {
 
     Widget child ;
     if(tabItem == "Feed")
-      child = feed();
-    //else if(tabItem == "Page2")//TODO refactor the tabitem string and create builders, otherwise they will keep throwing exceptions.
-      //child = Page2();
-    //else if(tabItem == "Page3")
-      //child = Page3();
+      child = Feed();
+    else if(tabItem == "Search")//TODO refactor the tabitem string and create builders, otherwise they will keep throwing exceptions.
+      child = Search();
+    else if(tabItem == "Profile")
+      child = Profile();
 
     return Navigator(
       key: navigatorKey,
