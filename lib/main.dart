@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'home_view.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'login.dart';
+import 'transition_route_observer.dart';
 //TODO add routing for different routes with bottom navigation bar
 //TODO add login route
 //TODO add feed route
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'totallynotinvadingyourprivacy',
-      home: HomeView()
+      home: LoginScreen()//HomeView()
     );
   }
 }

@@ -1,0 +1,3 @@
+const mockUsers = const {
+  '@.com': '.',
+};
