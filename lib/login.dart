@@ -29,12 +29,24 @@ class LoginScreen extends StatelessWidget {
       return null;
     });
   }
+  Future<String> _signupUser(LoginData data) {
+    //TODO modify this function for whatever they did in the backend
+    return Future.delayed(loginTime).then((_) {
+      /*if (!mockUsers.containsKey(data.name)) {
+        return 'Username not exists';
+      }
+      if (mockUsers[data.name] != data.password) {
+        return 'Password does not match';
+      }*/
+      return null;
+    });
+  }
 
   Future<String> _recoverPassword(String name) {
     //TODO modify this function for whatever they did in the backend
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
-        return 'Username not exists';
+        return 'Username does not exist';
       }
       return null;
     });
@@ -164,7 +176,7 @@ class LoginScreen extends StatelessWidget {
         print('Signup info');
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
-        return _loginUser(loginData);
+        return _signupUser(loginData);//TODO replace with signup function
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(FadePageRoute(
