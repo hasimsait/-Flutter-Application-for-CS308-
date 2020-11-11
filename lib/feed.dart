@@ -3,7 +3,7 @@
 //TODO has post widget/anchor. is the default route of the bottom navigation bar
 //TODO also add messages anchor
 import 'package:flutter/material.dart';
-import 'post.dart';
+import 'createpost.dart';
 import 'helper/constants.dart';
 class Feed extends StatefulWidget {
   @override
@@ -34,7 +34,7 @@ class _FeedState extends State<Feed> {
       floatingActionButton: new FloatingActionButton(
         onPressed:(){Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Post()),
+          MaterialPageRoute(builder: (context) => CreatePost()),
         );},
         tooltip: 'Create a new post',
         child: new Icon(Icons.create),

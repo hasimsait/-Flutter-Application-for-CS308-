@@ -41,5 +41,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<NSPhotoLibraryUsageDescription>In order to share photos, we need to access your gallery.</NSPhotoLibraryUsageDescription>
+	<NSCameraUsageDescription>In order to take pictures and share them, we need to access your camera</NSCameraUsageDescription>
+	<NSMicrophoneUsageDescription>We don't need this but the image picking package we use does, you may be able to pick images without this permission</NSMicrophoneUsageDescription>
 </dict>
 </plist>
