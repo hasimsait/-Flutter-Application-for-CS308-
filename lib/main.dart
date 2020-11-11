@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_view.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'login.dart';
-import 'transition_route_observer.dart';
+import 'helper/transition_route_observer.dart';
 //TODO add routing for different routes with bottom navigation bar
 //TODO add login route
 //TODO add feed route

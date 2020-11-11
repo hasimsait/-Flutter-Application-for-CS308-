@@ -3,11 +3,9 @@ import 'package:flutter_login/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:flutter/material.dart';
-import 'package:flutter_login/flutter_login.dart';
-import 'constants.dart';
-import 'custom_route.dart';
-import 'users.dart';
+import 'helper/constants.dart';
+import 'helper/custom_route.dart';
+import 'helper/users.dart';
 import 'home_view.dart';
 
 //TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts

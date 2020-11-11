@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'tab_navigator.dart';
+import 'helper/tab_navigator.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'login.dart';
-import 'transition_route_observer.dart';
+import 'helper/transition_route_observer.dart';
 class HomeView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomeViewState();
@@ -11,10 +10,11 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String _currentPage = "Feed";
-  List<String> pageKeys = ["Feed", "Search", "Profile"];
+  List<String> pageKeys = ["Feed", "Search", "Notifications", "Profile"];
   Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
     "Feed": GlobalKey<NavigatorState>(),
     "Search": GlobalKey<NavigatorState>(),
+    "Notifications": GlobalKey<NavigatorState>(),
     "Profile": GlobalKey<NavigatorState>(),
   };
   int _selectedIndex = 0;
@@ -39,7 +39,6 @@ class _HomeViewState extends State<HomeView> {
         if (isFirstRouteInCurrentTab) {
           if (_currentPage != "Feed") {
             _selectTab("Feed", 1);
-
             return false;
           }
         }
@@ -50,6 +49,7 @@ class _HomeViewState extends State<HomeView> {
         body: Stack(children: <Widget>[
           _buildOffstageNavigator("Feed"),
           _buildOffstageNavigator("Search"),
+          _buildOffstageNavigator("Notifications"),
           _buildOffstageNavigator("Profile"),
         ]),
         bottomNavigationBar: BottomNavigationBar(
@@ -66,6 +66,10 @@ class _HomeViewState extends State<HomeView> {
             BottomNavigationBarItem(
               icon: new Icon(Icons.search),
               title: new Text('Search'),
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.notifications),
+              title: new Text('Notifications'),
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.account_circle),
