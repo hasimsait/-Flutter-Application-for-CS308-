@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_login/theme.dart';
 
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'helper/constants.dart';
 import 'helper/custom_route.dart';
 import 'helper/users.dart';
 import 'home_view.dart';
+import 'package:http/http.dart' as http;
+
 
 //TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts
 
@@ -15,33 +19,38 @@ class LoginScreen extends StatelessWidget {
 
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
-  Future<String> _loginUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend
-    return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(data.name)) {
-        return 'Username not exists';
-      }
-      if (mockUsers[data.name] != data.password) {
-        return 'Password does not match';
-      }
-      return null;
-    });
+  Future<http.Response> sendLoginRequest(LoginData data) {
+    return http.post(
+      Constants.backendURL+Constants.signInAPI,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': data.name,
+        'password': data.password,
+      }),
+    );
   }
-  Future<String> _signupUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend
-    return Future.delayed(loginTime).then((_) {
+  Future<String> _loginUser(LoginData data)async {
       /*if (!mockUsers.containsKey(data.name)) {
         return 'Username not exists';
       }
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }*/
+      var response= await sendLoginRequest(data);
+      if(response.statusCode>=400 || response.statusCode<100 )
+        return 'Email address or password wrong, try again';
+      //TODO save the info to local session technically you login now.
       return null;
-    });
+  }
+  Future<String> _signupUser(LoginData data) {
+    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
+    return null;//
   }
 
   Future<String> _recoverPassword(String name) {
-    //TODO modify this function for whatever they did in the backend
+    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
         return 'Username does not exist';

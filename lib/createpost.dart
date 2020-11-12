@@ -17,9 +17,7 @@ class _CreatePostState extends State<CreatePost> {
   PickedFile file;
   final picker = ImagePicker();
 
-  Future<bool> _sendPost() {
-    int status = 400;
-
+  Future<bool> _sendPost() async {
     Post post = new Post();
     if (_postFieldController.text != null) {
       post.text = _postFieldController.text;
@@ -29,17 +27,21 @@ class _CreatePostState extends State<CreatePost> {
       post.image = file;
       print(post.image.path);
     }
-
-    //TODO send the post
-    status = 200; //or 302 whatever.
-    if (status < 400 && status >= 200) {
+    String locationTag;
+    //String topic;TODO we dont have topics yet, when we do, this function will take it as a parameter
+    //String videoURL;I don't understand how it's supposed to work
+    //TODO sessions
+    var sessionToken="1515618";
+    var response = await post.sendPost(sessionToken);
+    if (response.statusCode < 400 && response.statusCode >= 200) {
       Navigator.pop(context, post);
+      //return the post too so that it can be displayed at the top without refreshing the page
     }
     //TODO create snackbar with "service is temporarily available."
     return null;
   }
  Future _pickLocation() async{
-
+  //TODO https://pub.dev/packages/google_map_location_picker
  }
   Future _getImage(source) async {
     final pickedFile = await picker.getImage(source: source);
