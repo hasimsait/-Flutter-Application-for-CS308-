@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_login/theme.dart';
-
+import 'package:flutter_session/flutter_session.dart';
+import 'helper/session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
@@ -38,10 +39,16 @@ class LoginScreen extends StatelessWidget {
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }*/
+      return null;//delete this statement if you deploy it in localhost
       var response= await sendLoginRequest(data);
       if(response.statusCode>=400 || response.statusCode<100 )
         return 'Email address or password wrong, try again';
-      //TODO save the info to local session technically you login now.
+      //either the user does not have an email address or we also return the name of the user
+      Session sessionToken = Session(id: 0, data: json.decode(response.body)["token"]);
+      await FlutterSession().set('sessionToken', sessionToken);
+      Session userName = Session(id: 1, data: json.decode(response.body)["userName"]);
+      await FlutterSession().set('userName', userName);
+      //TODO get profile picture etc. of user and push an entire user to session when those are added.
       return null;
   }
   Future<String> _signupUser(LoginData data) {
@@ -50,7 +57,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String> _recoverPassword(String name) {
-    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet
+    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
         return 'Username does not exist';

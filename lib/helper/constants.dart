@@ -7,4 +7,5 @@ class Constants {
   static const String backendURL ="http://127.0.0.1:5000";//it has not been deployed yet
   static const String signInAPI ="/sign_in";
   static const String createPostAPI ="/create_post";
+  static const String apiKey="AIzaSyBtrT9cRN90qcCIrqM_bbxZpjYgUZ_-FFM";
 }

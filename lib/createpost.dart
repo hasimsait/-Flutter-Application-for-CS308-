@@ -6,6 +6,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'helper/constants.dart';
 import 'post.dart';
+import 'package:flutter_session/flutter_session.dart';
+import 'package:google_map_location_picker/google_map_location_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CreatePost extends StatefulWidget {
   @override
@@ -16,6 +19,8 @@ class _CreatePostState extends State<CreatePost> {
   final _postFieldController = TextEditingController();
   PickedFile file;
   final picker = ImagePicker();
+  double longitude;
+  double latitude;
 
   Future<bool> _sendPost() async {
     Post post = new Post();
@@ -27,27 +32,51 @@ class _CreatePostState extends State<CreatePost> {
       post.image = file;
       print(post.image.path);
     }
-    String locationTag;
-    //String topic;TODO we dont have topics yet, when we do, this function will take it as a parameter
+    if (latitude != null) {
+      post.latitude = latitude;
+      print(post.latitude);
+    }
+    if (longitude != null) {
+      post.longitude = longitude;
+      print(post.longitude);
+    }
+    //String topic;
+    // TODO we don't have topics yet, when we do, this function will take it as a parameter and this part will be moved elsewhere to avoid copying it
     //String videoURL;I don't understand how it's supposed to work
-    //TODO sessions
-    var sessionToken="1515618";
-    var response = await post.sendPost(sessionToken);
+    Navigator.pop(context, post); //TODO delete this line when deployed
+    var response = await post.sendPost();
     if (response.statusCode < 400 && response.statusCode >= 200) {
       Navigator.pop(context, post);
       //return the post too so that it can be displayed at the top without refreshing the page
     }
     //TODO create snackbar with "service is temporarily available."
+
     return null;
   }
- Future _pickLocation() async{
-  //TODO https://pub.dev/packages/google_map_location_picker
- }
+
+  Future _pickLocation() async {
+    LocationResult result = await showLocationPicker(context, Constants.apiKey);
+    setState(() {
+      if (result.latLng != null) {
+        longitude = result.latLng.longitude;
+        latitude = result.latLng.latitude;
+        print("+++++++++++++++++++++++++++++++++++" +
+            longitude.toString() +
+            " " +
+            latitude.toString() +
+            "++++++++++++++++++++++++++++++++++");
+      } else {
+        print(
+            '-----------------------------------------------------GOOGLE_MAP_LOCATION_PICKER IS A GREAT PACKAGE.----------------------------------------------------');
+      }
+    });
+  }
+
   Future _getImage(source) async {
     final pickedFile = await picker.getImage(source: source);
 
     setState(() {
-      if (pickedFile != null) {
+      if (pickedFile != null && pickedFile.path != null) {
         file = PickedFile(pickedFile.path);
       } else {
         print('No image selected.');
@@ -56,28 +85,38 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Widget _previewImage() {
-    if (file != null) {
+    if (file != null && file.path != null) {
       return new Stack(
         //It's one way to do it
         children: <Widget>[
           Container(
             width: 400.00,
             height: 300.00,
-            child: Image.file(File(file.path),fit: BoxFit.fitWidth,),
+            child: Image.file(
+              File(file.path),
+              fit: BoxFit.fitWidth,
+            ),
             //File is deprecating, check if Image class has an alternative
             //we may crop and display a preview, currently it puts the entire image
           ),
           Positioned(
             left: -10,
-            top:5,
-            child:RaisedButton(
-              child: Icon(Icons.cancel,size: 35,), shape: CircleBorder(), color: Colors.transparent, focusColor: Colors.black,
+            top: 5,
+            child: RaisedButton(
+              child: Icon(
+                Icons.cancel,
+                size: 35,
+              ),
+              shape: CircleBorder(),
+              color: Colors.transparent,
+              focusColor: Colors.black,
               onPressed: () {
-              setState(() {
-                file=null;
-              });
-            },
-          ),),
+                setState(() {
+                  file = null;
+                });
+              },
+            ),
+          ),
         ],
       );
     } else {

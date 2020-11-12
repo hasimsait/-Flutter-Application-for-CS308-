@@ -22,7 +22,10 @@
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
+              android:resource="@style/NormalTheme"/>
+            <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyBtrT9cRN90qcCIrqM_bbxZpjYgUZ_-FFM"
               />
             <!-- Displays an Android View that continues showing the launch screen
                  Drawable until Flutter paints its first frame, then this splash
@@ -45,4 +48,6 @@
             android:value="2" />
 
     </application>
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"  />
 </manifest>
