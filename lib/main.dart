@@ -3,8 +3,7 @@ import 'home_view.dart';
 import 'package:flutter/services.dart';
 import 'login.dart';
 import 'helper/transition_route_observer.dart';
-import 'package:google_map_location_picker/generated/l10n.dart' as location_picker;
-import 'package:flutter_localizations/flutter_localizations.dart';
+
 //TODO add routing for different routes with bottom navigation bar
 //TODO add login route
 //TODO add feed route
@@ -21,16 +20,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        localizationsDelegates: const [
-          location_picker.S.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const <Locale>[
-          Locale('en', ''),
-          Locale('tr', ''),
-        ],
       title: 'totallynotinvadingyourprivacy',
       home: LoginScreen()//which then redirects the user to HomeView()
     );

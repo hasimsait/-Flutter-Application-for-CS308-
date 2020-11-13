@@ -19,7 +19,7 @@ class TabNavigator extends StatelessWidget {
     Widget child ;
     if(tabItem == "Feed")
       child = Feed();
-    else if(tabItem == "Search")//TODO refactor the tabitem string and create builders, otherwise they will keep throwing exceptions.
+    else if(tabItem == "Search")
       child = Search();
     else if(tabItem == "Notifications")
       child = Notifications();

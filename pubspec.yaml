@@ -32,13 +32,16 @@ dependencies:
   google_map_location_picker: ^3.3.4
   flutter_localizations:
     sdk: flutter
+  video_thumbnail: ^0.2.4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
+  test:
   flutter_test:
     sdk: flutter
+  mockito:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -39,14 +39,14 @@ class LoginScreen extends StatelessWidget {
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }*/
-      return null;//delete this statement if you deploy it in localhost
+      //return null;//delete this statement if you deploy it in localhost It is too fast for animation which causes some weirdness
       var response= await sendLoginRequest(data);
       if(response.statusCode>=400 || response.statusCode<100 )
         return 'Email address or password wrong, try again';
       //either the user does not have an email address or we also return the name of the user
-      Session sessionToken = Session(id: 0, data: json.decode(response.body)["token"]);
+      Session sessionToken = Session(id: 0, data: json.decode(response.body)["token"]);//TODO check the response of an auth by the server
       await FlutterSession().set('sessionToken', sessionToken);
-      Session userName = Session(id: 1, data: json.decode(response.body)["userName"]);
+      Session userName = Session(id: 1, data: json.decode(response.body)["userName"]);//TODO check the response of an auth by the server
       await FlutterSession().set('userName', userName);
       //TODO get profile picture etc. of user and push an entire user to session when those are added.
       return null;
@@ -65,6 +65,18 @@ class LoginScreen extends StatelessWidget {
       return null;
     });
   }
+  Future<bool> isLoggedIn(BuildContext context)async{
+    //TODO use this with a FutureBuilder or something to get the user to skip the login if logged in
+    var loggedInBefore=await FlutterSession().get('loggedInBefore');
+    print(loggedInBefore["data"]);
+    if ( loggedInBefore["data"]=="true"){
+      print("WTF");
+      Navigator.of(context).pushReplacement(FadePageRoute(
+        builder: (context) => HomeView(),
+      ));
+      return null;
+       }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +84,8 @@ class LoginScreen extends StatelessWidget {
       bottom: Radius.circular(10.0),
       top: Radius.circular(20.0),
     );
-
     return FlutterLogin(
-      title: Constants.appName,
+      title: Constants.appName.substring(22,29),
       logo: 'assets/images/ecorp.png',
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
@@ -175,6 +186,7 @@ class LoginScreen extends StatelessWidget {
         return null;
       },
       passwordValidator: (value) {
+
         if (value.isEmpty) {
           return 'Password is empty';
         }
@@ -190,7 +202,7 @@ class LoginScreen extends StatelessWidget {
         print('Signup info');
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
-        return _signupUser(loginData);//TODO replace with signup function
+        return _signupUser(loginData);
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(FadePageRoute(

@@ -21,18 +21,20 @@ class Post
   Future<http.Response> sendPost()async {
     dynamic sessionToken=await FlutterSession().get('sessionToken');
     dynamic userName=await FlutterSession().get('userName');
+    //Map<String,String> usToken={'token':sessionToken};
+    //String dumbTrickThatWontWorkButImTooLazyToEncodeJSON=usToken.toString();
     return http.post(
       Constants.backendURL+Constants.createPostAPI,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'token':sessionToken//TODO check the name of the token's field in API
+        'currentUser':{'token':sessionToken}.toString()//TODO check the name of the token's field in API
       },
       body: jsonEncode(<String, String>{
         'postOwnerName':userName,
         'postText': text,
         'postImage': (image==null)? null:File(image.path).readAsStringSync(),
         'postTopic':topic,
-        'postVideoURL':videoURL,
+        'postVideoURL':(videoURL==null)? null:videoURL,
         'postLocationLatitude':latitude==null? null: latitude.toString(),
         'postLocationLongitude':longitude==null? null:longitude.toString(),
       }),
