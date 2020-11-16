@@ -26,6 +26,7 @@ class _CreatePostState extends State<CreatePost> {
   double latitude;
 
   Future<bool> _sendPost() async {
+    //This pops when post is sent, can't pull out of class, may put some of its features in the method
     Post post = new Post();
     if (_postFieldController.text != null) {
       post.text = _postFieldController.text;
@@ -48,7 +49,7 @@ class _CreatePostState extends State<CreatePost> {
     if (file != null && fileType==true) {
       post.videoURL=File(file.path).readAsStringSync();
     }
-    //Navigator.pop(context, post); //TODO delete this line when deployed
+    Navigator.pop(context, post); //TODO delete this line when deployed
     var response = await post.sendPost();
     if (response.statusCode < 400 && response.statusCode >= 200) {
       Navigator.pop(context, post);
@@ -65,6 +66,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future _getImage(source, isVideo) async {
+    //we may make it return file and fileType instead of setState
     setState(() {
       file=null;
       fileType=null;
@@ -108,6 +110,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Widget _previewImage() {
+    //TODO move it out of class
     if (file != null && file.path != null && fileType == false) {
       return new Stack(
         //It's one way to do it
@@ -188,6 +191,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future<void> retrieveLostData() async {
+    //TODO get it out of class
     final LostData response = await picker.getLostData();
     if (response.isEmpty) {
       return;
@@ -198,6 +202,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void initState() {
+    //this must stay here
     super.initState();
     _postFieldController.addListener(() {
       final text = _postFieldController.text;

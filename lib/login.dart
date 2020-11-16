@@ -39,7 +39,10 @@ class LoginScreen extends StatelessWidget {
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }*/
-      //return null;//delete this statement if you deploy it in localhost It is too fast for animation which causes some weirdness
+      Session userName = Session(id: 1, data: 'hasimsait');
+      await FlutterSession().set('userName', userName);
+      return null;//delete these 3 statements if you deploy it in localhost. It is too fast for animation which causes some weirdness
+      /*
       var response= await sendLoginRequest(data);
       if(response.statusCode>=400 || response.statusCode<100 )
         return 'Email address or password wrong, try again';
@@ -50,6 +53,7 @@ class LoginScreen extends StatelessWidget {
       await FlutterSession().set('userName', userName);
       //TODO get profile picture etc. of user and push an entire user to session when those are added.
       return null;
+       */
   }
   Future<String> _signupUser(LoginData data) {
     //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria

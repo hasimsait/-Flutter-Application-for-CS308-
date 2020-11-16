@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'createpost.dart';
 import 'helper/constants.dart';
+
 class Feed extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _FeedState();
@@ -32,14 +33,15 @@ class _FeedState extends State<Feed> {
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed:(){Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CreatePost()),
-        );},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreatePost()),
+          );
+        },
         tooltip: 'Create a new post',
         child: new Icon(Icons.create),
       ),
     );
   }
-
 }

@@ -28,6 +28,7 @@ class Post
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'currentUser':{'token':sessionToken}.toString()//TODO check the name of the token's field in API
+        // TODO fix it ASAP, you do not create 2D json arrays this way in dart.
       },
       body: jsonEncode(<String, String>{
         'postOwnerName':userName,

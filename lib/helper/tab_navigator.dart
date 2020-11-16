@@ -3,6 +3,8 @@ import '../feed.dart';
 import '../search.dart';
 import '../profile.dart';
 import '../notifications.dart';
+import 'package:flutter_session/flutter_session.dart';
+
 class TabNavigatorRoutes {
   static const String root = '/';
   static const String detail = '/detail';
@@ -12,6 +14,8 @@ class TabNavigator extends StatelessWidget {
   TabNavigator({this.navigatorKey, this.tabItem});
   final GlobalKey<NavigatorState> navigatorKey;
   final String tabItem;
+  static String userName;
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class TabNavigator extends StatelessWidget {
     else if(tabItem == "Notifications")
       child = Notifications();
     else if(tabItem == "Profile")
-      child = Profile();
+      child = Profile("");
     return Navigator(
       key: navigatorKey,
       onGenerateRoute: (routeSettings) {
