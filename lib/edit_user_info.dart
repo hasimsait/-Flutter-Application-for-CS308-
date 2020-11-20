@@ -80,7 +80,20 @@ class _EditUserInfoState extends State<EditUserInfo> {
                       Navigator.pop(context);
                     })
               ],
-            )
+            ),
+            RaisedButton(
+              onPressed: () {
+                return null;
+                //TODO
+              },
+              child: Text("DEACTIVATE ACCOUNT"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                return null;//TODO
+              },
+              child: Text("DELETE ACCOUNT"),
+            ),
           ],
         ),
       ),
