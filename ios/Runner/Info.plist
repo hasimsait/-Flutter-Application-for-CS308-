@@ -47,6 +47,6 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs your location for the option to add location to your posts.</string>
     <key>io.flutter.embedded_views_preview</key>
-    <true/>
+    <string>YES</string>
 </dict>
 </plist>

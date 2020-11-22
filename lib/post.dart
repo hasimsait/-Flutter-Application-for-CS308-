@@ -14,17 +14,20 @@ class Post {
   double longitude;
   String topic;
   String videoURL;
+  String placeName;
   Post(
       {this.text,
       this.image,
       this.latitude,
       this.longitude,
       this.topic,
-      this.videoURL});
+      this.videoURL,
+      this.placeName});
   //dart does not allow you to overload constructors so I made them optional
   //var post = MyPost(text:"bezkoder", location: "US");
 
   Future<http.Response> sendPost() async {
+    //TODO add placename to request when it's added to backend
     dynamic sessionToken = await FlutterSession().get('sessionToken');
     dynamic userName = await FlutterSession().get('userName');
     //Map<String,String> usToken={'token':sessionToken};

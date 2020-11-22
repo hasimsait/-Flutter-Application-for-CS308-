@@ -10,6 +10,7 @@ import 'post.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:convert';
+import 'package:place_picker/place_picker.dart';
 
 class CreatePost extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _CreatePostState extends State<CreatePost> {
   Image thumbnail;
   double longitude;
   double latitude;
+  String placeName;//not currently implemented but I find it necessary so I'll add it here
 
   Future<bool> _sendPost() async {
     //This pops when post is sent, can't pull out of class, may put some of its features in the method
@@ -36,6 +38,9 @@ class _CreatePostState extends State<CreatePost> {
       post.image = file;
       print(post.image.path);
     }
+    if (file != null && fileType == true) {
+      post.videoURL = File(file.path).readAsStringSync();
+    }
     if (latitude != null) {
       post.latitude = latitude;
       print(post.latitude);
@@ -44,11 +49,13 @@ class _CreatePostState extends State<CreatePost> {
       post.longitude = longitude;
       print(post.longitude);
     }
+    if (placeName != null) {
+      post.placeName = placeName;
+      print(post.placeName);
+    }
     //String topic;
     // TODO we don't have topics yet, when we do, this function will take it as a parameter and this part will be moved elsewhere to avoid copying it
-    if (file != null && fileType == true) {
-      post.videoURL = File(file.path).readAsStringSync();
-    }
+
     if (Constants.DEPLOYED) {
       var response = await post.sendPost();
       if (response.statusCode < 400 && response.statusCode >= 200) {
@@ -67,6 +74,17 @@ class _CreatePostState extends State<CreatePost> {
     latitude = 0;
     longitude = 0;
     //TODO find a package that works.
+    LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PlacePicker(
+              Constants.apiKey,
+            )));
+
+    // Handle the result in your way
+    print(result);
+    longitude=result.latLng.longitude;
+    latitude=result.latLng.latitude;
+    placeName=result.name;
+    print(result.placeId);
   }
 
   Future _getImage(source, isVideo) async {
