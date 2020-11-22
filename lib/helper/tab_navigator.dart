@@ -16,27 +16,21 @@ class TabNavigator extends StatelessWidget {
   final String tabItem;
   static String userName;
 
-
   @override
   Widget build(BuildContext context) {
-
-    Widget child ;
-    if(tabItem == "Feed")
+    Widget child;
+    if (tabItem == "Feed")
       child = Feed();
-    else if(tabItem == "Search")
+    else if (tabItem == "Search")
       child = Search();
-    else if(tabItem == "Notifications")
+    else if (tabItem == "Notifications")
       child = Notifications();
-    else if(tabItem == "Profile")
-      child = Profile("");
+    else if (tabItem == "Profile") child = Profile("");
     return Navigator(
       key: navigatorKey,
       onGenerateRoute: (routeSettings) {
-        return MaterialPageRoute(
-          builder: (context) => child
-        );
+        return MaterialPageRoute(builder: (context) => child);
       },
     );
   }
 }
-

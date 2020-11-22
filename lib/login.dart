@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_login/theme.dart';
@@ -12,17 +13,14 @@ import 'helper/users.dart';
 import 'home_view.dart';
 import 'package:http/http.dart' as http;
 
-
 //TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts
 
 class LoginScreen extends StatelessWidget {
-  static const routeName = '/auth';
-
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
   Future<http.Response> sendLoginRequest(LoginData data) {
     return http.post(
-      Constants.backendURL+Constants.signInAPI,
+      Constants.backendURL + Constants.signInAPI,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -32,32 +30,39 @@ class LoginScreen extends StatelessWidget {
       }),
     );
   }
-  Future<String> _loginUser(LoginData data)async {
-      /*if (!mockUsers.containsKey(data.name)) {
+
+  Future<String> _loginUser(LoginData data) async {
+    /*if (!mockUsers.containsKey(data.name)) {
         return 'Username not exists';
       }
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }*/
+    if (Constants.DEPLOYED) {
+      var response = await sendLoginRequest(data);
+      if (response.statusCode >= 400 || response.statusCode < 100)
+        return 'Email address or password wrong, try again';
+      Session sessionToken = Session(
+          id: 0,
+          data: json.decode(response.body)[
+              "token"]); //TODO check the response of an auth by the server
+      await FlutterSession().set('sessionToken', sessionToken);
+      Session userName = Session(
+          id: 1,
+          data: json.decode(response.body)[
+              "userName"]); //TODO check the response of an auth by the server
+      await FlutterSession().set('userName', userName);
+      return null;
+    } else {
       Session userName = Session(id: 1, data: 'hasimsait');
       await FlutterSession().set('userName', userName);
-      return null;//delete these 3 statements if you deploy it in localhost. It is too fast for animation which causes some weirdness
-      /*
-      var response= await sendLoginRequest(data);
-      if(response.statusCode>=400 || response.statusCode<100 )
-        return 'Email address or password wrong, try again';
-      //either the user does not have an email address or we also return the name of the user
-      Session sessionToken = Session(id: 0, data: json.decode(response.body)["token"]);//TODO check the response of an auth by the server
-      await FlutterSession().set('sessionToken', sessionToken);
-      Session userName = Session(id: 1, data: json.decode(response.body)["userName"]);//TODO check the response of an auth by the server
-      await FlutterSession().set('userName', userName);
-      //TODO get profile picture etc. of user and push an entire user to session when those are added.
       return null;
-       */
+    }
   }
+
   Future<String> _signupUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
-    return null;//
+    //TODO modify this function for whatever they did in the backend, not in acceptance criteria
+    return null; //
   }
 
   Future<String> _recoverPassword(String name) {
@@ -69,17 +74,18 @@ class LoginScreen extends StatelessWidget {
       return null;
     });
   }
-  Future<bool> isLoggedIn(BuildContext context)async{
-    //TODO use this with a FutureBuilder or something to get the user to skip the login if logged in
-    var loggedInBefore=await FlutterSession().get('loggedInBefore');
+
+  Future<bool> isLoggedIn(BuildContext context) async {
+    //TODO use this to get the user to skip the login if logged in
+    var loggedInBefore = await FlutterSession().get('loggedInBefore');
     print(loggedInBefore["data"]);
-    if ( loggedInBefore["data"]=="true"){
+    if (loggedInBefore["data"] == "true") {
       print("WTF");
       Navigator.of(context).pushReplacement(FadePageRoute(
         builder: (context) => HomeView(),
       ));
       return null;
-       }
+    }
   }
 
   @override
@@ -89,7 +95,7 @@ class LoginScreen extends StatelessWidget {
       top: Radius.circular(20.0),
     );
     return FlutterLogin(
-      title: Constants.appName.substring(22,29),
+      title: Constants.appName.substring(22, 29),
       logo: 'assets/images/ecorp.png',
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
@@ -190,7 +196,6 @@ class LoginScreen extends StatelessWidget {
         return null;
       },
       passwordValidator: (value) {
-
         if (value.isEmpty) {
           return 'Password is empty';
         }

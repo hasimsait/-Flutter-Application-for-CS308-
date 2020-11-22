@@ -1,5 +1,5 @@
 //TODO add autocomplete to the create post
-//TODO user can add videos, pick locations
+//TODO user can pick locations
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,7 +32,7 @@ class _CreatePostState extends State<CreatePost> {
       post.text = _postFieldController.text;
       print(post.text);
     }
-    if (file != null && fileType==false) {
+    if (file != null && fileType == false) {
       post.image = file;
       print(post.image.path);
     }
@@ -46,16 +46,20 @@ class _CreatePostState extends State<CreatePost> {
     }
     //String topic;
     // TODO we don't have topics yet, when we do, this function will take it as a parameter and this part will be moved elsewhere to avoid copying it
-    if (file != null && fileType==true) {
-      post.videoURL=File(file.path).readAsStringSync();
+    if (file != null && fileType == true) {
+      post.videoURL = File(file.path).readAsStringSync();
     }
-    Navigator.pop(context, post); //TODO delete this line when deployed
-    var response = await post.sendPost();
-    if (response.statusCode < 400 && response.statusCode >= 200) {
+    if (Constants.DEPLOYED) {
+      var response = await post.sendPost();
+      if (response.statusCode < 400 && response.statusCode >= 200) {
+        Navigator.pop(context, post);
+        //TODO command the feed to reload.
+      } else {
+        //TODO create snackbar with "service is temporarily available.There was a good package for it, check the previous project"
+      }
+    } else {
       Navigator.pop(context, post);
-      //return the post too so that it can be displayed at the top without refreshing the page, TODO.
     }
-    //TODO create snackbar with "service is temporarily available.There was a good package for it, check the previous project"
     return null;
   }
 
@@ -68,8 +72,8 @@ class _CreatePostState extends State<CreatePost> {
   Future _getImage(source, isVideo) async {
     //we may make it return file and fileType instead of setState
     setState(() {
-      file=null;
-      fileType=null;
+      file = null;
+      fileType = null;
     });
     if (isVideo) {
       final pickedFile = await picker.getVideo(
@@ -89,8 +93,8 @@ class _CreatePostState extends State<CreatePost> {
         //print(thumbnail);
         setState(() {
           //thumbnail=thumbnail;
-          file=file;
-          fileType=true;
+          file = file;
+          fileType = true;
         });
       } else {
         print('No image selected.');
@@ -161,27 +165,28 @@ class _CreatePostState extends State<CreatePost> {
             //we may crop and display a preview, currently it puts the entire image
           ),*/
           Positioned(
-            left: -10,
-            top: 5,
-            child: RaisedButton(
-              child: Icon(
-                Icons.cancel,
-                size: 35,
-              ),
-              shape: CircleBorder(),
-              color: Colors.transparent,
-              focusColor: Colors.black,
-              onPressed: () {
-                setState(() {
-                  file = null;
-                  fileType = null;
-                  thumbnail = null;
-                });
-              },
-            ),
-          )/*,
+        left: -10,
+        top: 5,
+        child: RaisedButton(
+          child: Icon(
+            Icons.cancel,
+            size: 35,
+          ),
+          shape: CircleBorder(),
+          color: Colors.transparent,
+          focusColor: Colors.black,
+          onPressed: () {
+            setState(() {
+              file = null;
+              fileType = null;
+              thumbnail = null;
+            });
+          },
+        ),
+      ) /*,
         ],
-      )*/;
+      )*/
+          ;
     } else {
       return const Text(
         'You have not yet picked an image or a video.',

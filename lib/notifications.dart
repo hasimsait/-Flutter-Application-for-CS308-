@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
-Widget Notifications () {
+
+Widget Notifications() {
   return Scaffold();
 }

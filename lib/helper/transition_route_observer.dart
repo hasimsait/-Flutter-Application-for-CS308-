@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class TransitionRouteObserver<R extends TransitionRoute<dynamic>>
     extends NavigatorObserver {
   final Map<R, Set<TransitionRouteAware>> _listeners =
-  <R, Set<TransitionRouteAware>>{};
+      <R, Set<TransitionRouteAware>>{};
 
   /// Subscribe [routeAware] to be informed about changes to [route].
   ///
@@ -16,7 +16,7 @@ class TransitionRouteObserver<R extends TransitionRoute<dynamic>>
     assert(routeAware != null);
     assert(route != null);
     final Set<TransitionRouteAware> subscribers =
-    _listeners.putIfAbsent(route, () => <TransitionRouteAware>{});
+        _listeners.putIfAbsent(route, () => <TransitionRouteAware>{});
     if (subscribers.add(routeAware)) {
       routeAware.didPush();
       Future.delayed(route.transitionDuration, () {
@@ -41,7 +41,7 @@ class TransitionRouteObserver<R extends TransitionRoute<dynamic>>
   void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
     if (route is R && previousRoute is R) {
       final List<TransitionRouteAware> previousSubscribers =
-      _listeners[previousRoute]?.toList();
+          _listeners[previousRoute]?.toList();
 
       if (previousSubscribers != null) {
         for (TransitionRouteAware routeAware in previousSubscribers) {
@@ -50,7 +50,7 @@ class TransitionRouteObserver<R extends TransitionRoute<dynamic>>
       }
 
       final List<TransitionRouteAware> subscribers =
-      _listeners[route]?.toList();
+          _listeners[route]?.toList();
 
       if (subscribers != null) {
         for (TransitionRouteAware routeAware in subscribers) {
@@ -64,7 +64,7 @@ class TransitionRouteObserver<R extends TransitionRoute<dynamic>>
   void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
     if (route is R && previousRoute is R) {
       final Set<TransitionRouteAware> previousSubscribers =
-      _listeners[previousRoute];
+          _listeners[previousRoute];
 
       if (previousSubscribers != null) {
         for (TransitionRouteAware routeAware in previousSubscribers) {

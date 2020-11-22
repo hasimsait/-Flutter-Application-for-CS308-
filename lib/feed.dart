@@ -1,6 +1,4 @@
-//TODO add feed route
 //TODO basically search but you send request for feed,
-//TODO has post widget/anchor. is the default route of the bottom navigation bar
 //TODO also add messages anchor
 import 'package:flutter/material.dart';
 import 'createpost.dart';
@@ -39,7 +37,13 @@ class _FeedState extends State<Feed> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CreatePost()),
-          );
+          ).then((value) {
+            if (Constants.DEPLOYED) {
+              //TODO request feed of the user.
+            } else {
+              return null;
+            }
+          });
         },
         tooltip: 'Create a new post',
         child: new Icon(Icons.create),

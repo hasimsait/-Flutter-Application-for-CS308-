@@ -1,22 +1,14 @@
-//TODO add profile route
-//TODO send a request to the backend, parse it and display.
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'profile_picture.dart';
 import 'helper/constants.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 class Profile extends StatefulWidget {
-  final String
-      userName; //this may be a string or whatever, TODO change accordingly.
+  final String userName;
   Profile(this.userName);
 
   @override
@@ -80,40 +72,44 @@ class _ProfileState extends State<Profile> {
                             builder: (context) =>
                                 EditUserInfo(userName, myName, profilePicture)),
                       ).then((up) {
-                        if(up!=null){
-                        print(up.length);
-                        if (up.length == 1 && up[0] is String) {
-                          setState(() {
-                            thisUser.setName(up[0]).then((value) {
-                              setState(() {
-                                updateFields(value);
-                              });
-                            });
-                          });
-                        } else {
-                          if (up.length == 1 && up[0] is File) {
+                        if (up != null) {
+                          print(up.length);
+                          if (up.length == 1 && up[0] is String) {
                             setState(() {
-                              thisUser.setPicture(up[0]).then((value) {
-                                print("changing the profile picture");
+                              thisUser.setName(up[0]).then((value) {
                                 setState(() {
                                   updateFields(value);
                                 });
                               });
                             });
                           } else {
-                            if (up.length == 2 &&
-                                up[0] is String &&
-                                up[1] is File) {
+                            if (up.length == 1 && up[0] is File) {
                               setState(() {
-                                thisUser.setNameAndPicture(up[0],up[1]).then((value) {
+                                thisUser.setPicture(up[0]).then((value) {
+                                  print("changing the profile picture");
                                   setState(() {
                                     updateFields(value);
                                   });
                                 });
-                              });}
+                              });
+                            } else {
+                              if (up.length == 2 &&
+                                  up[0] is String &&
+                                  up[1] is File) {
+                                setState(() {
+                                  thisUser
+                                      .setNameAndPicture(up[0], up[1])
+                                      .then((value) {
+                                    setState(() {
+                                      updateFields(value);
+                                    });
+                                  });
+                                });
+                              }
+                            }
                           }
                         }
-                      }});
+                      });
                     })
               ]
             : null,
@@ -181,7 +177,7 @@ class _ProfileState extends State<Profile> {
             ),
           ]); //instead it returns the delete account stuff
     if (currUser == "ADMIN") {
-      //TODO change this to whatever they do for admin
+      //TODO change this to whatever they do to specify admin
       return Column(children: <Widget>[
         new Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -304,8 +300,6 @@ class _ProfileState extends State<Profile> {
     isFollowing = value.isFollowing;
     followerCt = value.followerCt;
     followingCt = value.followingCt;
-    setState(() {
-
-    });
+    setState(() {});
   }
 }

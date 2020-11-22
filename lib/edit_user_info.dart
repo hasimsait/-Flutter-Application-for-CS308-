@@ -20,8 +20,7 @@ class EditUserInfo extends StatefulWidget {
 }
 
 class _EditUserInfoState extends State<EditUserInfo> {
-  final String
-      userName; //this may be a string or whatever, TODO change accordingly.
+  final String userName;
   String myName;
   Image profilePicture;
   File newPP;
@@ -135,21 +134,30 @@ class _EditUserInfoState extends State<EditUserInfo> {
       myName = newName;
       print(myName);
       //TODO name validator creates error message
-      //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      Navigator.pop(context, [myName]);
+      if (Constants.DEPLOYED) {
+        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
+      } else {
+        Navigator.pop(context, [myName]);
+      }
       return null;
     }
     if (newName == "" && newPP != null) {
-      //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      Navigator.pop(context, [newPP]);
+      if (Constants.DEPLOYED) {
+        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
+      } else {
+        Navigator.pop(context, [newPP]);
+      }
       return null;
     }
     if (newName != null && newPP != null) {
       myName = newName;
       print(myName);
       //TODO name validator creates error message
-      //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      Navigator.pop(context, [myName, newPP]);
+      if (Constants.DEPLOYED) {
+        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
+      } else {
+        Navigator.pop(context, [myName, newPP]);
+      }
       return null;
     }
   }
@@ -168,7 +176,9 @@ class _EditUserInfoState extends State<EditUserInfo> {
         profilePicture = Image.file(
           File(newPP.path),
         );
-        setState(() {print("set the preview image to the newly selected picture");});
+        setState(() {
+          print("set the preview image to the newly selected picture");
+        });
       } else {
         print('No image selected.');
       }
