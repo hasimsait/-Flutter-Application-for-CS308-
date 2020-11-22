@@ -1,13 +1,18 @@
 //TODO add profile route
 //TODO send a request to the backend, parse it and display.
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'profile_picture.dart';
 import 'helper/constants.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class Profile extends StatefulWidget {
   final String
@@ -27,12 +32,14 @@ class _ProfileState extends State<Profile> {
       .sampleProfilePictureBASE64)); //TODO replace with placeholder image, this can not be null
   bool isFollowing = false;
   var userInfo;
-  int followerCt=0;
-  int followingCt=0;
+  int followerCt = 0;
+  int followingCt = 0;
+  User thisUser;
   _ProfileState(this.userName);
 
   @override
   void initState() {
+    thisUser = User(userName);
     FlutterSession().get('userName').then((value) {
       currUser = value['data'];
     });
@@ -41,16 +48,12 @@ class _ProfileState extends State<Profile> {
       isMyProfile = true;
       FlutterSession().get('userName').then((value) {
         userName = value['data'];
-        currUser=value['data'];
+        currUser = value['data'];
       });
     }
-    User(userName).getInfo(userName).then((value) {
+    thisUser.getInfo(userName).then((value) {
       setState(() {
-        profilePicture = value.myProfilePicture;
-        myName = value.myName;
-        isFollowing = value.isFollowing;
-        followerCt = value.followerCt;
-        followingCt=value.followingCt;
+        updateFields(value);
       });
     });
     super.initState();
@@ -76,30 +79,71 @@ class _ProfileState extends State<Profile> {
                         MaterialPageRoute(
                             builder: (context) =>
                                 EditUserInfo(userName, myName, profilePicture)),
-                      );
+                      ).then((up) {
+                        if(up!=null){
+                        print(up.length);
+                        if (up.length == 1 && up[0] is String) {
+                          setState(() {
+                            thisUser.setName(up[0]).then((value) {
+                              setState(() {
+                                updateFields(value);
+                              });
+                            });
+                          });
+                        } else {
+                          if (up.length == 1 && up[0] is File) {
+                            setState(() {
+                              thisUser.setPicture(up[0]).then((value) {
+                                print("changing the profile picture");
+                                setState(() {
+                                  updateFields(value);
+                                });
+                              });
+                            });
+                          } else {
+                            if (up.length == 2 &&
+                                up[0] is String &&
+                                up[1] is File) {
+                              setState(() {
+                                thisUser.setNameAndPicture(up[0],up[1]).then((value) {
+                                  setState(() {
+                                    updateFields(value);
+                                  });
+                                });
+                              });}
+                          }
+                        }
+                      }});
                     })
               ]
             : null,
       ),
       body: new Center(
-        child: new Column(
-          children: <Widget>[
-            Padding(
-              child: Container(
-                  child: CircleAvatar(
-                radius: 100,
-                backgroundImage: profilePicture.image,
-              )),
-              padding: EdgeInsets.all(10),
-            ),
-            Text(
-              myName,
-              style: TextStyle(fontSize: 25),
-            ),
-            followButton(isMyProfile, isFollowing, userName),
-            viewPostsButton (userName),
-            switchView(),
-          ],
+        child: new SingleChildScrollView(
+          child: new Column(
+            children: <Widget>[
+              Padding(
+                  child: Container(
+                      child: CircleAvatar(
+                    radius: 100,
+                    backgroundImage: profilePicture.image,
+                  )),
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+              Text(
+                myName,
+                style: TextStyle(fontSize: 25),
+              ),
+              userActions(isMyProfile, isFollowing, userName),
+              viewPostsButton(userName),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  switchView(),
+                  switchViewToAdmin(),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -113,57 +157,71 @@ class _ProfileState extends State<Profile> {
     isFollowing = false;
   } //TODO replace with sending requests then assigning the value.
 
-  Widget followButton(bool isMyProfile, bool isFollowing, String userName) {
+  Widget userActions(bool isMyProfile, bool isFollowing, String userName) {
     if (isMyProfile)
-      return Column(children: <Widget>[
-        RaisedButton(
-          onPressed: () {
-            return null;
-            //TODO redirect to followers list
-          },
-          child: Text("Followers:"+followerCt.toString()),
-        ),
-        RaisedButton(
-          onPressed: () {
-            return null;
-            //TODO redirect to following list
-          },
-          child: Text("Following:"+followingCt.toString()),
-        ),
-      ]); //instead it returns the delete account stuff
-    if(currUser=="ADMIN"){
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                return null;
+                //TODO redirect to followers list
+              },
+              child: Text("Followers:" + followerCt.toString()),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+            ),
+            RaisedButton(
+              onPressed: () {
+                return null;
+                //TODO redirect to following list
+              },
+              child: Text("Following:" + followingCt.toString()),
+            ),
+          ]); //instead it returns the delete account stuff
+    if (currUser == "ADMIN") {
       //TODO change this to whatever they do for admin
-        return Column(children: <Widget>[
-          RaisedButton(
-            onPressed: () {
-              return null;//TODO
-              //ADMIN gets to select the timeout length, user deactivates
-            },
-            child: Text("DEACTIVATE ACCOUNT"),
-          ),
-          RaisedButton(
-            onPressed: () {
-              return null;//TODO
-            },
-            child: Text("DELETE ACCOUNT"),
-          ),
-          RaisedButton(
-            onPressed: () {
-              return null;
-              //TODO redirect to followers list
-            },
-            child: Text("Followers:"+followerCt.toString()),
-          ),
-          RaisedButton(
-            onPressed: () {
-              return null;
-              //TODO redirect to following list
-            },
-            child: Text("Following:"+followingCt.toString()),
-          ),
-        ]);
-    }
-    else {
+      return Column(children: <Widget>[
+        new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                return null; //TODO
+                //ADMIN gets to select the timeout length, user deactivates
+              },
+              child: Text("DEACTIVATE ACCOUNT"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                return null; //TODO
+              },
+              child: Text("DELETE ACCOUNT"),
+            ),
+          ],
+        ),
+        new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                return null;
+                //TODO redirect to followers list
+              },
+              child: Text("Followers:" + followerCt.toString()),
+            ),
+            RaisedButton(
+              onPressed: () {
+                return null;
+                //TODO redirect to following list
+              },
+              child: Text("Following:" + followingCt.toString()),
+            ),
+          ],
+        ),
+      ]);
+    } else {
       if (isFollowing)
         return RaisedButton(
           onPressed: () {
@@ -184,6 +242,18 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  Widget viewPostsButton(String userName) {
+    return RaisedButton(
+      onPressed: () {
+        return null;
+        //TODO turn the button into a listview of posts.
+        //posts=User(userName).getPosts()
+        //return listPosts(posts)
+      },
+      child: Text("Posts by " + userName),
+    );
+  }
+
   void aaaaa() {
     isMyProfile = !isMyProfile;
   }
@@ -202,16 +272,40 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget viewPostsButton (String userName) {
+  void admin() {
+    var temp;
+    if (currUser != "ADMIN") {
+      isMyProfile = false;
+      temp = currUser;
+      currUser = "ADMIN";
+    } else {
+      isMyProfile = true;
+      currUser = temp;
+    }
+  }
+
+  Widget switchViewToAdmin() {
     return RaisedButton(
       onPressed: () {
-        return null;
-        //TODO turn the button into a listview of posts.
-        //posts=User(userName).getPosts()
-        //return listPosts(posts)
+        admin();
+        setState(() {});
       },
-      child: Text("Posts by "+userName),
+      child: Column(children: <Widget>[
+        Text("SWITCH VIEW TO ADMIN"),
+        Icon(Icons.flash_on),
+        Text("THIS IS A DEBUG BUTTON")
+      ]),
     );
   }
-}
 
+  void updateFields(User value) {
+    profilePicture = value.myProfilePicture;
+    myName = value.myName;
+    isFollowing = value.isFollowing;
+    followerCt = value.followerCt;
+    followingCt = value.followingCt;
+    setState(() {
+
+    });
+  }
+}

@@ -8,20 +8,18 @@ import 'helper/session.dart';
 class ProfilePicture{
   //PickedFile image;
   String userID;
-  String picture; //db stores them as strings, I will too.
+
 
   ProfilePicture(this.userID);
 
-  Future<Image> get()async {
+  Future<Image> get({String image})async {
     dynamic profilePicture=await FlutterSession().get('pp'+userID);
     //we could define a profile class in session manager but I'm not sure what we would cache, therefore I wil not.
-    if(profilePicture==null || profilePicture['data']==null){
-      print("requesting the image from the server");
-      //request the picture of the user.
-      //TODO learn how they serve profile pictures, request the picture, convert to base 64, use it instead of the constant.
-      Session profilePicture = Session( data: Constants.sampleProfilePictureBASE64);
+    if(image!=null){
+      print("writing to sesion");
+      Session profilePicture = Session( data: image);
       await FlutterSession().set('pp'+userID, profilePicture);
-      return Image.memory(base64Decode(Constants.sampleProfilePictureBASE64));
+      return Image.memory(base64Decode(image));
     }
     else{
       print("loading from session");

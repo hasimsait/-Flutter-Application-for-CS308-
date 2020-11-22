@@ -29,6 +29,8 @@ class _FeedState extends State<Feed> {
               'This route will contain posts',
               style: Theme.of(context).textTheme.headline4,
             ),
+            //posts=User(userName).getPosts()
+            //return listPosts(posts)
           ],
         ),
       ),
