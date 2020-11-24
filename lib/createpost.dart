@@ -19,13 +19,14 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   final _postFieldController = TextEditingController();
-  PickedFile file;
+  File file;
   bool fileType; //0 if image, 1 if video
   final picker = ImagePicker();
   Image thumbnail;
   double longitude;
   double latitude;
-  String placeName;//not currently implemented but I find it necessary so I'll add it here
+  String placeName;
+  String placeGeoID;
 
   Future<bool> _sendPost() async {
     //This pops when post is sent, can't pull out of class, may put some of its features in the method
@@ -34,20 +35,21 @@ class _CreatePostState extends State<CreatePost> {
       post.text = _postFieldController.text;
       print(post.text);
     }
+    if (_postFieldController.text == null) {
+      post.text = "";
+      print(post.text);
+    }
     if (file != null && fileType == false) {
-      post.image = file;
-      print(post.image.path);
+      post.image = base64Encode(file.readAsBytesSync());
+      //print(post.image.path);
     }
     if (file != null && fileType == true) {
-      post.videoURL = File(file.path).readAsStringSync();
+      post.videoURL = base64Encode(file.readAsBytesSync());
     }
-    if (latitude != null) {
-      post.latitude = latitude;
-      print(post.latitude);
-    }
-    if (longitude != null) {
-      post.longitude = longitude;
-      print(post.longitude);
+
+    if (placeGeoID != null) {
+      post.placeGeoID = placeGeoID;
+      print(post.placeGeoID);
     }
     if (placeName != null) {
       post.placeName = placeName;
@@ -78,13 +80,8 @@ class _CreatePostState extends State<CreatePost> {
         builder: (context) => PlacePicker(
               Constants.apiKey,
             )));
-
-    // Handle the result in your way
-    print(result);
-    longitude=result.latLng.longitude;
-    latitude=result.latLng.latitude;
     placeName=result.name;
-    print(result.placeId);
+    placeGeoID=result.placeId;
   }
 
   Future _getImage(source, isVideo) async {
@@ -98,7 +95,7 @@ class _CreatePostState extends State<CreatePost> {
           source: source,
           maxDuration: const Duration(seconds: Constants.maxVideoDuration));
       if (pickedFile != null && pickedFile.path != null) {
-        file = PickedFile(pickedFile.path);
+        file = File(pickedFile.path);
         fileType = true;
         /*
         var genThumb = await VideoThumbnail.thumbnailData(
@@ -122,7 +119,7 @@ class _CreatePostState extends State<CreatePost> {
       final pickedFile = await picker.getImage(source: source);
       setState(() {
         if (pickedFile != null && pickedFile.path != null) {
-          file = PickedFile(pickedFile.path);
+          file = File(pickedFile.path);
           fileType = false;
         } else {
           print('No image selected.');
@@ -144,8 +141,6 @@ class _CreatePostState extends State<CreatePost> {
               File(file.path),
               fit: BoxFit.fitWidth,
             ),
-            //File is deprecating, check if Image class has an alternative
-            //we may crop and display a preview, currently it puts the entire image
           ),
           Positioned(
             left: -10,
@@ -178,9 +173,6 @@ class _CreatePostState extends State<CreatePost> {
             height: 300.00,
             child: thumbnail,
               //fit: BoxFit.fitWidth,
-
-            //File is deprecating, check if Image class has an alternative
-            //we may crop and display a preview, currently it puts the entire image
           ),*/
           Positioned(
         left: -10,
@@ -220,7 +212,7 @@ class _CreatePostState extends State<CreatePost> {
       return;
     }
     if (response.file != null) {
-      file = response.file;
+      file = File(response.file.path);
     }
   }
 

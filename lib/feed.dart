@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'createpost.dart';
 import 'helper/constants.dart';
+import 'package:flutter_session/flutter_session.dart';
+import 'user.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -10,9 +12,32 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
-  //pickFile,attach to tweet
-  //selectLocation
-  //
+  User currUser;
+  ListView feedView;
+
+
+  @override
+  void initState() {
+    super.initState();
+    feedView = ListView(
+      children: <Widget>[
+        Text(
+          'Please wait while we retrieve your feed.',
+        ),
+      ],
+    );
+    FlutterSession().get('userName').then((value) {
+      currUser = User(value['data']);
+      currUser.getFeedItems().then((value) {
+        currUser.displayFeed(value).then((value) {
+          feedView =value;
+              setState(() {});
+        });
+      });
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -20,17 +45,7 @@ class _FeedState extends State<Feed> {
         title: new Text(Constants.appName),
       ),
       body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'This route will contain posts',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            //posts=User(userName).getPosts()
-            //return listPosts(posts)
-          ],
-        ),
+        child: feedView,
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {

@@ -21,9 +21,9 @@ class User {
   User(this.userName);
 
   Future<User> getInfo(String currentUser) async {
-    //TODO request user info, set image: to the image string, set the rest to variables below
-
     if (Constants.DEPLOYED) {
+      //TODO request user info, set image: to the image string, set the rest to variables below
+
     } else {
       this.myProfilePicture = await ProfilePicture(this.userName)
           .get(image: Constants.sampleProfilePictureBASE64);
@@ -75,5 +75,36 @@ class User {
     } else {
       return null;
     }
+  }
+  Future<Map<int, Post>> getFeedItems() async {
+    if (Constants.DEPLOYED) {
+      //TODO send request for the feed
+      //TODO parse the feed
+      //TODO for i in posts.length()
+      //res.append(i,Post(posts[i]))
+      //return res
+    } else {
+      return <int, Post>{
+        0: Post(
+            text: "This is a sample post",
+            image: Constants.sampleProfilePictureBASE64,
+            postID: 0,
+            postLikes: 0,
+            postDislikes: 10,
+            postOwnerName: "hasimsait")
+      };
+    }
+  }
+
+  Future<Widget> displayFeed (Map<int, Post> posts) async {
+    List<Widget> postWidgets;
+    await posts.forEach((key, value) async {
+      print(key);
+      Widget a=await value.displayPost(userName);
+      postWidgets.add(a);
+    });
+   return ListView(
+     children: postWidgets,
+   );
   }
 }
