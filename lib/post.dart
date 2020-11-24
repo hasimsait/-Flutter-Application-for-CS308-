@@ -67,42 +67,44 @@ class Post {
     );
   }
 
-  Future<Widget> displayPost(String currentUserName) async {
+  Future<Widget> displayPost(String currentUserName,BuildContext context) async {
+    //I want these to have anchors but they can't since I need to pass context to navigator.
+    //I could move it to feed.dart for now but then, I'll be using the same code for search etc too.
+    //Which then I'd be repeating code.
+    //TODO turn topic/location/comment button into anchors.
     User owner = User(postOwnerName);
-    owner.getInfo(currentUserName).then((value) {
-      return Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              owner.myProfilePicture,
-              Text(postOwnerName), //Text(owner.myName),
-            ],
-          ),
-          Text(postDate.toString()),
-          topic != null && topic != ""
-              ? Text(topic)
-              : SizedBox(), //TODO check if this worked
-          placeName != null && placeName != ""
-              ? Text(placeName)
-              : SizedBox(), //TODO topic and location are anchors which push a new route
-          Text(text),
-          image != null && image != ""
-              ? Image.memory(base64Decode(image))
-              : _displayVideo(
-                  videoURL), //A post can't have both video and image
-          Row(
-            children: <Widget>[
-              Icon(Icons.thumb_up),
-              Text(postLikes.toString()),
-              Icon(Icons.thumb_down),
-              Text(postDislikes.toString()),
-            ],
-          ),
-          _displayComments(postComments),
-        ],
-      );
-    });
+    owner = await owner.getInfo(currentUserName);
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            owner.myProfilePicture,
+            Text(owner.myName),
+          ],
+        ),
+        Text(postDate.toString()),
+        topic != null && topic != ""
+            ? Text(topic)
+            : SizedBox(), //TODO check if this worked
+        placeName != null && placeName != ""
+            ? Text(placeName)
+            : SizedBox(), //TODO topic and location are anchors which push a new route
+        Text(text),
+        image != null && image != ""
+            ? Image.memory(base64Decode(image))
+            : _displayVideo(videoURL), //A post can't have both video and image
+        Row(
+          children: <Widget>[
+            Icon(Icons.thumb_up),
+            Text(postLikes.toString()),
+            Icon(Icons.thumb_down),
+            Text(postDislikes.toString()),
+          ],
+        ),
+        _displayComments(postComments),
+      ],
+    );
   }
 
   Widget _displayVideo(String videoURL) {

@@ -5,6 +5,7 @@ import 'createpost.dart';
 import 'helper/constants.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'user.dart';
+import 'post.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -15,6 +16,21 @@ class _FeedState extends State<Feed> {
   User currUser;
   ListView feedView;
 
+  Future<Widget> displayFeed(Map<int, Post> posts) async {
+    List<Widget> postWidgets=[];
+    await posts.forEach((key, value) async {
+      print(key);
+      print(value.text);
+      Widget a = await value.displayPost(currUser.userName,context);
+      if(a!=null)
+        postWidgets.add(a);
+    });
+    if(postWidgets!=null)
+    return ListView(
+      children: postWidgets,
+    );
+    else return Text("WTF");
+  }
 
   @override
   void initState() {
@@ -29,13 +45,12 @@ class _FeedState extends State<Feed> {
     FlutterSession().get('userName').then((value) {
       currUser = User(value['data']);
       currUser.getFeedItems().then((value) {
-        currUser.displayFeed(value).then((value) {
-          feedView =value;
-              setState(() {});
+        displayFeed(value).then((value) {
+          feedView = value;
+          setState(() {});
         });
       });
     });
-
   }
 
   @override

@@ -115,6 +115,8 @@ class _EditUserInfoState extends State<EditUserInfo> {
                   //TODO
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
+                //TODO this is a dropdown where the user selects a date and sends request to deactivate till that picked date
+
               ),
               RaisedButton(
                 onPressed: () {

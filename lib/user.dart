@@ -76,6 +76,7 @@ class User {
       return null;
     }
   }
+
   Future<Map<int, Post>> getFeedItems() async {
     if (Constants.DEPLOYED) {
       //TODO send request for the feed
@@ -83,28 +84,28 @@ class User {
       //TODO for i in posts.length()
       //res.append(i,Post(posts[i]))
       //return res
+      //use currUser.userName
     } else {
       return <int, Post>{
         0: Post(
             text: "This is a sample post",
+            placeName: "Sample Place Name Which is not an anchor currently",
+            postDate: DateTime.now(),
             image: Constants.sampleProfilePictureBASE64,
             postID: 0,
             postLikes: 0,
             postDislikes: 10,
+            postOwnerName: "hasimsait"),
+        1: Post(
+            text: "This is another sample post",
+            postDate: DateTime.now(),
+            postID: 1,
+            topic: "Sample Topic",
+            postLikes: 10,
+            postDislikes: 0,
             postOwnerName: "hasimsait")
       };
     }
   }
 
-  Future<Widget> displayFeed (Map<int, Post> posts) async {
-    List<Widget> postWidgets;
-    await posts.forEach((key, value) async {
-      print(key);
-      Widget a=await value.displayPost(userName);
-      postWidgets.add(a);
-    });
-   return ListView(
-     children: postWidgets,
-   );
-  }
 }

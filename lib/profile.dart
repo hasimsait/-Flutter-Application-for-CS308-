@@ -188,6 +188,7 @@ class _ProfileState extends State<Profile> {
                 //ADMIN gets to select the timeout length, user deactivates
               },
               child: Text("DEACTIVATE ACCOUNT"),
+              //TODO this is a dropdown where the admin selects a date and sends request to deactivate till that picked date
             ),
             RaisedButton(
               onPressed: () {
