@@ -80,8 +80,8 @@ class _CreatePostState extends State<CreatePost> {
         builder: (context) => PlacePicker(
               Constants.apiKey,
             )));
-    placeName=result.name;
-    placeGeoID=result.placeId;
+    placeName = result.name;
+    placeGeoID = result.placeId;
   }
 
   Future _getImage(source, isVideo) async {

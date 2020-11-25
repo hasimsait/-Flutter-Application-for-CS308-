@@ -88,16 +88,20 @@ class User {
     } else {
       return <int, Post>{
         0: Post(
-            text: "This is a sample post",
-            placeName: "Sample Place Name Which is not an anchor currently",
+            text: "This is a sample post with an image and a location.",
+            placeName: "Sample Place Name",
             postDate: DateTime.now(),
             image: Constants.sampleProfilePictureBASE64,
             postID: 0,
             postLikes: 0,
             postDislikes: 10,
-            postOwnerName: "hasimsait"),
+            postOwnerName: "hasimsait",
+            postComments: {
+              "ahmet": "sample comment",
+              "mehmet": "lorem ipsum..."
+            }),
         1: Post(
-            text: "This is another sample post",
+            text: "This is another sample post under a topic.",
             postDate: DateTime.now(),
             postID: 1,
             topic: "Sample Topic",
@@ -107,5 +111,4 @@ class User {
       };
     }
   }
-
 }

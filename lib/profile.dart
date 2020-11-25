@@ -34,9 +34,12 @@ class _ProfileState extends State<Profile> {
     thisUser = User(userName);
     FlutterSession().get('userName').then((value) {
       currUser = value['data'];
+      if (userName == currUser)
+        //if user clicks his own profile picture
+        isMyProfile = true;
     });
     if (userName == "") {
-      //if self profile
+      //if self profile page
       isMyProfile = true;
       FlutterSession().get('userName').then((value) {
         userName = value['data'];
