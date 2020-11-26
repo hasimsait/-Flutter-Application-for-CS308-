@@ -63,7 +63,7 @@ class _FeedState extends State<Feed> {
             MaterialPageRoute(builder: (context) => CreatePost()),
           ).then((value) {
             if (Constants.DEPLOYED) {
-              //TODO request feed of the user.
+              _loadFeed();
             } else {
               return null;
             }

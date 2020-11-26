@@ -107,7 +107,19 @@ class User {
             topic: "Sample Topic",
             postLikes: 10,
             postDislikes: 0,
-            postOwnerName: "hasimsait")
+            postOwnerName: "hasimsait"),
+        2: Post(
+            text:
+                "This is a post from another user. Name and image are static, don't mind them.",
+            postDate: DateTime.now(),
+            postID: 2,
+            postLikes: 100,
+            postDislikes: 10,
+            postOwnerName: "aaaaaa",
+            postComments: {
+              "ayşe": "sample comment",
+              "ĞĞĞĞĞ": "lorem ipsum..."
+            }),
       };
     }
   }

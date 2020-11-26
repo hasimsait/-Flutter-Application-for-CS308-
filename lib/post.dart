@@ -71,7 +71,9 @@ class Post {
   }
 
   Future<Widget> displayPost(
-      String currentUserName, BuildContext context) async {
+      //TODO turn this into postwidget stateful class so that we can setState
+      String currentUserName,
+      BuildContext context) async {
     //TODO turn topic/location/comment button into anchors.
     User owner = User(postOwnerName);
     owner = await owner.getInfo(currentUserName);
@@ -80,48 +82,56 @@ class Post {
     return Column(
       children: <Widget>[
         Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            IconButton(
-              icon: CircleAvatar(
-                  radius: 25, backgroundImage: owner.myProfilePicture.image),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Profile(postOwnerName)),
-                );
-              },
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Row(
               children: <Widget>[
-                Text(
-                  owner.myName,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 15),
+                IconButton(
+                  icon: CircleAvatar(
+                      radius: 25,
+                      backgroundImage: owner.myProfilePicture.image),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Profile(postOwnerName)),
+                    );
+                  },
                 ),
-                topic != null && topic != ""
-                    ? Text(
-                        topic,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      owner.myName,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    topic != null && topic != ""
+                        ? Text(
+                            topic,
+                            textAlign: TextAlign.left,
+                          )
+                        : SizedBox(),
+                    placeName != null && placeName != ""
+                        ? Text(
+                            placeName,
+                          )
+                        : SizedBox(), //TODO topic and location are anchors which push a new route
+                    Container(
+                      child: Text(
+                        postDate.toString().substring(0, 16),
                         textAlign: TextAlign.left,
-                      )
-                    : SizedBox(),
-                placeName != null && placeName != ""
-                    ? Text(
-                        placeName,
-                      )
-                    : SizedBox(), //TODO topic and location are anchors which push a new route
-                Container(
-                  child: Text(
-                    postDate.toString().substring(0, 16),
-                    textAlign: TextAlign.left,
-                  ),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      ),
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    ),
+                  ],
                 ),
               ],
             ),
+            postOwnerName == currentUserName
+                ? IconButton(icon: Icon(Icons.cancel), onPressed: _deletePost)
+                : SizedBox(),
           ],
         ),
 
@@ -172,6 +182,8 @@ class Post {
                   context,
                   MaterialPageRoute(
                       builder: (context) => CreateComment(postID)),
+                  //TODO get the post data again, setState
+                  //for now I'll rely on user being smart enough to reload the feed.
                 );
               },
             ),
@@ -237,5 +249,10 @@ class Post {
     } else {
       //TODO
     }
+  }
+
+  void _deletePost() {
+    throw UnimplementedError();
+    //TODO send request to delete this.postID, if 404 create snackbar, if 200 display "post is deleted"
   }
 }
