@@ -5,12 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:teamone_social_media/profile.dart';
+import 'create_post.dart';
 import 'helper/constants.dart';
 import 'dart:io';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'user.dart';
 import 'create_comment.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Post {
   String text;
@@ -42,8 +44,6 @@ class Post {
       this.postLikes,
       this.postDislikes,
       this.postComments});
-  //dart does not allow you to overload constructors so I made them optional
-  //var post = MyPost(text:"bezkoder", location: "US");
 
   Future<http.Response> sendPost() async {
     dynamic sessionToken = await FlutterSession().get('sessionToken');
@@ -130,7 +130,14 @@ class Post {
               ],
             ),
             postOwnerName == currentUserName
-                ? IconButton(icon: Icon(Icons.cancel), onPressed: _deletePost)
+                ? Row(children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          editPost(context);
+                        }),
+                    IconButton(icon: Icon(Icons.cancel), onPressed: _deletePost)
+                  ])
                 : SizedBox(),
           ],
         ),
@@ -208,15 +215,15 @@ class Post {
       return Text(
           "Currently there are no comments on this post. Be the first!");
     } else {
-      List<Widget> comms = [];
+      List<Widget> comments = [];
       postComments.forEach((key, value) {
-        comms.add(Text(
+        comments.add(Text(
           key + ":" + value,
           textAlign: TextAlign.left,
         ));
       });
       return Column(
-        children: comms,
+        children: comments,
       );
     }
   }
@@ -254,5 +261,54 @@ class Post {
   void _deletePost() {
     throw UnimplementedError();
     //TODO send request to delete this.postID, if 404 create snackbar, if 200 display "post is deleted"
+  }
+
+  void editPost(context) {
+    //TODO turn image or videoURL strings into File and pass it as either imageFile or videoFile
+    //reverse base64Encode(file.readAsBytesSync());
+    var file;
+    if (this.image != null) {
+      //if the post has an image file attached to it
+      _localFile().then((value) {
+        File(value.path).writeAsBytesSync(base64Decode(this.image));
+        return value;
+      }).then((value) {
+        print("We got the picture");
+        navigateToEditPostRoute(context, value);
+      });
+      //file =  File(tempFile)(base64Decode(this.image));
+    } else if (this.videoURL != null) {
+      _localFile().then((value) {
+        File(value.path).writeAsBytesSync(base64Decode(this.videoURL));
+        return value;
+      }).then((value) {
+        print("We got the video");
+        navigateToEditPostRoute(context, value);
+      });
+    } else {
+      navigateToEditPostRoute(context, null);
+    }
+  }
+
+  void navigateToEditPostRoute(context, file) {
+    print(this.text);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CreatePost(
+                postID: this.postID,
+                text: this.text,
+                placeName: this.placeName,
+                placeGeoID: this.placeGeoID,
+                topic: this.topic,
+                videoFile: this.videoURL == null ? null : file,
+                imageFile: this.image == null ? null : file,
+              )),
+    );
+  }
+
+  Future<File> _localFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/tempFile');
   }
 }

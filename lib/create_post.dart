@@ -1,5 +1,3 @@
-//TODO add autocomplete to the create post
-//TODO user can pick locations
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,8 +11,30 @@ import 'dart:convert';
 import 'package:place_picker/place_picker.dart';
 
 class CreatePost extends StatefulWidget {
+  File imageFile;
+  File videoFile;
+  String placeName;
+  String placeGeoID;
+  String text;
+  int postID;
+  String topic;
+  CreatePost(
+      {this.postID,
+      this.text,
+      this.imageFile,
+      this.videoFile,
+      this.placeName,
+      this.placeGeoID,
+      this.topic});
   @override
-  State<StatefulWidget> createState() => _CreatePostState();
+  State<StatefulWidget> createState() => _CreatePostState(
+      postID: this.postID,
+      initText: this.text,
+      imageFile: this.imageFile,
+      videoFile: this.videoFile,
+      placeName: this.placeName,
+      placeGeoID: this.placeGeoID,
+      topic: this.topic);
 }
 
 class _CreatePostState extends State<CreatePost> {
@@ -23,10 +43,32 @@ class _CreatePostState extends State<CreatePost> {
   bool fileType; //0 if image, 1 if video
   final picker = ImagePicker();
   Image thumbnail;
-  double longitude;
-  double latitude;
   String placeName;
   String placeGeoID;
+  String topic;
+
+  bool editing;
+  int postID;
+  String initText;
+  _CreatePostState(
+      {this.postID,
+      this.initText,
+      File imageFile,
+      File videoFile,
+      this.placeName,
+      this.placeGeoID,
+      this.topic}) {
+    if (this.postID != null) {
+      editing = true; //not necessary but will make it look better.
+    }
+    if (imageFile != null) {
+      this.file = imageFile;
+      this.fileType = false;
+    } else if (videoFile != null) {
+      this.file = videoFile;
+      this.fileType = true;
+    }
+  } //this will only be used when editing post btw, I hate it too.
 
   Future<bool> _sendPost() async {
     //This pops when post is sent, can't pull out of class, may put some of its features in the method
@@ -55,8 +97,11 @@ class _CreatePostState extends State<CreatePost> {
       post.placeName = placeName;
       print(post.placeName);
     }
-    //String topic;
-    // TODO we don't have topics yet, when we do, this function will take it as a parameter and this part will be moved elsewhere to avoid copying it
+
+    if (topic != null) {
+      post.topic = topic;
+      print(post.topic);
+    }
 
     if (Constants.DEPLOYED) {
       var response = await post.sendPost();
@@ -73,15 +118,15 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future _pickLocation() async {
-    latitude = 0;
-    longitude = 0;
-    //TODO find a package that works.
     LocationResult result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PlacePicker(
               Constants.apiKey,
             )));
     placeName = result.name;
     placeGeoID = result.placeId;
+    setState(() {
+      //so that the location icon turns blue
+    });
   }
 
   Future _getImage(source, isVideo) async {
@@ -217,10 +262,8 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void initState() {
-    //this must stay here
-    super.initState();
     _postFieldController.addListener(() {
-      final text = _postFieldController.text;
+      final text = initText;
       _postFieldController.value = _postFieldController.value.copyWith(
         text: text,
         selection:
@@ -228,6 +271,7 @@ class _CreatePostState extends State<CreatePost> {
         composing: TextRange.empty,
       );
     });
+    super.initState();
   }
 
   void dispose() {
@@ -250,78 +294,85 @@ class _CreatePostState extends State<CreatePost> {
         ],
       ),
       body: new Center(
-        child: new Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new TextFormField(
-              controller: _postFieldController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'What\'s on your mind?'),
-              autofocus: true,
-            ),
-            FutureBuilder<void>(
-              future: retrieveLostData(),
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const Text(
-                      'You have not yet picked an image.',
-                      textAlign: TextAlign.center,
-                    );
-                  case ConnectionState.done:
-                    return _previewImage();
-                  default:
-                    if (snapshot.hasError) {
-                      return Text(
-                        'Pick image/video error: ${snapshot.error}}',
-                        textAlign: TextAlign.center,
-                      );
-                    } else {
-                      return const Text(
-                        'You have not yet picked an image.',
-                        textAlign: TextAlign.center,
-                      );
-                    }
-                }
-              },
-            ),
-            new Row(
+        child: new Container(
+          alignment: Alignment.topCenter,
+          child: new SingleChildScrollView(
+            child: new Column(
+              //mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.image),
-                  onPressed: () {
-                    _getImage(ImageSource.gallery, false);
+                new TextFormField(
+                  controller: _postFieldController,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'What\'s on your mind?'),
+                  autofocus: true,
+                ),
+                FutureBuilder<void>(
+                  future: retrieveLostData(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const Text(
+                          'You have not yet picked an image.',
+                          textAlign: TextAlign.center,
+                        );
+                      case ConnectionState.done:
+                        return _previewImage();
+                      default:
+                        if (snapshot.hasError) {
+                          return Text(
+                            'Pick image/video error: ${snapshot.error}}',
+                            textAlign: TextAlign.center,
+                          );
+                        } else {
+                          return const Text(
+                            'You have not yet picked an image.',
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                    }
                   },
                 ),
-                IconButton(
-                  icon: Icon(Icons.camera_alt),
-                  onPressed: () {
-                    _getImage(ImageSource.camera, false);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.video_collection),
-                  onPressed: () {
-                    _getImage(ImageSource.gallery, true);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.video_call),
-                  onPressed: () {
-                    _getImage(ImageSource.camera, true);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.location_on),
-                  onPressed: () {
-                    _pickLocation();
-                  },
+                new Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.image),
+                      onPressed: () {
+                        _getImage(ImageSource.gallery, false);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.camera_alt),
+                      onPressed: () {
+                        _getImage(ImageSource.camera, false);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.video_collection),
+                      onPressed: () {
+                        _getImage(ImageSource.gallery, true);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.video_call),
+                      onPressed: () {
+                        _getImage(ImageSource.camera, true);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.location_on),
+                      color: placeGeoID == null ? Colors.black87 : Colors.blue,
+                      onPressed: () {
+                        _pickLocation();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
