@@ -11,82 +11,12 @@ import 'helper/constants.dart';
 import 'helper/custom_route.dart';
 import 'helper/users.dart';
 import 'home_view.dart';
-import 'package:http/http.dart' as http;
+import 'helper/requests.dart';
 
 //TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts
 
 class LoginScreen extends StatelessWidget {
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
-
-  Future<http.Response> sendLoginRequest(LoginData data) {
-    return http.post(
-      Constants.backendURL + Constants.signInAPI,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'username': data.name,
-        'password': data.password,
-      }),
-    );
-  }
-
-  Future<String> _loginUser(LoginData data) async {
-    /*if (!mockUsers.containsKey(data.name)) {
-        return 'Username not exists';
-      }
-      if (mockUsers[data.name] != data.password) {
-        return 'Password does not match';
-      }*/
-    if (Constants.DEPLOYED) {
-      var response = await sendLoginRequest(data);
-      if (response.statusCode >= 400 || response.statusCode < 100)
-        return 'Email address or password wrong, try again';
-      Session sessionToken = Session(
-          id: 0,
-          data: json.decode(response.body)[
-              "token"]); //TODO check the response of an auth by the server
-      await FlutterSession().set('sessionToken', sessionToken);
-      Session userName = Session(
-          id: 1,
-          data: json.decode(response.body)[
-              "userName"]); //TODO check the response of an auth by the server
-      await FlutterSession().set('userName', userName);
-      return null;
-    } else {
-      Session userName = Session(id: 1, data: 'hasimsait');
-      await FlutterSession().set('userName', userName);
-      return null;
-    }
-  }
-
-  Future<String> _signupUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend, not in acceptance criteria
-    return null; //
-  }
-
-  Future<String> _recoverPassword(String name) {
-    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
-    return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(name)) {
-        return 'Username does not exist';
-      }
-      return null;
-    });
-  }
-
-  Future<bool> isLoggedIn(BuildContext context) async {
-    //TODO use this to get the user to skip the login if logged in
-    var loggedInBefore = await FlutterSession().get('loggedInBefore');
-    print(loggedInBefore["data"]);
-    if (loggedInBefore["data"] == "true") {
-      print("WTF");
-      Navigator.of(context).pushReplacement(FadePageRoute(
-        builder: (context) => HomeView(),
-      ));
-      return null;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +26,11 @@ class LoginScreen extends StatelessWidget {
     );
     return FlutterLogin(
       title: Constants.appName.substring(22, 29),
-      logo: 'assets/images/ecorp.png',
-      logoTag: Constants.logoTag,
-      titleTag: Constants.titleTag,
-      // messages: LoginMessages(
-      //   usernameHint: 'Username',
+      //logo: 'assets/images/ecorp.png',
+      //logoTag: Constants.logoTag,
+      //titleTag: Constants.titleTag,
+       messages: LoginMessages(
+         usernameHint: 'Username',
       //   passwordHint: 'Pass',
       //   confirmPasswordHint: 'Confirm',
       //   loginButton: 'LOG IN',
@@ -112,7 +42,7 @@ class LoginScreen extends StatelessWidget {
       //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
       //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
       //   recoverPasswordSuccess: 'Password rescued successfully',
-      // ),
+       ),
       // theme: LoginTheme(
       //   primaryColor: Colors.teal,
       //   accentColor: Colors.yellow,
@@ -190,8 +120,8 @@ class LoginScreen extends StatelessWidget {
       //   ),
       // ),
       emailValidator: (value) {
-        if (!value.contains('@') || !value.endsWith('.com')) {
-          return "Email must contain '@' and end with '.com'";
+        if (value.isEmpty) {
+          return "Username can't be empty";
         }
         return null;
       },
@@ -203,15 +133,15 @@ class LoginScreen extends StatelessWidget {
       },
       onLogin: (loginData) {
         print('Login info');
-        print('Name: ${loginData.name}');
+        print('Username: ${loginData.name}');
         print('Password: ${loginData.password}');
-        return _loginUser(loginData);
+        return Requests().auth(loginData);
       },
       onSignup: (loginData) {
         print('Signup info');
-        print('Name: ${loginData.name}');
+        print('Username: ${loginData.name}');
         print('Password: ${loginData.password}');
-        return _signupUser(loginData);
+        return Requests().signupUser(loginData);
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(FadePageRoute(
@@ -221,7 +151,7 @@ class LoginScreen extends StatelessWidget {
       onRecoverPassword: (name) {
         print('Recover password info');
         print('Name: $name');
-        return _recoverPassword(name);
+        return Requests().recoverPassword(name);
         // Show new password dialog
       },
       //showDebugButtons: true,
