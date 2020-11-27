@@ -1,17 +1,18 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'profile_picture.dart';
 import 'helper/constants.dart';
 import 'user.dart';
+import 'helper/requests.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class EditUserInfo extends StatefulWidget {
   final String userName;
-  String myName;
-  Image profilePicture;
+  final String myName;
+  final Image profilePicture;
   EditUserInfo(this.userName, this.myName, this.profilePicture);
 
   @override
@@ -59,7 +60,20 @@ class _EditUserInfoState extends State<EditUserInfo> {
           IconButton(
               icon: Icon(Icons.check_circle_outline_rounded),
               onPressed: () {
-                updateUserInfo(_postFieldController.text, newPP);
+                Requests()
+                    .updateUserInfo(_postFieldController.text, newPP,userName)
+                    .then((value) {
+                  if (value) {
+                    if (_postFieldController.text != null && newPP == null)
+                      Navigator.pop(context, [_postFieldController.text]);
+                    else if (_postFieldController.text == "" && newPP != null)
+                      Navigator.pop(context, [newPP]);
+                    else if (_postFieldController.text != null && newPP != null)
+                      Navigator.pop(context, [_postFieldController.text, newPP]);
+                  } else {
+                    //display error message
+                  }
+                });
               }),
           IconButton(
               icon: Icon(Icons.cancel_outlined),
@@ -99,7 +113,20 @@ class _EditUserInfoState extends State<EditUserInfo> {
                       icon: Icon(Icons.check_circle_outline_rounded),
                       iconSize: 50,
                       onPressed: () {
-                        updateUserInfo(_postFieldController.text, newPP);
+                        Requests()
+                            .updateUserInfo(_postFieldController.text, newPP,userName)
+                            .then((value) {
+                          if (value) {
+                            if (_postFieldController.text != null && newPP == null)
+                              Navigator.pop(context, [_postFieldController.text]);
+                            else if (_postFieldController.text == "" && newPP != null)
+                              Navigator.pop(context, [newPP]);
+                            else if (_postFieldController.text != null && newPP != null)
+                              Navigator.pop(context, [_postFieldController.text, newPP]);
+                          } else {
+                            //display error message
+                          }
+                        });
                       }),
                   IconButton(
                       icon: Icon(Icons.cancel_outlined),
@@ -116,7 +143,6 @@ class _EditUserInfoState extends State<EditUserInfo> {
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
                 //TODO this is a dropdown where the user selects a date and sends request to deactivate till that picked date
-
               ),
               RaisedButton(
                 onPressed: () {
@@ -129,39 +155,6 @@ class _EditUserInfoState extends State<EditUserInfo> {
         ),
       ),
     );
-  }
-
-  void updateUserInfo(String newName, File newPP) {
-    if (newName != null && newPP == null) {
-      myName = newName;
-      print(myName);
-      //TODO name validator creates error message
-      if (Constants.DEPLOYED) {
-        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      } else {
-        Navigator.pop(context, [myName]);
-      }
-      return null;
-    }
-    if (newName == "" && newPP != null) {
-      if (Constants.DEPLOYED) {
-        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      } else {
-        Navigator.pop(context, [newPP]);
-      }
-      return null;
-    }
-    if (newName != null && newPP != null) {
-      myName = newName;
-      print(myName);
-      //TODO name validator creates error message
-      if (Constants.DEPLOYED) {
-        //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
-      } else {
-        Navigator.pop(context, [myName, newPP]);
-      }
-      return null;
-    }
   }
 
   Future _getImage(source) async {

@@ -23,7 +23,6 @@ class User {
   Future<User> getInfo(String currentUser) async {
     if (Constants.DEPLOYED) {
       //TODO request user info, set image: to the image string, set the rest to variables below
-
     } else {
       this.myProfilePicture = await ProfilePicture(this.userName)
           .get(image: Constants.sampleProfilePictureBASE64);
@@ -40,6 +39,7 @@ class User {
     //send request to update
     //return getInfo(this.userName);
     if (Constants.DEPLOYED) {
+      //retrieve user profile
     } else {
       this.myName = newName;
       return this;
@@ -51,6 +51,7 @@ class User {
     //send request to update
     //return getInfo(this.userName);//So that if any error/cropping happens, user gets to see it
     if (Constants.DEPLOYED) {
+      //retrieve user profile
     } else {
       this.myProfilePicture = Image.file(newPicture);
       return this;
@@ -62,6 +63,7 @@ class User {
     //send request to update
     //return getInfo(this.userName);
     if (Constants.DEPLOYED) {
+      //retrieve user profile
     } else {
       this.myProfilePicture = Image.file(newPicture);
       this.myName = newName;

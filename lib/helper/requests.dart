@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
@@ -53,5 +54,29 @@ class Requests {
   Future<String> recoverPassword(String name) {
     //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
     return null;
+  }
+
+  bool editPost() {
+    //TODO send the request to edit post endpoint with this.postID
+    //throw UnimplementedError();
+    if (Constants.DEPLOYED) {
+    } else
+      return true;
+  }
+
+  Future<bool> updateUserInfo(
+      String newName, File newPP, String userName) async {
+    //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
+    if (!Constants.DEPLOYED)
+      return true;
+    //the part below depends on how the edit works in the backend. worst case we create an user instance getInfo then set the fields to those and send that.
+    else if (newName != null && newPP == null) {
+      //set myName = newName;
+    } else if (newName == "" && newPP != null) {
+      //set pp to newPP;
+    } else if (newName != null && newPP != null) {
+      //set myName = newName;
+      //set pp to newPP;
+    }
   }
 }
