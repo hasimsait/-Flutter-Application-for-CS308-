@@ -9,6 +9,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:convert';
 import 'package:place_picker/place_picker.dart';
+import 'helper/requests.dart';
 
 class CreatePost extends StatefulWidget {
   File imageFile;
@@ -49,7 +50,7 @@ class _CreatePostState extends State<CreatePost> {
 
   bool editing;
   int postID;
-  String initText;
+  String initText="";
   _CreatePostState(
       {this.postID,
       this.initText,
@@ -262,8 +263,10 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void initState() {
+    super.initState();
+    _postFieldController.text=initText;
     _postFieldController.addListener(() {
-      final text = initText;
+      final text = _postFieldController.text;
       _postFieldController.value = _postFieldController.value.copyWith(
         text: text,
         selection:
@@ -271,7 +274,6 @@ class _CreatePostState extends State<CreatePost> {
         composing: TextRange.empty,
       );
     });
-    super.initState();
   }
 
   void dispose() {
@@ -288,7 +290,13 @@ class _CreatePostState extends State<CreatePost> {
           IconButton(
             icon: Icon(Icons.create),
             onPressed: () {
-              _sendPost();
+              if (editing==null || !editing)
+                _sendPost();
+              else {
+                bool result = Requests().editPost();
+                if (result) Navigator.pop(context);
+                //else display error message
+              }
             },
           ),
         ],
