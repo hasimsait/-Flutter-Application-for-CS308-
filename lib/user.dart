@@ -11,8 +11,9 @@ import 'profile_picture.dart';
 import 'post.dart';
 
 class User {
-  Image myProfilePicture;
-  String myName; //Haşim Sait Göktan
+  Image myProfilePicture = Image.memory(
+      base64Decode(Constants.sampleProfilePictureBASE64)); //null protection
+  String myName = ""; //Haşim Sait Göktan//null protection
   String userName; //hasimsait
   bool isFollowing;
   int followerCt;
