@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:teamone_social_media/helper/constants.dart';
+import 'helper/requests.dart';
 
 class CreateComment extends StatefulWidget {
   final int postID;
-  CreateComment(this.postID);
+  final String currUserName;
+  CreateComment(this.postID, this.currUserName);
   @override
-  State<StatefulWidget> createState() => _CreateCommentState(postID);
+  State<StatefulWidget> createState() =>
+      _CreateCommentState(postID, currUserName);
 }
 
 class _CreateCommentState extends State<CreateComment> {
   int postID;
+  String currUserName;
   final _postFieldController = TextEditingController();
-  _CreateCommentState(this.postID);
+  _CreateCommentState(this.postID, this.currUserName);
 
   void initState() {
     super.initState();
@@ -52,7 +55,7 @@ class _CreateCommentState extends State<CreateComment> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.check_circle_outline_rounded),
-                  onPressed: _postCommment,
+                  onPressed: _postComment,
                 ),
                 IconButton(
                     icon: Icon(Icons.cancel_outlined),
@@ -67,12 +70,15 @@ class _CreateCommentState extends State<CreateComment> {
     );
   }
 
-  void _postCommment() {
-    if (Constants.DEPLOYED) {
-      //TODO send the request to comment to postID
-      //if 404 display error message, if 200 pop and return true
-    } else {
-      Navigator.pop(context, true);
-    }
+  void _postComment() {
+    Requests()
+        .postComment(_postFieldController.text, postID, currUserName)
+        .then((value) {
+      if (value) {
+        Navigator.pop(context, true);
+      } else {
+        //TODO display error message;
+      }
+    });
   }
 }

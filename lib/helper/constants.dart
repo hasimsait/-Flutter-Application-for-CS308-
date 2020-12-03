@@ -1,7 +1,6 @@
 class Constants {
   static const String appName = 'totallynotinvadingyourprivacy';
   static const String postAppBarText = "Create a Post";
-  static const String createPostAPI = "/create_post";
   static const String apiKey = "AIzaSyBtrT9cRN90qcCIrqM_bbxZpjYgUZ_-FFM";
   static const int maxVideoDuration = 10;
   static const String sampleProfilePictureBASE64 =
@@ -10,7 +9,7 @@ class Constants {
   static const bool DEPLOYED = false;
   //static const String backendURL ="https://www.teamone_social.ml/api/v1/";//.ml is free
   static const String backendURL =
-      "http://127.0.0.1:5000"; //it has not been deployed yet
+      "http://127.0.0.1:5000/api/v1/"; //it has not been deployed yet
   //Some of them are not really endpoints, I'm aware of it.
   static const String signInEndpoint = "auth/login";
   static const String signUpEndpoint = "auth/sign-up";

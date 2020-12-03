@@ -3,7 +3,6 @@ import '../feed.dart';
 import '../search.dart';
 import '../profile.dart';
 import '../notifications.dart';
-import 'package:flutter_session/flutter_session.dart';
 
 class TabNavigatorRoutes {
   static const String root = '/';

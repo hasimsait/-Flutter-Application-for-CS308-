@@ -1,12 +1,7 @@
 import 'dart:io';
-
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'helper/constants.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
-import 'helper/session.dart';
 import 'profile_picture.dart';
 import 'post.dart';
 
@@ -89,8 +84,8 @@ class User {
       //return res
       //use currUser.userName
     } else {
-      return <int, Post>{
-        0: Post(
+      return new Map<int,Post>.from({
+        0: new Post(
             text: "This is a sample post with an image and a location.",
             placeName: "Sample Place Name",
             postDate: DateTime.now(),
@@ -103,7 +98,7 @@ class User {
               "ahmet": "sample comment",
               "mehmet": "lorem ipsum..."
             }),
-        1: Post(
+        1: new Post(
             text: "This is another sample post under a topic.",
             postDate: DateTime.now(),
             postID: 1,
@@ -111,7 +106,7 @@ class User {
             postLikes: 10,
             postDislikes: 0,
             postOwnerName: "hasimsait"),
-        2: Post(
+        2: new Post(
             text:
                 "This is a post from another user. Name and image are static, don't mind them.",
             postDate: DateTime.now(),
@@ -121,9 +116,10 @@ class User {
             postOwnerName: "aaaaaa",
             postComments: {
               "ayşe": "sample comment",
-              "ĞĞĞĞĞ": "lorem ipsum..."
+              "ĞĞĞĞĞ": "lorem ipsum...",
+              'aaaaaaaaaaaa':'aaaaaaaaaaaaaaaaaaaaaa'
             }),
-      };
+      });
     }
   }
 }

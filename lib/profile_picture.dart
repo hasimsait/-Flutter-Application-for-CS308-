@@ -1,5 +1,3 @@
-import 'package:http/http.dart' as http;
-import 'helper/constants.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';

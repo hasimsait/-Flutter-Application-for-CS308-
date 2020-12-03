@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'helper/tab_navigator.dart';
-import 'package:flutter/services.dart';
-import 'login.dart';
-import 'helper/transition_route_observer.dart';
+
 
 class HomeView extends StatefulWidget {
   @override
@@ -62,19 +60,19 @@ class _HomeViewState extends State<HomeView> {
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.home),
-              title: new Text('Feed'),
+              label: 'Feed',
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.search),
-              title: new Text('Search'),
+              label: 'Search',
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.notifications),
-              title: new Text('Notifications'),
+              label: 'Notifications',
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.account_circle),
-              title: new Text('Profile'),
+              label: 'Profile',
             ),
           ],
           type: BottomNavigationBarType.fixed,

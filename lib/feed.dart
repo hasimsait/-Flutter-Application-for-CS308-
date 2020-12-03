@@ -6,6 +6,7 @@ import 'helper/constants.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'user.dart';
 import 'post.dart';
+import 'specificPost.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -15,33 +16,51 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> {
   User currUser;
   ListView feedView;
+  List<Widget> postWidgets;
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
-    List<Widget> postWidgets = [];
-    await posts.forEach((key, value) async {
-      print(key);
-      print(value.text);
-      Widget a = await value.displayPost(currUser.userName, context);
-      if (a != null) {
-        postWidgets.add(a);
-        //TODO draw a gray line to seperate posts or turn posts into cards, second one makes more sense.
+    if (postWidgets!=null)
+      postWidgets.forEach((element) {
+        element=null;
+      });
+    postWidgets=null;
+    //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
+    postWidgets = [];
+    posts.forEach((key, value) {
+      print('FEED.DART: '+value.postID.toString()+'will be rendered now');
+      if(value.postComments!=null){
+        print('FEED.DART: '+value.postID.toString()+' has '+value.postComments.length.toString()+' comments.');
+        print('FEED.DART: '+value.postID.toString()+' last comment is: '+value.postComments.entries.last.value);
+      }
+      var postWidget= new SpecificPost(currentUserName:currUser.userName,currPost: value);
+      //this new doesn't do shit. That's an issue since I need to clean that up
+      //in terms of deleting posts and displaying new ones it will be fine but it will not display comments in realtime unless if that new does what it's supposed to do.
+      //TODO find a fix for that. setting it to null etc did not fix it. Garbage collector should've picked them up.
+      //https://dart.dev/guides/language/effective-dart/usage#dont-use-new GREAT IDEA. CAN'T DELETE OBJECT, CAN'T CREATE NEW.
+      //I'll deal with it later. I already spent 3+ hours bc of this dumb thing.
+        postWidgets.add(postWidget);
         postWidgets.add(Padding(
           padding: const EdgeInsets.all(10),
         ));
-      }
-    });
-    if (postWidgets != null)
+      });
+    if (postWidgets != null) {
       return ListView(
         children: postWidgets,
       );
-    else
+    } else
       return Text("WTF");
   }
 
   @override
   void initState() {
+    FlutterSession().get('userName').then((value) {
+      currUser = User(value['data']);
+      _loadFeed();
+    });
+
+    print('FEED.DART: initialized feed widget');
+
     super.initState();
-    _loadFeed();
   }
 
   @override
@@ -64,9 +83,7 @@ class _FeedState extends State<Feed> {
           ).then((value) {
             if (Constants.DEPLOYED) {
               _loadFeed();
-            } else {
-              return null;
-            }
+            } else {}
           });
         },
         tooltip: 'Create a new post',
@@ -83,15 +100,14 @@ class _FeedState extends State<Feed> {
         ),
       ],
     );
-    FlutterSession().get('userName').then((value) {
-      currUser = User(value['data']);
-      currUser.getFeedItems().then((value) {
-        displayFeed(value).then((value) {
-          feedView = value;
-          setState(() {});
-        });
+
+    currUser.getFeedItems().then((value) {
+      feedView = null;
+      displayFeed(value).then((value) {
+        print("POST.DART: We got the listview feed.");
+        feedView = value;
+        setState(() {});
       });
     });
-    return;
   }
 }

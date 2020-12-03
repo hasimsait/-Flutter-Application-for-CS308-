@@ -1,24 +1,21 @@
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'helper/constants.dart';
 import 'post.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:convert';
 import 'package:place_picker/place_picker.dart';
 import 'helper/requests.dart';
 
 class CreatePost extends StatefulWidget {
-  File imageFile;
-  File videoFile;
-  String placeName;
-  String placeGeoID;
-  String text;
-  int postID;
-  String topic;
+  final File imageFile;
+  final File videoFile;
+  final String placeName;
+  final String placeGeoID;
+  final String text;
+  final int postID;
+  final String topic;
   CreatePost(
       {this.postID,
       this.text,
@@ -50,7 +47,7 @@ class _CreatePostState extends State<CreatePost> {
 
   bool editing;
   int postID;
-  String initText="";
+  String initText = "";
   _CreatePostState(
       {this.postID,
       this.initText,
@@ -71,49 +68,16 @@ class _CreatePostState extends State<CreatePost> {
     }
   } //this will only be used when editing post btw, I hate it too.
 
-  Future<bool> _sendPost() async {
+  _sendPost() async {
     //This pops when post is sent, can't pull out of class, may put some of its features in the method
-    Post post = new Post();
-    if (_postFieldController.text != null) {
-      post.text = _postFieldController.text;
-      print(post.text);
-    }
-    if (_postFieldController.text == null) {
-      post.text = "";
-      print(post.text);
-    }
-    if (file != null && fileType == false) {
-      post.image = base64Encode(file.readAsBytesSync());
-      //print(post.image.path);
-    }
-    if (file != null && fileType == true) {
-      post.videoURL = base64Encode(file.readAsBytesSync());
-    }
-
-    if (placeGeoID != null) {
-      post.placeGeoID = placeGeoID;
-      print(post.placeGeoID);
-    }
-    if (placeName != null) {
-      post.placeName = placeName;
-      print(post.placeName);
-    }
-
-    if (topic != null) {
-      post.topic = topic;
-      print(post.topic);
-    }
-
-    if (Constants.DEPLOYED) {
-      var response = await post.sendPost();
-      if (response.statusCode < 400 && response.statusCode >= 200) {
-        Navigator.pop(context, post);
-        //TODO command the feed to reload.
-      } else {
-        //TODO create snackbar with "service is temporarily available.There was a good package for it, check the previous project"
-      }
-    } else {
+    var post = fillPostFields();
+    bool result = await Requests().sendPost(post);
+    if (result) {
       Navigator.pop(context, post);
+      print("Successfully created the post.");
+    } else {
+      print("there is something wrong.");
+      //TODO display error message
     }
     return null;
   }
@@ -264,7 +228,7 @@ class _CreatePostState extends State<CreatePost> {
 
   void initState() {
     super.initState();
-    _postFieldController.text=initText;
+    _postFieldController.text = initText;
     _postFieldController.addListener(() {
       final text = _postFieldController.text;
       _postFieldController.value = _postFieldController.value.copyWith(
@@ -290,12 +254,10 @@ class _CreatePostState extends State<CreatePost> {
           IconButton(
             icon: Icon(Icons.create),
             onPressed: () {
-              if (editing==null || !editing)
+              if (editing == null || !editing)
                 _sendPost();
               else {
-                bool result = Requests().editPost();
-                if (result) Navigator.pop(context);
-                //else display error message
+                _editPost();
               }
             },
           ),
@@ -384,5 +346,54 @@ class _CreatePostState extends State<CreatePost> {
         ),
       ),
     );
+  }
+
+  fillPostFields() {
+    Post post = new Post();
+    if (_postFieldController.text != null) {
+      post.text = _postFieldController.text;
+      print("Post text: " + post.text);
+    }
+    if (_postFieldController.text == null) {
+      post.text = "";
+      print("Post text: " + post.text);
+    }
+    if (file != null && fileType == false) {
+      post.image = base64Encode(file.readAsBytesSync());
+      print("Post has an image attached to it.");
+    }
+    if (file != null && fileType == true) {
+      post.videoURL = base64Encode(file.readAsBytesSync());
+      print("Post has a video attached to it.");
+    }
+
+    if (placeGeoID != null) {
+      post.placeGeoID = placeGeoID;
+      print("Post place GeoID: " + post.placeGeoID);
+    }
+    if (placeName != null) {
+      post.placeName = placeName;
+      print("Post place name: " + post.placeName);
+    }
+
+    if (topic != null) {
+      post.topic = topic;
+      print("Post topic: " + post.topic);
+    }
+    return post;
+  }
+
+  void _editPost() async {
+    Post post = fillPostFields();
+    post.postID=postID;
+    bool result = await Requests().editPost(post);
+    if (result) {
+      Navigator.pop(context, post);
+      print("Successfully edited the post with postID: " +postID.toString());
+    } else {
+      print("there is something wrong.");
+      //TODO display error message
+    }
+    return null;
   }
 }

@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
-  String topic = "";
-  String locationID = "";
-  String locationName = "";
+  final String topic;
+  final String locationID;
+  final String locationName;
   Search({this.topic, this.locationID, this.locationName});
   @override
   State<StatefulWidget> createState() =>
@@ -19,7 +19,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold();
     //request the feed of the topic or locationID, check if user is subscribed, if not display a subscribe button,
   }
 }

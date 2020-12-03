@@ -1,10 +1,4 @@
-import 'dart:convert';
-//import 'package:flutter/cupertino.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
-import 'profile_picture.dart';
-import 'helper/constants.dart';
-import 'user.dart';
 import 'helper/requests.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';

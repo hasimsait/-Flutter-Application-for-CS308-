@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
-
 class Session {
   final int id;
   final String data;
