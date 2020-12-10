@@ -6,10 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:teamone_social_media/helper/session.dart';
 import 'constants.dart';
 import 'package:teamone_social_media/post.dart';
+import 'package:teamone_social_media/user.dart';
 
 class Requests {
   static String token;
   static Map<String, String> header;
+  static String currUserName;
 
   Future<String> auth(LoginData data) async {
     if (Constants.DEPLOYED) {
@@ -45,13 +47,15 @@ class Requests {
           data: json.decode(response.body)[
               "userName"]); //TODO check the response of an auth by the server
       await FlutterSession().set('userName', userName);
+      currUserName = data.name;
       return null;
     } else {
       Session sessionToken =
           Session(id: 0, data: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       await FlutterSession().set('sessionToken', sessionToken);
       token = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-      Session userName = Session(id: 1, data: 'hasimsait');
+      currUserName = data.name;
+      Session userName = Session(id: 1, data: data.name);
       await FlutterSession().set('userName', userName);
       return null;
     }
@@ -67,8 +71,7 @@ class Requests {
     return null;
   }
 
-  Future<bool> updateUserInfo(
-      String newName, File newPP, String userName) async {
+  Future<bool> updateUserInfo(String newName, File newPP) async {
     //TODO get selected Image, turn it into string and post the request to change user info, if response is succes, setstate and pop.
     if (!Constants.DEPLOYED)
       return true;
@@ -101,15 +104,16 @@ class Requests {
     //TODO remove oldPost from parameters.
     if (Constants.DEPLOYED || oldPost == null) {
       //TODO request the post from the server (this method is called when user edits the post or a comment is posted under the post.)
+      //if instagram can get away with doing this, we can too.
     } else {
       var newComm;
       if (oldPost.postComments != null) {
-        newComm = Map<String,String>.from(oldPost.postComments);
-            newComm.addAll({"reload the feed": "to see your comment"});
-      }else
-        newComm = {"reload the feed": "to see your comment"};
-      var newPost=oldPost.from();
-      newPost.postComments=newComm;
+        newComm = Map<String, String>.from(oldPost.postComments);
+        newComm.addAll({"reload the feed": "to see your comment"});
+      } else
+        newComm = {"if deployed was set to true": "the post would reload"};
+      var newPost = oldPost.from();
+      newPost.postComments = newComm;
       return newPost;
     }
   }
@@ -182,7 +186,7 @@ class Requests {
       var response = await http.post(
         Constants.backendURL + Constants.deletePostEndpoint + postID.toString(),
         headers: header,
-      );
+      ); //TODO make sure it is a get request
       if (response.statusCode < 400 && response.statusCode >= 200) {
         return true;
       } else {
@@ -192,6 +196,141 @@ class Requests {
       print(Constants.backendURL +
           Constants.deletePostEndpoint +
           postID.toString());
+      return true;
+    }
+  }
+
+  Future<Map<int, Post>> getPosts(String userName, String s) async {
+    if (Constants.DEPLOYED) {
+      if (s == 'feed') {
+        //request feed of userName
+      } else if (s == 'posts') {
+        //retrieve posts by userName
+      }
+      //parse the response som it looks like the static map below.
+    } else {
+      if (s == 'feed') {
+        return new Map<int, Post>.from({
+          0: new Post(
+              text: "This is a sample post with an image and a location.",
+              placeName: "Sample Place Name",
+              postDate: DateTime.now(),
+              image: Constants.sampleProfilePictureBASE64,
+              postID: 0,
+              postLikes: 0,
+              postDislikes: 10,
+              postOwnerName: "hasimsait",
+              postComments: {
+                "ahmet": "sample comment",
+                "mehmet": "lorem ipsum..."
+              }),
+          1: new Post(
+              text: "This is another sample post under a topic.",
+              postDate: DateTime.now(),
+              postID: 1,
+              topic: "Sample Topic",
+              postLikes: 10,
+              postDislikes: 0,
+              postOwnerName: "hasimsait"),
+          2: new Post(
+              text:
+                  "This is a post from another user. Name and image are static, don't mind them.",
+              postDate: DateTime.now(),
+              postID: 2,
+              postLikes: 100,
+              postDislikes: 10,
+              postOwnerName: "aaaaaa",
+              postComments: {
+                "ayşe": "sample comment",
+                "ĞĞĞĞĞ": "lorem ipsum...",
+                'aaaaaaaaaaaa': 'aaaaaaaaaaaaaaaaaaaaaa'
+              }),
+        });
+      } else if (s == 'posts') {
+        User profileOwner = User(userName);
+        profileOwner.getInfo();
+        return new Map<int, Post>.from({
+          0: new Post(
+              text: "This is a sample post with an image and a location.",
+              placeName: "Sample Place Name",
+              postDate: DateTime.now(),
+              image: Constants.sampleProfilePictureBASE64,
+              postID: 0,
+              postLikes: 0,
+              postDislikes: 10,
+              postOwnerName: userName,
+              postComments: {
+                "ahmet": "sample comment",
+                "mehmet": "lorem ipsum..."
+              }),
+          1: new Post(
+              text: "This is another sample post under a topic.",
+              postDate: DateTime.now(),
+              postID: 1,
+              topic: "Sample Topic",
+              postLikes: 10,
+              postDislikes: 0,
+              postOwnerName: userName),
+          2: new Post(
+              text:
+                  "This is a post from another user. Name and image are static, don't mind them.",
+              postDate: DateTime.now(),
+              postID: 2,
+              postLikes: 100,
+              postDislikes: 10,
+              postOwnerName: userName,
+              postComments: {
+                "ayşe": "sample comment",
+                "ĞĞĞĞĞ": "lorem ipsum...",
+                'aaaaaaaaaaaa': 'aaaaaaaaaaaaaaaaaaaaaa'
+              }),
+        });
+      }
+    }
+  }
+
+  Future<User> getUserInfo(String userName) async {
+    //TODO use the search thing here (returns profile page dto) add the is following attribute too, really important
+  }
+
+  Future<bool> followTopic(String topic) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> unfollowTopic(String topic) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> followLocation(String locationID) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> unfollowLocation(String locationID) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> isFollowingTopic(String topic) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> isFollowingLocation(String locationID) async {
+    if (Constants.DEPLOYED) {
+    } else {
       return true;
     }
   }

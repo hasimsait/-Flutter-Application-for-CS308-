@@ -55,7 +55,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
               icon: Icon(Icons.check_circle_outline_rounded),
               onPressed: () {
                 Requests()
-                    .updateUserInfo(_postFieldController.text, newPP,userName)
+                    .updateUserInfo(_postFieldController.text, newPP)
                     .then((value) {
                   if (value) {
                     if (_postFieldController.text != null && newPP == null)
@@ -108,7 +108,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
                       iconSize: 50,
                       onPressed: () {
                         Requests()
-                            .updateUserInfo(_postFieldController.text, newPP,userName)
+                            .updateUserInfo(_postFieldController.text, newPP)
                             .then((value) {
                           if (value) {
                             if (_postFieldController.text != null && newPP == null)

@@ -100,11 +100,11 @@ class _FeedState extends State<Feed> {
         ),
       ],
     );
-
+    //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
     currUser.getFeedItems().then((value) {
       feedView = null;
       displayFeed(value).then((value) {
-        print("POST.DART: We got the listview feed.");
+        print("FEED.DART: We got the listview feed.");
         feedView = value;
         setState(() {});
       });

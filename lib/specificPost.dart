@@ -35,8 +35,9 @@ class _SpecificPostState extends State<SpecificPost> {
   var postID = 0;
   var postComments;
   var placeGeoID;
-  bool liked =
-      false; //TODO get this by requesting the likes and dislikes and checking if the user is in that list.
+  bool isAdmin=false;
+  bool liked = false;
+  //TODO get this by requesting the likes and dislikes and checking if the user is in that list, would be nice to have a flag.
   bool disliked = false;
   bool deleted = false;
   _SpecificPostState(this.currentUserName, this.currPost);
@@ -62,7 +63,7 @@ class _SpecificPostState extends State<SpecificPost> {
       print("SPECIFICPOST.DART: This item has been deleted.");
       return SizedBox();
     } else {
-      return Column(
+      return new Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,7 +113,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   ),
                 ],
               ),
-              postOwnerName == currentUserName
+              (postOwnerName == currentUserName) || (isAdmin)
                   ? Row(children: <Widget>[
                       IconButton(
                           icon: Icon(Icons.edit),
@@ -250,13 +251,13 @@ class _SpecificPostState extends State<SpecificPost> {
 
   initializePost(Post newPost, {bool delete}) {
     if (delete != null && delete) {
-      //FUCK FLUTTER., SPENT 2 HOURS BC IT WOULDNT TELL ME THIS IS WAS THE NULL.
+      //FUCK FLUTTER., SPENT 2 HOURS BC IT WOULDNT TELL ME THIS IS WAS THE NULL. When shit fucks up, you get no info.
       print("SPECIFICPOST.DART: deleting the post");
       deleted = true;
       setState(() {});
     } else {
       owner = User(newPost.postOwnerName);
-      owner.getInfo(currentUserName).then((value) {
+      owner.getInfo().then((value) {
         owner = value;
         setState(() {});
       });
@@ -277,12 +278,16 @@ class _SpecificPostState extends State<SpecificPost> {
         liked =
             false; //TODO get this by requesting the likes and dislikes and checking if the user is in that list.
         disliked = false;
+        if (currentUserName=="ADMIN")
+          isAdmin=true;
+        else
+          print("SPECIFICPOST.DART: will not display edit and delete button since current user is: "+currentUserName);
+        //which displays the buttons to edit and delete the posts.
       });
     }
   }
 
   void editPost(context) {
-    var file;
     if (this.image != null) {
       //if the post has an image file attached to it
       _localFile().then((value) {
@@ -321,7 +326,6 @@ class _SpecificPostState extends State<SpecificPost> {
                 imageFile: this.image == null ? null : file,
               )),
     ).then((value) {
-      //TODO reload the post add this to API
       Requests().reloadPost(postID, oldPost: currPost).then((value) {
         currPost = value;
         initializePost(value);

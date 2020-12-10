@@ -21,7 +21,7 @@ class _ProfileState extends State<Profile> {
   bool isMyProfile = false;
   String myName = "Loading, please wait.";
   Image profilePicture = Image.memory(base64Decode(Constants
-      .sampleProfilePictureBASE64)); //TODO replace with placeholder image, this can not be null
+      .sampleProfilePictureBASE64));
   bool isFollowing = false;
   var userInfo;
   int followerCt = 0;
@@ -35,7 +35,7 @@ class _ProfileState extends State<Profile> {
     FlutterSession().get('userName').then((value) {
       currUser = value['data'];
       if (userName == currUser)
-        //if user clicks his own profile picture
+        //if user clicks his own profile picture or something
         isMyProfile = true;
     });
     if (userName == "") {
@@ -46,7 +46,7 @@ class _ProfileState extends State<Profile> {
         currUser = value['data'];
       });
     }
-    thisUser.getInfo(userName).then((value) {
+    thisUser.getInfo().then((value) {
       setState(() {
         updateFields(value);
       });
@@ -75,6 +75,7 @@ class _ProfileState extends State<Profile> {
                             builder: (context) =>
                                 EditUserInfo(userName, myName, profilePicture)),
                       ).then((up) {
+                        //TODO change this with request profile
                         if (up != null) {
                           print(up.length);
                           if (up.length == 1 && up[0] is String) {
@@ -150,11 +151,11 @@ class _ProfileState extends State<Profile> {
 
   void followRequest(String userName) {
     isFollowing = true;
-  } //TODO replace with sending requests then assigning the value.
+  } //TODO REQUEST replace with sending requests then assigning the value.
 
   void unfollowRequest(String userName) {
     isFollowing = false;
-  } //TODO replace with sending requests then assigning the value.
+  } //TODO REQUEST replace with sending requests then assigning the value.
 
   Widget userActions(bool isMyProfile, bool isFollowing, String userName) {
     if (isMyProfile)
@@ -164,7 +165,7 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 return null;
-                //TODO redirect to followers list
+                //TODO REQUEST redirect to followers list
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
@@ -174,7 +175,7 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 return null;
-                //TODO redirect to following list
+                //TODO REQUEST redirect to following list
               },
               child: Text("Following:" + followingCt.toString()),
             ),
@@ -187,7 +188,7 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null; //TODO
+                return null; //TODO REQUEST
                 //ADMIN gets to select the timeout length, user deactivates
               },
               child: Text("DEACTIVATE ACCOUNT"),
@@ -195,7 +196,7 @@ class _ProfileState extends State<Profile> {
             ),
             RaisedButton(
               onPressed: () {
-                return null; //TODO
+                return null; //TODO REQUEST
               },
               child: Text("DELETE ACCOUNT"),
             ),
@@ -207,14 +208,14 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 return null;
-                //TODO redirect to followers list
+                //TODO REQUEST redirect to followers list
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
             RaisedButton(
               onPressed: () {
                 return null;
-                //TODO redirect to following list
+                //TODO REQUEST redirect to following list
               },
               child: Text("Following:" + followingCt.toString()),
             ),

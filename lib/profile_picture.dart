@@ -2,7 +2,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'helper/session.dart';
-
+/*I created this class to cache profile pictures in the session but users can change their profile pictures, we would need a "profile picture has changed flag" or something for it to work properly therefore I will not use this class.*/
 class ProfilePicture {
   //PickedFile image;
   String userID;
