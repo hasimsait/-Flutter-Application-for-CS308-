@@ -15,7 +15,6 @@ class User {
   bool isFollowing;
   int followerCt;
   int followingCt;
-  //TODO check what they did in backend, (which fields user has)
   User(this.userName);
 
   Future<User> getInfo() async {
@@ -23,7 +22,8 @@ class User {
       User info = await Requests().getUserInfo(userName);
       this.myProfilePicture = info.myProfilePicture;
       this.myName = info.myName;
-      this.isFollowing = info.isFollowing; //true if currentUser is following this user.
+      this.isFollowing =
+          info.isFollowing; //true if currentUser is following this user.
       this.followerCt = info.followerCt;
       this.followingCt = info.followingCt;
       return this;
@@ -40,8 +40,8 @@ class User {
 
   Future<User> setName(String newName) async {
     if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName,null);
-      this.getInfo();//TODO this may not work properly
+      await Requests().updateUserInfo(newName, null);
+      this.getInfo(); //TODO this may not work properly
     } else {
       this.myName = newName;
       return this;
@@ -50,8 +50,8 @@ class User {
 
   Future<User> setPicture(File newPicture) async {
     if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(null,newPicture);
-      this.getInfo();//TODO this may not work properly
+      await Requests().updateUserInfo(null, newPicture);
+      this.getInfo(); //TODO this may not work properly
     } else {
       this.myProfilePicture = Image.file(newPicture);
       return this;
@@ -60,8 +60,8 @@ class User {
 
   Future<User> setNameAndPicture(String newName, File newPicture) async {
     if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName,newPicture);
-      this.getInfo();//TODO this may not work properly
+      await Requests().updateUserInfo(newName, newPicture);
+      this.getInfo(); //TODO this may not work properly
     } else {
       this.myProfilePicture = Image.file(newPicture);
       this.myName = newName;
@@ -70,10 +70,10 @@ class User {
   }
 
   Future<Map<int, Post>> getPosts() async {
-    return await Requests().getPosts(userName,"posts");
+    return await Requests().getPosts(userName, "posts");
   }
 
   Future<Map<int, Post>> getFeedItems() async {
-    return await Requests().getPosts(userName,"feed");
+    return await Requests().getPosts(userName, "feed");
   }
 }

@@ -20,8 +20,8 @@ class _ProfileState extends State<Profile> {
   String currUser;
   bool isMyProfile = false;
   String myName = "Loading, please wait.";
-  Image profilePicture = Image.memory(base64Decode(Constants
-      .sampleProfilePictureBASE64));
+  Image profilePicture =
+      Image.memory(base64Decode(Constants.sampleProfilePictureBASE64));
   bool isFollowing = false;
   var userInfo;
   int followerCt = 0;
@@ -75,7 +75,7 @@ class _ProfileState extends State<Profile> {
                             builder: (context) =>
                                 EditUserInfo(userName, myName, profilePicture)),
                       ).then((up) {
-                        //TODO change this with request profile
+                        //TODO change this with request profile->reload the widget
                         if (up != null) {
                           print(up.length);
                           if (up.length == 1 && up[0] is String) {
@@ -134,7 +134,7 @@ class _ProfileState extends State<Profile> {
                 style: TextStyle(fontSize: 25),
               ),
               userActions(isMyProfile, isFollowing, userName),
-              viewPostsButton(userName),
+              viewPosts(userName),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -243,7 +243,7 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Widget viewPostsButton(String userName) {
+  Widget viewPosts(String userName) {
     return RaisedButton(
       onPressed: () {
         return null;

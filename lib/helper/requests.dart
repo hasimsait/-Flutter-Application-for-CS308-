@@ -334,4 +334,8 @@ class Requests {
       return true;
     }
   }
+
+  Future<bool> deleteAcccount() async {
+    return true;
+  }
 }

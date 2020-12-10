@@ -36,7 +36,6 @@ class _CreateCommentState extends State<CreateComment> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Create Comment"),

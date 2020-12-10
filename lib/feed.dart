@@ -19,30 +19,38 @@ class _FeedState extends State<Feed> {
   List<Widget> postWidgets;
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
-    if (postWidgets!=null)
+    if (postWidgets != null)
       postWidgets.forEach((element) {
-        element=null;
+        element = null;
       });
-    postWidgets=null;
+    postWidgets = null;
     //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
     postWidgets = [];
     posts.forEach((key, value) {
-      print('FEED.DART: '+value.postID.toString()+'will be rendered now');
-      if(value.postComments!=null){
-        print('FEED.DART: '+value.postID.toString()+' has '+value.postComments.length.toString()+' comments.');
-        print('FEED.DART: '+value.postID.toString()+' last comment is: '+value.postComments.entries.last.value);
+      print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
+      if (value.postComments != null) {
+        print('FEED.DART: ' +
+            value.postID.toString() +
+            ' has ' +
+            value.postComments.length.toString() +
+            ' comments.');
+        print('FEED.DART: ' +
+            value.postID.toString() +
+            ' last comment is: ' +
+            value.postComments.entries.last.value);
       }
-      var postWidget= new SpecificPost(currentUserName:currUser.userName,currPost: value);
+      var postWidget =
+          new SpecificPost(currentUserName: currUser.userName, currPost: value);
       //this new doesn't do shit. That's an issue since I need to clean that up
       //in terms of deleting posts and displaying new ones it will be fine but it will not display comments in realtime unless if that new does what it's supposed to do.
       //TODO find a fix for that. setting it to null etc did not fix it. Garbage collector should've picked them up.
       //https://dart.dev/guides/language/effective-dart/usage#dont-use-new GREAT IDEA. CAN'T DELETE OBJECT, CAN'T CREATE NEW.
       //I'll deal with it later. I already spent 3+ hours bc of this dumb thing.
-        postWidgets.add(postWidget);
-        postWidgets.add(Padding(
-          padding: const EdgeInsets.all(10),
-        ));
-      });
+      postWidgets.add(postWidget);
+      postWidgets.add(Padding(
+        padding: const EdgeInsets.all(10),
+      ));
+    });
     if (postWidgets != null) {
       return ListView(
         children: postWidgets,

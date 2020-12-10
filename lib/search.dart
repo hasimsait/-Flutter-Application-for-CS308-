@@ -102,14 +102,14 @@ class _SearchState extends State<Search> {
                           child: Text("FOLLOW"),
                         ),
                 ]),
-        body: new ListView(
-          children: <Widget>[
-            //TODO add the search bar here
-            Text(
-              'Please wait while we retrieve your results.',
-            ),
-          ],
-        ),
+      body: new ListView(
+        children: <Widget>[
+          //TODO add the search bar here
+          Text(
+            'Please wait a while we retrieve your results.',
+          ),
+        ],
+      ),
       //what if we seperate them??? like twitter.
       // searchposts=feed.dart but with the results
       // search users is a listview of circle avatars

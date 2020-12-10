@@ -35,7 +35,7 @@ class _SpecificPostState extends State<SpecificPost> {
   var postID = 0;
   var postComments;
   var placeGeoID;
-  bool isAdmin=false;
+  bool isAdmin = false;
   bool liked = false;
   //TODO get this by requesting the likes and dislikes and checking if the user is in that list, would be nice to have a flag.
   bool disliked = false;
@@ -278,10 +278,12 @@ class _SpecificPostState extends State<SpecificPost> {
         liked =
             false; //TODO get this by requesting the likes and dislikes and checking if the user is in that list.
         disliked = false;
-        if (currentUserName=="ADMIN")
-          isAdmin=true;
+        if (currentUserName == "ADMIN")
+          isAdmin = true;
         else
-          print("SPECIFICPOST.DART: will not display edit and delete button since current user is: "+currentUserName);
+          print(
+              "SPECIFICPOST.DART: will not display edit and delete button since current user is: " +
+                  currentUserName);
         //which displays the buttons to edit and delete the posts.
       });
     }

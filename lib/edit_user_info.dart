@@ -63,7 +63,8 @@ class _EditUserInfoState extends State<EditUserInfo> {
                     else if (_postFieldController.text == "" && newPP != null)
                       Navigator.pop(context, [newPP]);
                     else if (_postFieldController.text != null && newPP != null)
-                      Navigator.pop(context, [_postFieldController.text, newPP]);
+                      Navigator.pop(
+                          context, [_postFieldController.text, newPP]);
                   } else {
                     //display error message
                   }
@@ -111,12 +112,17 @@ class _EditUserInfoState extends State<EditUserInfo> {
                             .updateUserInfo(_postFieldController.text, newPP)
                             .then((value) {
                           if (value) {
-                            if (_postFieldController.text != null && newPP == null)
-                              Navigator.pop(context, [_postFieldController.text]);
-                            else if (_postFieldController.text == "" && newPP != null)
+                            if (_postFieldController.text != null &&
+                                newPP == null)
+                              Navigator.pop(
+                                  context, [_postFieldController.text]);
+                            else if (_postFieldController.text == "" &&
+                                newPP != null)
                               Navigator.pop(context, [newPP]);
-                            else if (_postFieldController.text != null && newPP != null)
-                              Navigator.pop(context, [_postFieldController.text, newPP]);
+                            else if (_postFieldController.text != null &&
+                                newPP != null)
+                              Navigator.pop(
+                                  context, [_postFieldController.text, newPP]);
                           } else {
                             //display error message
                           }
@@ -133,14 +139,16 @@ class _EditUserInfoState extends State<EditUserInfo> {
               RaisedButton(
                 onPressed: () {
                   return null;
-                  //TODO
+                  //TODO REQUEST display dropdown menu and send request once the time is selected
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
                 //TODO this is a dropdown where the user selects a date and sends request to deactivate till that picked date
               ),
               RaisedButton(
                 onPressed: () {
-                  return null; //TODO
+                  Requests().deleteAcccount().then((value) {
+                    //TODO display success message or failed
+                  });
                 },
                 child: Text("DELETE ACCOUNT"),
               ),

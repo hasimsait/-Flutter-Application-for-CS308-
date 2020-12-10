@@ -14,13 +14,13 @@ class Constants {
   static const String signInEndpoint = "auth/login";
   static const String signUpEndpoint = "auth/sign-up";
   static const String profileEndpoint = "profile/"; //GET profile/<userName>
-  static const String editInfoEndpoint = "/edit";   //profile/<userName>/edit (I liked the previous one better tbh)
+  static const String editInfoEndpoint =
+      "/edit"; //profile/<userName>/edit (I liked the previous one better tbh)
   static const String createPostEndpoint = "posts/upload";
-  static const String editPostEndpoint = "posts/edit/";//<postID>
-  //TODO for edit, make create post able to take parameters and button creates an instance with that given post object.
-  static const String deletePostEndpoint = "posts/delete/";//<postID>
+  static const String editPostEndpoint = "posts/edit/"; //<postID>
+  static const String deletePostEndpoint = "posts/delete/"; //<postID>
   static const String followUserEndpoint = "connections/follow";
   static const String interactWithPostEndpoint = "interactions/";
   static const String subscribeEndpoint = "interactions/subscribe";
-  static const String feedEndpoint = "feed/";//<userName>
+  static const String feedEndpoint = "feed/"; //<userName>
 }

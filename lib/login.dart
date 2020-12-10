@@ -13,8 +13,6 @@ import 'helper/users.dart';
 import 'home_view.dart';
 import 'helper/requests.dart';
 
-//TODO add https://pub.dev/packages/flutter_session/ so that user does not have to login each time application starts
-
 class LoginScreen extends StatelessWidget {
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
@@ -29,20 +27,20 @@ class LoginScreen extends StatelessWidget {
       //logo: 'assets/images/ecorp.png',
       //logoTag: Constants.logoTag,
       //titleTag: Constants.titleTag,
-       messages: LoginMessages(
-         usernameHint: 'Username',
-      //   passwordHint: 'Pass',
-      //   confirmPasswordHint: 'Confirm',
-      //   loginButton: 'LOG IN',
-      //   signupButton: 'REGISTER',
-      //   forgotPasswordButton: 'Forgot huh?',
-      //   recoverPasswordButton: 'HELP ME',
-      //   goBackButton: 'GO BACK',
-      //   confirmPasswordError: 'Not match!',
-      //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
-      //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-      //   recoverPasswordSuccess: 'Password rescued successfully',
-       ),
+      messages: LoginMessages(
+        usernameHint: 'Username',
+        //   passwordHint: 'Pass',
+        //   confirmPasswordHint: 'Confirm',
+        //   loginButton: 'LOG IN',
+        //   signupButton: 'REGISTER',
+        //   forgotPasswordButton: 'Forgot huh?',
+        //   recoverPasswordButton: 'HELP ME',
+        //   goBackButton: 'GO BACK',
+        //   confirmPasswordError: 'Not match!',
+        //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
+        //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        //   recoverPasswordSuccess: 'Password rescued successfully',
+      ),
       // theme: LoginTheme(
       //   primaryColor: Colors.teal,
       //   accentColor: Colors.yellow,

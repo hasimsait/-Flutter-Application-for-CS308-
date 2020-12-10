@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'helper/tab_navigator.dart';
 
-
 class HomeView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _HomeViewState();

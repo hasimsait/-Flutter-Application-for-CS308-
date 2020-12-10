@@ -139,7 +139,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Widget _previewImage() {
-    //TODO move it out of class
+    //TODO move it out of class to helper/image_helper
     if (file != null && file.path != null && fileType == false) {
       return new Stack(
         //It's one way to do it
@@ -216,7 +216,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future<void> retrieveLostData() async {
-    //TODO get it out of class
+    //TODO get it out of class to helper/image_helper
     final LostData response = await picker.getLostData();
     if (response.isEmpty) {
       return;
@@ -385,11 +385,11 @@ class _CreatePostState extends State<CreatePost> {
 
   void _editPost() async {
     Post post = fillPostFields();
-    post.postID=postID;
+    post.postID = postID;
     bool result = await Requests().editPost(post);
     if (result) {
       Navigator.pop(context, post);
-      print("Successfully edited the post with postID: " +postID.toString());
+      print("Successfully edited the post with postID: " + postID.toString());
     } else {
       print("there is something wrong.");
       //TODO display error message

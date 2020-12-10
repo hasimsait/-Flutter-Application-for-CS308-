@@ -41,8 +41,7 @@ class Post {
           this.postOwnerName);
       return true;
     } else {
-      //TODO
-
+      //TODO REQUEST to like the post
     }
   }
 
@@ -55,7 +54,7 @@ class Post {
           this.postOwnerName);
       return true;
     } else {
-      //TODO
+      //TODO REQUEST to dislike the post
     }
   }
 
