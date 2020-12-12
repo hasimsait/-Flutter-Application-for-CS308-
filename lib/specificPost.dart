@@ -160,6 +160,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 iconSize: 30,
                 onPressed: () {
                   liked = currPost.like(currentUserName);
+                  disliked=false;
                   setState(() {});
                 },
               ),
@@ -175,6 +176,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 iconSize: 30,
                 onPressed: () {
                   disliked = currPost.dislike(currentUserName);
+                  liked=false;
                   setState(() {});
                 },
               ),
@@ -275,9 +277,8 @@ class _SpecificPostState extends State<SpecificPost> {
         postID = newPost.postID;
         postComments = newPost.postComments;
         placeGeoID = newPost.placeGeoID;
-        liked =
-            false; //TODO get this by requesting the likes and dislikes and checking if the user is in that list.
-        disliked = false;
+        liked =newPost.userLikedIt==null? false:newPost.userLikedIt;
+        disliked = newPost.userDislikedIt==null? false:newPost.userDislikedIt;
         if (currentUserName == "ADMIN")
           isAdmin = true;
         else

@@ -23,7 +23,7 @@ class User {
   User(this.userName);
 
   Future<User> getInfo() async {
-    if (Constants.DEPLOYED) {
+    if (!Constants.DEPLOYED) {
       User info = await Requests().getUserInfo(userName);
       this.myProfilePicture = info.myProfilePicture;
       this.myName = info.myName;

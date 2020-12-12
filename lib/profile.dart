@@ -167,7 +167,7 @@ class _ProfileState extends State<Profile> {
             ),
             RaisedButton(
               onPressed: () {
-                Requests().deleteAcccount().then((value) {
+                Requests().deleteAccount().then((value) {
                   //TODO display success message or failed
                 });
               },

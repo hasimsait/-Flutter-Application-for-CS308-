@@ -17,6 +17,8 @@ class Post {
   int postLikes;
   int postDislikes;
   Map<String, String> postComments; //yorum ve yorum yapanin usernamei
+  bool userLikedIt;
+  bool userDislikedIt;
 
   Post(
       {this.text,
@@ -30,7 +32,9 @@ class Post {
       this.postDate,
       this.postLikes,
       this.postDislikes,
-      this.postComments});
+      this.postComments,
+      this.userLikedIt,
+      this.userDislikedIt});
 
   like(String currentUserName) {
     //currentUserName likes the post this.postID
@@ -40,9 +44,14 @@ class Post {
           this.postID.toString() +
           " by " +
           this.postOwnerName);
+      this.userDislikedIt = false;
+      this.userLikedIt = true;
       return true;
     } else {
-      Requests().like(postID).then((value) {return value;});
+      Requests().like(postID).then((value) {
+        return value;
+        //we could reload the post here too (instagram does it)
+      });
     }
   }
 
@@ -53,9 +62,13 @@ class Post {
           this.postID.toString() +
           " by " +
           this.postOwnerName);
+      this.userDislikedIt = false;
+      this.userLikedIt = true;
       return true;
     } else {
-      Requests().dislike(postID).then((value) {return value;});
+      Requests().dislike(postID).then((value) {
+        return value;
+      });
     }
   }
 

@@ -146,7 +146,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
               ),
               RaisedButton(
                 onPressed: () {
-                  Requests().deleteAcccount().then((value) {
+                  Requests().deleteAccount().then((value) {
                     //TODO display success message or failed
                   });
                 },
