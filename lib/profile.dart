@@ -76,44 +76,14 @@ class _ProfileState extends State<Profile> {
                             builder: (context) =>
                                 EditUserInfo(userName, myName, profilePicture)),
                       ).then((up) {
-                        //TODO change this with request profile->reload the widget
-                        if (up != null) {
-                          print(up.length);
-                          if (up.length == 1 && up[0] is String) {
-                            setState(() {
-                              thisUser.setName(up[0]).then((value) {
-                                setState(() {
-                                  updateFields(value);
-                                });
-                              });
-                            });
-                          } else {
-                            if (up.length == 1 && up[0] is File) {
-                              setState(() {
-                                thisUser.setPicture(up[0]).then((value) {
-                                  print("changing the profile picture");
-                                  setState(() {
-                                    updateFields(value);
-                                  });
-                                });
-                              });
-                            } else {
-                              if (up.length == 2 &&
-                                  up[0] is String &&
-                                  up[1] is File) {
-                                setState(() {
-                                  thisUser
-                                      .setNameAndPicture(up[0], up[1])
-                                      .then((value) {
-                                    setState(() {
-                                      updateFields(value);
-                                    });
-                                  });
-                                });
-                              }
-                            }
-                          }
-                        }
+                        //edit user info calls requests.edit anyways, just update the user accordingly
+                        // ie. why did I send the same request twice?
+                        // found the answer: to be able to show it update in demo
+                        thisUser.getInfo().then((value) {
+                          setState(() {
+                            updateFields(value);
+                          });
+                        });
                       });
                     })
               ]

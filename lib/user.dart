@@ -10,11 +10,16 @@ import 'post.dart';
 class User {
   Image myProfilePicture = Image.memory(
       base64Decode(Constants.sampleProfilePictureBASE64)); //null protection
-  String myName = ""; //Haşim Sait Göktan//null protection
+  String myName =
+      ""; //Haşim Sait Göktan//null protection//TODO this field does not exist???
   String userName; //hasimsait
   bool isFollowing;
   int followerCt;
   int followingCt;
+
+  String email;
+  bool active = true;
+  bool deleted = false;
   User(this.userName);
 
   Future<User> getInfo() async {
@@ -26,6 +31,9 @@ class User {
           info.isFollowing; //true if currentUser is following this user.
       this.followerCt = info.followerCt;
       this.followingCt = info.followingCt;
+      this.email = info.email;
+      this.active = info.active;
+      this.deleted = info.deleted;
       return this;
     } else {
       this.myProfilePicture = await ProfilePicture(this.userName)
@@ -34,37 +42,6 @@ class User {
       this.isFollowing = true; //true if currentUser is following this user.
       this.followerCt = 100;
       this.followingCt = 99;
-      return this;
-    }
-  }
-
-  Future<User> setName(String newName) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName, null);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myName = newName;
-      return this;
-    }
-  }
-
-  Future<User> setPicture(File newPicture) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(null, newPicture);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myProfilePicture = Image.file(newPicture);
-      return this;
-    }
-  }
-
-  Future<User> setNameAndPicture(String newName, File newPicture) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName, newPicture);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myProfilePicture = Image.file(newPicture);
-      this.myName = newName;
       return this;
     }
   }
