@@ -1,4 +1,5 @@
 import 'helper/constants.dart';
+import 'helper/requests.dart';
 
 class Post {
   String text;
@@ -41,7 +42,7 @@ class Post {
           this.postOwnerName);
       return true;
     } else {
-      //TODO REQUEST to like the post
+      Requests().like(postID).then((value) {return value;});
     }
   }
 
@@ -54,7 +55,7 @@ class Post {
           this.postOwnerName);
       return true;
     } else {
-      //TODO REQUEST to dislike the post
+      Requests().dislike(postID).then((value) {return value;});
     }
   }
 

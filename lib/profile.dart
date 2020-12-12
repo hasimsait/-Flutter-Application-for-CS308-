@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'helper/constants.dart';
+import 'helper/requests.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
 import 'dart:io';
@@ -196,7 +197,9 @@ class _ProfileState extends State<Profile> {
             ),
             RaisedButton(
               onPressed: () {
-                return null; //TODO REQUEST
+                Requests().deleteAcccount().then((value) {
+                  //TODO display success message or failed
+                });
               },
               child: Text("DELETE ACCOUNT"),
             ),

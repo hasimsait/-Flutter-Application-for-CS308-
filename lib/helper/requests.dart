@@ -26,48 +26,43 @@ class Requests {
         }),
       );
       if (response.statusCode >= 400 || response.statusCode < 100)
-        return 'Email address or password wrong, try again';
-      Session sessionToken = Session(
-          id: 0,
-          data: json.decode(response.body)[
-              "token"]); //TODO check the response of an auth by the server
+        return json.decode(response.body)["message"];
+      Session sessionToken =
+          Session(id: 0, data: json.decode(response.body)["data"]["token"]);
       await FlutterSession().set('sessionToken', sessionToken);
-      token = json.decode(response.body)["token"];
-      //TODO set header here
-      /*
-      {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'currentUser': {'token': sessionToken}
-              .toString() //TODO check the name of the token's field in API
-          // TODO fix it ASAP, you do not create 2D json arrays this way in dart.
-       }
-      */
-      Session userName = Session(
-          id: 1,
-          data: json.decode(response.body)[
-              "userName"]); //TODO check the response of an auth by the server
+      Session userName =
+          Session(id: 1, data: json.decode(response.body)["data"]["userName"]);
       await FlutterSession().set('userName', userName);
+      token = json.decode(response.body)["data"]["token"];
+      header = {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'currentUser': jsonEncode(<String, String>{'token': token})
+      };
       currUserName = data.name;
       return null;
     } else {
       Session sessionToken =
           Session(id: 0, data: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       await FlutterSession().set('sessionToken', sessionToken);
-      token = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-      currUserName = data.name;
       Session userName = Session(id: 1, data: data.name);
       await FlutterSession().set('userName', userName);
+      token = "MYSTATICTOKEN";
+      header = {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'currentUser': jsonEncode(<String, String>{'token': token})
+      };
+      currUserName = data.name;
       return null;
     }
   }
 
   Future<String> signupUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend, not in acceptance criteria
+    //TODO modify this function for whatever they did in the backend
     return null; //
   }
 
   Future<String> recoverPassword(String name) {
-    //TODO modify this function for whatever they did in the backend, this feature hasn't been implemented yet, also not in acceptance criteria
+    //this feature hasn't been implemented yet, also not in acceptance criteria
     return null;
   }
 
@@ -337,5 +332,22 @@ class Requests {
 
   Future<bool> deleteAcccount() async {
     return true;
+  }
+
+  Future<bool> like(int postID) async {
+    //this feature hasn't been implemented yet (I guess, either that or not in documentation), not in their acceptance criteria
+    //return true if successful
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+  Future<bool> dislike(int postID) async {
+    //this feature hasn't been implemented yet (I guess, either that or not in documentation), not in their acceptance criteria
+    //return true if successfull
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
   }
 }
