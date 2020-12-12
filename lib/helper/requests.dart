@@ -123,8 +123,15 @@ class Requests {
 
   Future<bool> postComment(String text, int postID, currUserName) async {
     if (Constants.DEPLOYED) {
-      //TODO send the request to comment to postID
-      //if successful return true, else return false.
+      var response = await http.post(
+          Constants.backendURL + Constants.interactWithPostEndpoint,
+          headers: header,
+          body: jsonEncode(<String, String>{
+            'postId': postID.toString(),
+            'postComment': text,
+          }));
+      if (response.statusCode >= 400 || response.statusCode < 100) return false;
+      return true;
     } else {
       return true;
     }
@@ -371,7 +378,7 @@ class Requests {
   }
 
   Future<bool> like(int postID) async {
-    //this feature hasn't been implemented yet (I guess, either that or not in documentation), not in their acceptance criteria
+    //postinteraction controller
     //return true if successful
     if (Constants.DEPLOYED) {
     } else {
@@ -380,16 +387,11 @@ class Requests {
   }
 
   Future<bool> dislike(int postID) async {
-    //this feature hasn't been implemented yet (I guess, either that or not in documentation), not in their acceptance criteria
+    //postinteraction controller
     //return true if successfull
     if (Constants.DEPLOYED) {
     } else {
       return true;
     }
-  }
-
-  Future<File> _localFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File('${directory.path}/tempPPFile');
   }
 }
