@@ -68,6 +68,7 @@ class Requests {
 
   Future<String> signupUser(LoginData data) {
     //TODO send email username pwwd
+    /*honestly I want to launch a webview or create a new route here and be done with it but we will see what I end up doing, I mentioned it in retro too*/
     return null; //
   }
 
@@ -242,8 +243,6 @@ class Requests {
     if (Constants.DEPLOYED) {
       if (s == 'feed') {
         //TODO request feed of userName
-      } else if (s == 'posts') {
-        //TODO retrieve posts by userName
       }
       //parse the response so it looks like the static map below.
     } else {
@@ -252,7 +251,7 @@ class Requests {
           0: new Post(
             text: "This is a sample post with an image and a location.",
             placeName: "Sample Place Name",
-            postDate: DateTime.now(),
+            postDate: DateTime.now().toString(),
             image: Constants.sampleProfilePictureBASE64,
             postID: 0,
             postLikes: 0,
@@ -266,7 +265,7 @@ class Requests {
           ),
           1: new Post(
             text: "This is another sample post under a topic.",
-            postDate: DateTime.now(),
+            postDate: DateTime.now().toString(),
             postID: 1,
             topic: "Sample Topic",
             postLikes: 10,
@@ -276,7 +275,7 @@ class Requests {
           2: new Post(
             text:
                 "This is a post from another user. Name and image are static, don't mind them.",
-            postDate: DateTime.now(),
+            postDate: DateTime.now().toString(),
             postID: 2,
             postLikes: 100,
             postDislikes: 10,
@@ -296,7 +295,7 @@ class Requests {
           0: new Post(
               text: "This is a sample post with an image and a location.",
               placeName: "Sample Place Name",
-              postDate: DateTime.now(),
+              postDate: DateTime.now().toString(),
               image: Constants.sampleProfilePictureBASE64,
               postID: 0,
               postLikes: 0,
@@ -308,7 +307,7 @@ class Requests {
               }),
           1: new Post(
               text: "This is another sample post under a topic.",
-              postDate: DateTime.now(),
+              postDate: DateTime.now().toString(),
               postID: 1,
               topic: "Sample Topic",
               postLikes: 10,
@@ -317,7 +316,7 @@ class Requests {
           2: new Post(
               text:
                   "This is a post from another user. Name and image are static, don't mind them.",
-              postDate: DateTime.now(),
+              postDate: DateTime.now().toString(),
               postID: 2,
               postLikes: 100,
               postDislikes: 10,
@@ -338,7 +337,7 @@ class Requests {
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
     var data = json.decode(response.body)['data'];
-    print('requests.dart: getUserInfo requested info of ' +
+    print('REQUESTS.DART: getUserInfo requested info of ' +
         userName +
         ' and received: ' +
         data.toString());
@@ -369,6 +368,25 @@ class Requests {
         thisUser.isFollowing = false;
     } else
       thisUser.isFollowing = false;
+    List<Post> posts=[];
+    for (int i=0; i<data['userPostsList'].length;i++){
+      var text=data['userPostsList'][i]['postText'];
+      var image=data['userPostsList'][i]['postImage'];
+      var topic=data['userPostsList'][i]['postTopic'];
+      var videoURL=data['userPostsList'][i]['postVideoURL'];
+      var placeName=data['userPostsList'][i]['postGeoName'];
+      var postID=data['userPostsList'][i]['postId'];
+      var postDate=data['userPostsList'][i]['postDate'];
+      var postLikes=data['userPostsList'][i]['totalPostLike'];
+      var postDislikes=data['userPostsList'][i]['totalPostDislike'];
+      var postComments=data['userPostsList'][i]['postCommentDto'];//this may fuck up test it
+      //this.image,    this.topic,    this.videoURL,    this.placeName,    this.placeGeoID,    this.postID,    this.postOwnerName,    this.postDate,    this.postLikes,    this.postDislikes,    this.postComments,    this.userLikedIt,    this.userDislikedIt
+      Post thisPost=Post().from(text:text,image:image,topic:topic,videoURL: videoURL,placeName: placeName, postID: postID,postOwnerName: userName,postDate: postDate,postLikes: postLikes,postDislikes: postDislikes);
+      thisPost.userDislikedIt=data['userPostsList'][i]['userDislikedIt'] == 'true';
+      thisPost.userLikedIt=data['userPostsList'][i]['userLikedIt'] == 'true';
+      posts.add(thisPost);
+    }
+    thisUser.posts=posts;
     return thisUser;
   }
 
@@ -432,22 +450,48 @@ class Requests {
   }
 
   Future<bool> deleteAccount({String userName}) async {
-    return true;
-  }
-
-  Future<bool> like(int postID) async {
-    //postinteraction controller
-    //return true if successful
     if (Constants.DEPLOYED) {
     } else {
       return true;
     }
   }
 
-  Future<bool> dislike(int postID) async {
-    //postinteraction controller
-    //return true if successfull
+  Future<bool> like(int postID) async {
     if (Constants.DEPLOYED) {
+      print('REQUESTS.DART: '+currUserName+" attempts to like post: "+postID.toString());
+      var response = await http.post(
+          Constants.backendURL + Constants.interactWithPostEndpoint,
+          headers: header,
+          body: jsonEncode(<String, String>{
+            'postId': postID.toString(),
+            'postLike': '1',
+            'postDislike': '0',
+            'commentatorName': currUserName,
+          }));
+      if (response.statusCode >= 400 || response.statusCode < 100) return false;
+      return true;
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> dislike(int postID) async {
+    if (Constants.DEPLOYED) {
+      print('REQUESTS.DART: '+currUserName+" attempts to dislike post: "+postID.toString());
+      var response = await http.post(
+          Constants.backendURL + Constants.interactWithPostEndpoint,
+          headers: header,
+          body: jsonEncode(<String, String>{
+            'postId': postID.toString(),
+            'postLike': '0',
+            'postDislike': '1',
+            'commentatorName': currUserName,
+          }));
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(jsonDecode(response.body)['message']);
+        return false;}
+      print('REQUEST.DART: DISLIKE SUCCESSFUL');
+      return true;
     } else {
       return true;
     }

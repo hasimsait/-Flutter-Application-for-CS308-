@@ -27,7 +27,7 @@ class _SpecificPostState extends State<SpecificPost> {
   var topic;
   var placeName;
   var text = "";
-  var postDate = DateTime.now();
+  var postDate = DateTime.now().toString();
   var image;
   var videoURL;
   var postLikes = 0;
@@ -37,7 +37,6 @@ class _SpecificPostState extends State<SpecificPost> {
   var placeGeoID;
   bool isAdmin = false;
   bool liked = false;
-  //TODO get this by requesting the likes and dislikes and checking if the user is in that list, would be nice to have a flag.
   bool disliked = false;
   bool deleted = false;
   _SpecificPostState(this.currentUserName, this.currPost);
@@ -73,7 +72,9 @@ class _SpecificPostState extends State<SpecificPost> {
                   IconButton(
                     icon: CircleAvatar(
                         radius: 25,
-                        backgroundImage: Image.memory(base64Decode(owner.myProfilePicture)).image),
+                        backgroundImage:
+                            Image.memory(base64Decode(owner.myProfilePicture))
+                                .image),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -90,13 +91,13 @@ class _SpecificPostState extends State<SpecificPost> {
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 15),
                       ),
-                      topic != null && topic != ""
+                      topic != null && topic != "" && topic!= 'null'
                           ? Text(
                               topic,
                               textAlign: TextAlign.left,
                             )
                           : SizedBox(),
-                      placeName != null && placeName != ""
+                      placeName != null && placeName != "" && placeName!='null'
                           ? Text(
                               placeName,
                             )
@@ -155,12 +156,17 @@ class _SpecificPostState extends State<SpecificPost> {
               IconButton(
                 icon: Icon(
                   Icons.thumb_up,
-                  color: liked ? Colors.blue : Colors.black38,
+                  color:
+                      (liked != null && liked) ? Colors.blue : Colors.black38,
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  liked = currPost.like(currentUserName);
-                  disliked=false;
+                  currPost.like(currentUserName).then((value) {
+                    if (value){
+                      liked = true;
+                      disliked = false;
+                    }
+                  });
                   setState(() {});
                 },
               ),
@@ -171,12 +177,18 @@ class _SpecificPostState extends State<SpecificPost> {
               IconButton(
                 icon: Icon(
                   Icons.thumb_down,
-                  color: disliked ? Colors.blue : Colors.black38,
+                  color: (disliked != null && disliked)
+                      ? Colors.blue
+                      : Colors.black38,
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  disliked = currPost.dislike(currentUserName);
-                  liked=false;
+                  currPost.dislike(currentUserName).then((value) {
+                    if (value){
+                      disliked = true;
+                      liked = false;
+                    }
+                  });
                   setState(() {});
                 },
               ),
@@ -277,8 +289,9 @@ class _SpecificPostState extends State<SpecificPost> {
         postID = newPost.postID;
         postComments = newPost.postComments;
         placeGeoID = newPost.placeGeoID;
-        liked =newPost.userLikedIt==null? false:newPost.userLikedIt;
-        disliked = newPost.userDislikedIt==null? false:newPost.userDislikedIt;
+        liked = newPost.userLikedIt == null ? false : newPost.userLikedIt;
+        disliked =
+            newPost.userDislikedIt == null ? false : newPost.userDislikedIt;
         if (currentUserName == "ADMIN")
           isAdmin = true;
         else
@@ -288,6 +301,10 @@ class _SpecificPostState extends State<SpecificPost> {
         //which displays the buttons to edit and delete the posts.
       });
     }
+    currPost=newPost;
+    setState(() {
+
+    });
   }
 
   void editPost(context) {

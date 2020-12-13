@@ -19,6 +19,7 @@ class User {
   String email;
   bool active = true;
   bool deleted = false;
+  List<Post> posts;
   User(this.userName);
 
   Future<User> getInfo() async {
@@ -34,6 +35,7 @@ class User {
       this.email = info.email;
       this.active = info.active;
       this.deleted = info.deleted;
+      this.posts=info.posts;
       return this;
     } else {
       this.myProfilePicture = Constants.sampleProfilePictureBASE64;
@@ -45,8 +47,9 @@ class User {
     }
   }
 
-  Future<Map<int, Post>> getPosts() async {
-    return await Requests().getPosts(userName, "posts");
+  List<Post> getPosts() {
+    //return await Requests().getPosts(userName, "posts");
+    return this.posts;
   }
 
   Future<Map<int, Post>> getFeedItems() async {

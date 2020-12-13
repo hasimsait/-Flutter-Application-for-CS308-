@@ -13,7 +13,7 @@ class Post {
   //Below apply to posts received from feed etc.
   int postID; //dart integers == java longs
   String postOwnerName;
-  DateTime postDate;
+  String postDate;
   int postLikes;
   int postDislikes;
   Map<String, String> postComments; //yorum ve yorum yapanin usernamei
@@ -36,7 +36,7 @@ class Post {
       this.userLikedIt,
       this.userDislikedIt});
 
-  like(String currentUserName) {
+  Future<bool> like(String currentUserName) async {
     //currentUserName likes the post this.postID
     if (!Constants.DEPLOYED) {
       print(currentUserName +
@@ -48,14 +48,12 @@ class Post {
       this.userLikedIt = true;
       return true;
     } else {
-      Requests().like(postID).then((value) {
-        return value;
-        //we could reload the post here too (instagram does it)
-      });
+      bool value= await Requests().like(postID);
+      return value;
     }
   }
 
-  dislike(String currentUserName) {
+  Future<bool> dislike(String currentUserName) async{
     if (!Constants.DEPLOYED) {
       print(currentUserName +
           " dislikes the post " +
@@ -66,9 +64,8 @@ class Post {
       this.userLikedIt = true;
       return true;
     } else {
-      Requests().dislike(postID).then((value) {
-        return value;
-      });
+      bool value= await Requests().dislike(postID);
+      return value;
     }
   }
 
@@ -81,7 +78,7 @@ class Post {
       String placeGeoID,
       int postID,
       String postOwnerName,
-      DateTime postDate,
+      String postDate,
       int postLikes,
       int postDislikes,
       Map<String, String> postComments}) {

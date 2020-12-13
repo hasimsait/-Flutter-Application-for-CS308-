@@ -6,6 +6,7 @@ import 'helper/constants.dart';
 import 'helper/requests.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
+import 'specificPost.dart';
 import 'dart:io';
 
 class Profile extends StatefulWidget {
@@ -29,25 +30,28 @@ class _ProfileState extends State<Profile> {
   int followingCt = 0;
   User thisUser;
   _ProfileState(this.userName);
+  List<Widget> postWidgets;
 
   @override
   void initState() {
-    print('profile.dart: the username is: '+Requests.currUserName.toString());
-      currUser = Requests.currUserName;
-      if (userName == currUser)
-        //if user clicks his own profile picture or something
-        isMyProfile = true;
+    print('profile.dart: the username is: ' + Requests.currUserName.toString());
+    currUser = Requests.currUserName;
+    if (userName == currUser)
+      //if user clicks his own profile picture or something
+      isMyProfile = true;
 
     if (userName == "") {
       //if self profile page
       isMyProfile = true;
-        userName = Requests.currUserName;
-        currUser = Requests.currUserName;
-        print('PROFILE.DART: looking up self profile, username set to: '+userName);
+      userName = Requests.currUserName;
+      currUser = Requests.currUserName;
+      print('PROFILE.DART: looking up self profile, username set to: ' +
+          userName);
     }
     thisUser = User(userName);
     thisUser.getInfo().then((value) {
-      thisUser=value;
+      thisUser = value;
+      //print(thisUser.posts.length);
       setState(() {
         updateFields(value);
       });
@@ -90,8 +94,8 @@ class _ProfileState extends State<Profile> {
             : null,
       ),
       body: new Center(
-        child: new SingleChildScrollView(
-          child: new Column(
+        child: new ListView(
+          children:<Widget>[ new Column(
             children: <Widget>[
               Padding(
                   child: Container(
@@ -105,16 +109,18 @@ class _ProfileState extends State<Profile> {
                 style: TextStyle(fontSize: 25),
               ),
               userActions(isMyProfile, isFollowing, userName),
-              viewPosts(userName),
-              new Row(
+              (userName == null || thisUser == null || thisUser.posts == null)
+                  ? Text('Please wait while we retrieve the posts.')
+                  : viewPosts(userName),
+              /*new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   switchView(),
                   switchViewToAdmin(),
                 ],
-              )
+              )*/
             ],
-          ),
+          ),],
         ),
       ),
     );
@@ -217,15 +223,38 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget viewPosts(String userName) {
-    return RaisedButton(
-      onPressed: () {
-        return null;
-        //TODO turn the button into a listview of posts.
-        //posts=User(userName).getPosts()
-        //return listPosts(posts)
-      },
-      child: Text("Posts by " + userName),
-    );
+    //THE POSTS UNDER PROFILE DO THE SAME DUMB SHIT FEED DOES, IF YOU ATTEMPT TO LIKE AFTER IT RELOADS, IT WILL THROW AN ERROR AS IF THAT SPECIFICPOST WIDGET DOES NOT EXIST (WHICH IS CORRECT, IT SHOULD'VE BEEN DELETED AND RECREATED)
+    //COPY OF FEED's one, todo move it to a helper AND FIX IT
+    if (thisUser != null) {
+      if (postWidgets != null)
+        postWidgets.forEach((element) {
+          element = SizedBox();
+        });
+      //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
+      postWidgets = [];
+      var posts=thisUser.getPosts();
+        print('PROFILE.DART: RECEIVED THE POSTS OF THE USER: ' + userName);
+        posts.forEach((value) {
+          var postWidget =
+              new SpecificPost(currentUserName: currUser, currPost: value);
+          postWidgets.add(postWidget);
+          postWidgets.add(Padding(
+            padding: const EdgeInsets.all(10),
+          ));
+        });
+        if (postWidgets != null) {
+          setState(() {});
+          print('PROFILE.DART: received '+(postWidgets.length/2).toString()+' specific_post widgets.');
+          return SingleChildScrollView(
+            child:
+            Column( children: postWidgets,),
+          );
+        } else
+          return Text("WTF");
+    } else {
+      print('PROFILE.DART: could not find a user to print the posts.');
+      return SizedBox();
+    }
   }
 
   void aaaaa() {
