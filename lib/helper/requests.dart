@@ -225,13 +225,13 @@ class Requests {
           'postOwnerName': currUserName,
           'postText': myPost.text == null ? "" : myPost.text,
           'postImage': myPost.image,
-          'postTopic': myPost.topic,
           'postVideoURL': myPost.videoURL,
           'postGeoName': myPost.placeName.toString(),
-          'postGeoID': myPost.placeGeoID.toString(),
+          'postGeoId': myPost.placeGeoID.toString(),
         }),
       );
       if (response.statusCode >= 400 || response.statusCode < 100) return false;
+      print(myPost.placeGeoID);
       return true;
     } else {
       print("REQUESTS.DART: " +
@@ -676,7 +676,7 @@ class Requests {
 
   Future<bool> isFollowingTopic(String topic) async {
     if (Constants.DEPLOYED) {
-      if (followedTopics.contains(topic)) return true;
+      if ( followedTopics!=null && followedTopics.contains(topic)) return true;
       return false;
     } else {
       return true;
@@ -685,7 +685,7 @@ class Requests {
 
   Future<bool> isFollowingLocation(String locationID) async {
     if (Constants.DEPLOYED) {
-      if (followedLocations.contains(locationID)) return true;
+      if ( followedLocations!=null && followedLocations.contains(locationID)) return true;
       return false;
     } else {
       return true;

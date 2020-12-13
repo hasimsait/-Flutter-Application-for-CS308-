@@ -298,7 +298,7 @@ class _ProfileState extends State<Profile> {
 
   void admin() {
     var temp;
-    if (currUser != "ADMIN") {
+    if (!Requests.isAdmin) {
       isMyProfile = false;
       temp = currUser;
       currUser = "ADMIN";

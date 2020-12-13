@@ -113,7 +113,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   ),
                 ],
               ),
-              (postOwnerName == currentUserName) || (isAdmin)
+              (postOwnerName == currentUserName) || (Requests.isAdmin)
                   ? Row(children: <Widget>[
                       IconButton(
                           icon: Icon(Icons.edit),
@@ -319,7 +319,7 @@ class _SpecificPostState extends State<SpecificPost> {
         liked = newPost.userLikedIt == null ? false : newPost.userLikedIt;
         disliked =
             newPost.userDislikedIt == null ? false : newPost.userDislikedIt;
-        if (currentUserName == "ADMIN")
+        if (Requests.isAdmin)
           isAdmin = true;
         else
           print(
