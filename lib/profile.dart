@@ -32,22 +32,22 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    thisUser = User(userName);
-    FlutterSession().get('userName').then((value) {
-      currUser = value['data'];
+    print('profile.dart: the username is: '+Requests.currUserName.toString());
+      currUser = Requests.currUserName;
       if (userName == currUser)
         //if user clicks his own profile picture or something
         isMyProfile = true;
-    });
+
     if (userName == "") {
       //if self profile page
       isMyProfile = true;
-      FlutterSession().get('userName').then((value) {
-        userName = value['data'];
-        currUser = value['data'];
-      });
+        userName = Requests.currUserName;
+        currUser = Requests.currUserName;
+        print('PROFILE.DART: looking up self profile, username set to: '+userName);
     }
+    thisUser = User(userName);
     thisUser.getInfo().then((value) {
+      thisUser=value;
       setState(() {
         updateFields(value);
       });
@@ -74,7 +74,7 @@ class _ProfileState extends State<Profile> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                EditUserInfo(userName, myName, profilePicture)),
+                                EditUserInfo(userName, profilePicture)),
                       ).then((up) {
                         //edit user info calls requests.edit anyways, just update the user accordingly
                         // ie. why did I send the same request twice?
@@ -273,7 +273,7 @@ class _ProfileState extends State<Profile> {
   }
 
   void updateFields(User value) {
-    profilePicture = value.myProfilePicture;
+    profilePicture = Image.memory(base64Decode(value.myProfilePicture));
     myName = value.myName;
     isFollowing = value.isFollowing;
     followerCt = value.followerCt;

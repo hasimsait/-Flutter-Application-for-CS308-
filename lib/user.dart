@@ -8,8 +8,7 @@ import 'profile_picture.dart';
 import 'post.dart';
 
 class User {
-  Image myProfilePicture = Image.memory(
-      base64Decode(Constants.sampleProfilePictureBASE64)); //null protection
+  String myProfilePicture = Constants.sampleProfilePictureBASE64; //null protection
   String myName =
       ""; //Haşim Sait Göktan//null protection//TODO this field does not exist???
   String userName; //hasimsait
@@ -23,8 +22,9 @@ class User {
   User(this.userName);
 
   Future<User> getInfo() async {
-    if (!Constants.DEPLOYED) {
-      User info = await Requests().getUserInfo(userName);
+    if (Constants.DEPLOYED) {
+      print('USER.DART: requests the info of: '+this.userName);
+      User info = await Requests().getUserInfo(this.userName);
       this.myProfilePicture = info.myProfilePicture;
       this.myName = info.myName;
       this.isFollowing =
@@ -36,8 +36,7 @@ class User {
       this.deleted = info.deleted;
       return this;
     } else {
-      this.myProfilePicture = await ProfilePicture(this.userName)
-          .get(image: Constants.sampleProfilePictureBASE64);
+      this.myProfilePicture = Constants.sampleProfilePictureBASE64;
       this.myName = Constants.placeHolderName;
       this.isFollowing = true; //true if currentUser is following this user.
       this.followerCt = 100;

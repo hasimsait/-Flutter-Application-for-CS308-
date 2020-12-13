@@ -73,7 +73,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   IconButton(
                     icon: CircleAvatar(
                         radius: 25,
-                        backgroundImage: owner.myProfilePicture.image),
+                        backgroundImage: Image.memory(base64Decode(owner.myProfilePicture)).image),
                     onPressed: () {
                       Navigator.push(
                         context,

@@ -9,7 +9,7 @@ class Constants {
   static const bool DEPLOYED = true;
   //static const String backendURL ="https://www.teamone_social.ml/api/v1/";//.ml is free
   static const String backendURL =
-      "http://127.0.0.1:5000/api/v1/"; //it has not been deployed yet
+      "http://172.18.91.97:8080/api/v1/"; //it has not been deployed yet
   //Some of them are not really endpoints, I'm aware of it.
   static const String signInEndpoint = "auth/login";
   static const String signUpEndpoint = "auth/sign-up";

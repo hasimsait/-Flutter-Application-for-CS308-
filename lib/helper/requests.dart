@@ -21,7 +21,9 @@ class Requests {
       var response = await http.post(
         Constants.backendURL + Constants.signInEndpoint,
         headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + 'aaa',
+          'Accept': 'application/json',
         },
         body: jsonEncode(<String, String>{
           'username': data.name,
@@ -36,10 +38,14 @@ class Requests {
       Session userName =
           Session(id: 1, data: json.decode(response.body)["data"]["userName"]);
       await FlutterSession().set('userName', userName);
+      print('requests.dart received: ' +
+          json.decode(response.body)["data"].toString() +
+          ' after login.');
       token = json.decode(response.body)["data"]["token"];
       header = {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'currentUser': jsonEncode(<String, String>{'token': token})
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/json',
       };
       currUserName = data.name;
       return null;
@@ -51,8 +57,9 @@ class Requests {
       await FlutterSession().set('userName', userName);
       token = "MYSTATICTOKEN";
       header = {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'currentUser': jsonEncode(<String, String>{'token': token})
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/json',
       };
       currUserName = data.name;
       return null;
@@ -60,7 +67,7 @@ class Requests {
   }
 
   Future<String> signupUser(LoginData data) {
-    //TODO modify this function for whatever they did in the backend
+    //TODO send email username pwwd
     return null; //
   }
 
@@ -84,37 +91,33 @@ class Requests {
       User currUser = User(currUserName);
       String email = "";
       String existingPP = "";
-      bool deleted = false;
-      bool active = true;
       //todo add/remove whatever field is necessary
       currUser = await currUser.getInfo();
       email = currUser.email;
-      existingPP = (currUser.myProfilePicture.image
-          .toString()); //TODO this may not work as expected, keeping an image object ios a mess, refactor to keep it as a string and image.memory when necessary
-      deleted = currUser.deleted;
-      active = currUser.active;
+      existingPP = currUser.myProfilePicture;
       if (newPP != null) {
         String imageAsString = base64Encode(newPP.readAsBytesSync());
         existingPP = imageAsString;
       }
-      if (newName != null) {
+      if (newName != null && newName!="") {
+        //I add the existing name as hint (looks better imo), not init text so if the user never edits it it will remain ''.
         //Name field does not exist, they will receive an error if I add it to request.
-        //TODO remove name field or add these
         print("REQUEST.DART: We currently do not support changing names.");
       }
-      var response = await http.post(
+      var response = await http.put(
         url,
         headers: header,
+        /*username pwd email always included*/
         body: jsonEncode(<String, String>{
           'username': currUserName,
           'password': password,
           'email': email,
           'profilePicture': existingPP,
-          'deleted': deleted.toString(),
-          'active': active.toString(),
         }),
       );
+      print('REQUESTS.DART: trying to updateUserInfo of: ' + currUserName);
       if (response.statusCode >= 400 || response.statusCode < 100) {
+        print('REQUESTS.DART: failed to updateUserInfo');
         return false;
       }
       return true;
@@ -129,6 +132,7 @@ class Requests {
           body: jsonEncode(<String, String>{
             'postId': postID.toString(),
             'postComment': text,
+            'commentatorName': currUserName,
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) return false;
       return true;
@@ -143,8 +147,8 @@ class Requests {
       //var response=await http.post(Constants.backendURL+SOMETHINGENDPOINT+POSTID,headers:header)
       //if (response.statusCode >= 400 || response.statusCode < 100) return false;
       //       return true;
-      print(
-          "REQUESTS.DART: " +"this feature has not been implemented yet, reloading the feed will not load your edit/comment too. restart the application to see your update to the post.");
+      print("REQUESTS.DART: " +
+          "this feature has not been implemented yet, reloading the feed will not load your edit/comment too. restart the application to see your update to the post.");
     } else {
       var newComm;
       if (oldPost.postComments != null) {
@@ -178,13 +182,15 @@ class Requests {
       if (response.statusCode >= 400 || response.statusCode < 100) return false;
       return true;
     } else {
-      print(
-          "REQUESTS.DART: " + Constants.backendURL + Constants.createPostEndpoint);
+      print("REQUESTS.DART: " +
+          Constants.backendURL +
+          Constants.createPostEndpoint);
       return true;
     }
   }
 
   Future<bool> editPost(Post myPost) async {
+    //TODO checkimage
     if (Constants.DEPLOYED) {
       var response = await http.post(
         Constants.backendURL +
@@ -224,7 +230,8 @@ class Requests {
         return false;
       }
     } else {
-      print("REQUESTS.DART: " +Constants.backendURL +
+      print("REQUESTS.DART: " +
+          Constants.backendURL +
           Constants.deletePostEndpoint +
           postID.toString());
       return true;
@@ -243,43 +250,43 @@ class Requests {
       if (s == 'feed') {
         return new Map<int, Post>.from({
           0: new Post(
-              text: "This is a sample post with an image and a location.",
-              placeName: "Sample Place Name",
-              postDate: DateTime.now(),
-              image: Constants.sampleProfilePictureBASE64,
-              postID: 0,
-              postLikes: 0,
-              postDislikes: 10,
-              postOwnerName: "hasimsait",
-              postComments: {
-                "ahmet": "sample comment",
-                "mehmet": "lorem ipsum..."
-              },
-              userDislikedIt: true,
-              ),
+            text: "This is a sample post with an image and a location.",
+            placeName: "Sample Place Name",
+            postDate: DateTime.now(),
+            image: Constants.sampleProfilePictureBASE64,
+            postID: 0,
+            postLikes: 0,
+            postDislikes: 10,
+            postOwnerName: "hasimsait",
+            postComments: {
+              "ahmet": "sample comment",
+              "mehmet": "lorem ipsum..."
+            },
+            userDislikedIt: true,
+          ),
           1: new Post(
-              text: "This is another sample post under a topic.",
-              postDate: DateTime.now(),
-              postID: 1,
-              topic: "Sample Topic",
-              postLikes: 10,
-              postDislikes: 0,
-              postOwnerName: "hasimsait",
+            text: "This is another sample post under a topic.",
+            postDate: DateTime.now(),
+            postID: 1,
+            topic: "Sample Topic",
+            postLikes: 10,
+            postDislikes: 0,
+            postOwnerName: "hasimsait",
           ),
           2: new Post(
-              text:
-                  "This is a post from another user. Name and image are static, don't mind them.",
-              postDate: DateTime.now(),
-              postID: 2,
-              postLikes: 100,
-              postDislikes: 10,
-              postOwnerName: "aaaaaa",
-              postComments: {
-                "ayşe": "sample comment",
-                "ĞĞĞĞĞ": "lorem ipsum...",
-                'aaaaaaaaaaaa': 'aaaaaaaaaaaaaaaaaaaaaa'
-              },
-              userLikedIt: true,
+            text:
+                "This is a post from another user. Name and image are static, don't mind them.",
+            postDate: DateTime.now(),
+            postID: 2,
+            postLikes: 100,
+            postDislikes: 10,
+            postOwnerName: "aaaaaa",
+            postComments: {
+              "ayşe": "sample comment",
+              "ĞĞĞĞĞ": "lorem ipsum...",
+              'aaaaaaaaaaaa': 'aaaaaaaaaaaaaaaaaaaaaa'
+            },
+            userLikedIt: true,
           ),
         });
       } else if (s == 'posts') {
@@ -326,12 +333,49 @@ class Requests {
   }
 
   Future<User> getUserInfo(String userName) async {
-    //TODO use the search thing here (returns profile page dto) add the is following attribute too, really important
-    //myname field does not exist, set it to userName
+    User thisUser = User(userName);
+    var response = await http.get(
+        Constants.backendURL + Constants.profileEndpoint + userName,
+        headers: header);
+    var data = json.decode(response.body)['data'];
+    print('requests.dart: getUserInfo requested info of ' +
+        userName +
+        ' and received: ' +
+        data.toString());
+    thisUser.email = data['email'];
+    if (data['profilePicture'] == null)
+      thisUser.myProfilePicture = Constants.sampleProfilePictureBASE64;
+    else
+      thisUser.myProfilePicture = data['profilePicture'];
+    thisUser.active = data['active'];
+    thisUser.deleted = !thisUser.active;
+    thisUser.myName = userName;
+    var followingUserList = data['followingNamesList'];
+    //print(followingUserList.length.toString());
+    var followerUserList = data['followerNamesList'];
+    //print(followerUserList.length.toString());
+    var subscribedTopicNamesList = data['subscribedTopicNamesList'];
+    //print(subscribedTopicNamesList.length.toString());
+    var subscribedLocationIdsList = data['subscribedLocationIdsList'];
+    //print(subscribedLocationIdsList.length.toString());
+    thisUser.followingCt = subscribedLocationIdsList.length +
+        subscribedTopicNamesList.length +
+        followingUserList.length;
+    thisUser.followerCt = followerUserList.length;
+    if (followerUserList != null && followerUserList.length != 0) {
+      if (followerUserList.contains(currUserName))
+        thisUser.isFollowing = true;
+      else
+        thisUser.isFollowing = false;
+    } else
+      thisUser.isFollowing = false;
+    return thisUser;
   }
 
   Future<bool> followTopic(String topic) async {
     if (Constants.DEPLOYED) {
+      //displayed under a post which is posted under topic, todo pass the postid and send request
+      //body:{'subscriberUsername':currUserName,'postId':postId, 'subscribedContentType':'geo' or 'topic'}
     } else {
       return true;
     }
@@ -339,6 +383,7 @@ class Requests {
 
   Future<bool> unfollowTopic(String topic) async {
     if (Constants.DEPLOYED) {
+      //took a screenshot
     } else {
       return true;
     }
@@ -352,6 +397,20 @@ class Requests {
   }
 
   Future<bool> unfollowLocation(String locationID) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> followUser(String locationID) async {
+    if (Constants.DEPLOYED) {
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> unfollowUser(String locationID) async {
     if (Constants.DEPLOYED) {
     } else {
       return true;
