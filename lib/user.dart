@@ -8,7 +8,8 @@ import 'profile_picture.dart';
 import 'post.dart';
 
 class User {
-  String myProfilePicture = Constants.sampleProfilePictureBASE64; //null protection
+  String myProfilePicture =
+      Constants.sampleProfilePictureBASE64; //null protection
   String myName =
       ""; //Haşim Sait Göktan//null protection//TODO this field does not exist???
   String userName; //hasimsait
@@ -24,7 +25,7 @@ class User {
 
   Future<User> getInfo() async {
     if (Constants.DEPLOYED) {
-      print('USER.DART: requests the info of: '+this.userName);
+      print('USER.DART: requests the info of: ' + this.userName);
       User info = await Requests().getUserInfo(this.userName);
       this.myProfilePicture = info.myProfilePicture;
       this.myName = info.myName;
@@ -35,7 +36,7 @@ class User {
       this.email = info.email;
       this.active = info.active;
       this.deleted = info.deleted;
-      this.posts=info.posts;
+      this.posts = info.posts;
       return this;
     } else {
       this.myProfilePicture = Constants.sampleProfilePictureBASE64;

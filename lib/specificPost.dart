@@ -91,13 +91,15 @@ class _SpecificPostState extends State<SpecificPost> {
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 15),
                       ),
-                      topic != null && topic != "" && topic!= 'null'
+                      topic != null && topic != "" && topic != 'null'
                           ? Text(
                               topic,
                               textAlign: TextAlign.left,
                             )
                           : SizedBox(),
-                      placeName != null && placeName != "" && placeName!='null'
+                      placeName != null &&
+                              placeName != "" &&
+                              placeName != 'null'
                           ? Text(
                               placeName,
                             )
@@ -162,7 +164,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 iconSize: 30,
                 onPressed: () {
                   Requests().like(postID).then((value) {
-                    if (value){
+                    if (value) {
                       liked = true;
                       disliked = false;
                     }
@@ -184,7 +186,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 iconSize: 30,
                 onPressed: () {
                   Requests().dislike(postID).then((value) {
-                    if (value){
+                    if (value) {
                       disliked = true;
                       liked = false;
                     }
@@ -300,10 +302,8 @@ class _SpecificPostState extends State<SpecificPost> {
         //which displays the buttons to edit and delete the posts.
       });
     }
-    currPost=newPost;
-    setState(() {
-
-    });
+    currPost = newPost;
+    setState(() {});
   }
 
   void editPost(context) {

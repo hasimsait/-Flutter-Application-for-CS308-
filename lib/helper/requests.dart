@@ -100,7 +100,7 @@ class Requests {
         String imageAsString = base64Encode(newPP.readAsBytesSync());
         existingPP = imageAsString;
       }
-      if (newName != null && newName!="") {
+      if (newName != null && newName != "") {
         //I add the existing name as hint (looks better imo), not init text so if the user never edits it it will remain ''.
         //Name field does not exist, they will receive an error if I add it to request.
         print("REQUEST.DART: We currently do not support changing names.");
@@ -210,7 +210,8 @@ class Requests {
       );
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body)['message']);
-        return false;}
+        return false;
+      }
       print('REQUESTS.DART: succesfully edited the post');
       return true;
     } else {
@@ -375,25 +376,37 @@ class Requests {
         thisUser.isFollowing = false;
     } else
       thisUser.isFollowing = false;
-    List<Post> posts=[];
-    for (int i=0; i<data['userPostsList'].length;i++){
-      var text=data['userPostsList'][i]['postText'];
-      var image=data['userPostsList'][i]['postImage'];
-      var topic=data['userPostsList'][i]['postTopic'];
-      var videoURL=data['userPostsList'][i]['postVideoURL'];
-      var placeName=data['userPostsList'][i]['postGeoName'];
-      var postID=data['userPostsList'][i]['postId'];
-      var postDate=data['userPostsList'][i]['postDate'];
-      var postLikes=data['userPostsList'][i]['totalPostLike'];
-      var postDislikes=data['userPostsList'][i]['totalPostDislike'];
-      var postComments=data['userPostsList'][i]['postCommentDto'];//this may fuck up test it
+    List<Post> posts = [];
+    for (int i = 0; i < data['userPostsList'].length; i++) {
+      var text = data['userPostsList'][i]['postText'];
+      var image = data['userPostsList'][i]['postImage'];
+      var topic = data['userPostsList'][i]['postTopic'];
+      var videoURL = data['userPostsList'][i]['postVideoURL'];
+      var placeName = data['userPostsList'][i]['postGeoName'];
+      var postID = data['userPostsList'][i]['postId'];
+      var postDate = data['userPostsList'][i]['postDate'];
+      var postLikes = data['userPostsList'][i]['totalPostLike'];
+      var postDislikes = data['userPostsList'][i]['totalPostDislike'];
+      var postComments =
+          data['userPostsList'][i]['postCommentDto']; //this may fuck up test it
       //this.image,    this.topic,    this.videoURL,    this.placeName,    this.placeGeoID,    this.postID,    this.postOwnerName,    this.postDate,    this.postLikes,    this.postDislikes,    this.postComments,    this.userLikedIt,    this.userDislikedIt
-      Post thisPost=Post().from(text:text,image:image,topic:topic,videoURL: videoURL,placeName: placeName, postID: postID,postOwnerName: userName,postDate: postDate,postLikes: postLikes,postDislikes: postDislikes);
-      thisPost.userDislikedIt=data['userPostsList'][i]['userDislikedIt'] == 'true';
-      thisPost.userLikedIt=data['userPostsList'][i]['userLikedIt'] == 'true';
+      Post thisPost = Post().from(
+          text: text,
+          image: image,
+          topic: topic,
+          videoURL: videoURL,
+          placeName: placeName,
+          postID: postID,
+          postOwnerName: userName,
+          postDate: postDate,
+          postLikes: postLikes,
+          postDislikes: postDislikes);
+      thisPost.userDislikedIt =
+          data['userPostsList'][i]['userDislikedIt'] == 'true';
+      thisPost.userLikedIt = data['userPostsList'][i]['userLikedIt'] == 'true';
       posts.add(thisPost);
     }
-    thisUser.posts=posts;
+    thisUser.posts = posts;
     return thisUser;
   }
 
@@ -465,7 +478,10 @@ class Requests {
 
   Future<bool> like(int postID) async {
     if (Constants.DEPLOYED) {
-      print('REQUESTS.DART: '+currUserName+" attempts to like post: "+postID.toString());
+      print('REQUESTS.DART: ' +
+          currUserName +
+          " attempts to like post: " +
+          postID.toString());
       var response = await http.post(
           Constants.backendURL + Constants.interactWithPostEndpoint,
           headers: header,
@@ -477,7 +493,8 @@ class Requests {
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body)['message']);
-        return false;}
+        return false;
+      }
       print('REQUEST.DART: LIKE SUCCESSFUL');
       return true;
     } else {
@@ -487,7 +504,10 @@ class Requests {
 
   Future<bool> dislike(int postID) async {
     if (Constants.DEPLOYED) {
-      print('REQUESTS.DART: '+currUserName+" attempts to dislike post: "+postID.toString());
+      print('REQUESTS.DART: ' +
+          currUserName +
+          " attempts to dislike post: " +
+          postID.toString());
       var response = await http.post(
           Constants.backendURL + Constants.interactWithPostEndpoint,
           headers: header,
@@ -499,7 +519,8 @@ class Requests {
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body)['message']);
-        return false;}
+        return false;
+      }
       print('REQUEST.DART: DISLIKE SUCCESSFUL');
       return true;
     } else {

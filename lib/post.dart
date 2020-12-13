@@ -48,14 +48,14 @@ class Post {
       this.userLikedIt = true;
       return true;
     } else {
-      bool value= await Requests().like(postID);
+      bool value = await Requests().like(postID);
       this.userLikedIt = value;
       this.userLikedIt = !value;
       return value;
     }
   }
 
-  Future<bool> dislike(String currentUserName) async{
+  Future<bool> dislike(String currentUserName) async {
     if (!Constants.DEPLOYED) {
       print(currentUserName +
           " dislikes the post " +
@@ -66,7 +66,7 @@ class Post {
       this.userLikedIt = false;
       return true;
     } else {
-      bool value= await Requests().dislike(postID);
+      bool value = await Requests().dislike(postID);
       this.userDislikedIt = value;
       this.userLikedIt = !value;
       return value;

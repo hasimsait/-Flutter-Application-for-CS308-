@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 class EditUserInfo extends StatefulWidget {
   final String userName;
   final Image profilePicture;
-  EditUserInfo(this.userName,  this.profilePicture);
+  EditUserInfo(this.userName, this.profilePicture);
 
   @override
   State<StatefulWidget> createState() =>
@@ -110,7 +110,8 @@ class _EditUserInfoState extends State<EditUserInfo> {
                             .updateUserInfo(_postFieldController.text, newPP)
                             .then((value) {
                           if (value) {
-                            print("EDIT_USER_INFO.DART: user info successfully edited, popping the current route.");
+                            print(
+                                "EDIT_USER_INFO.DART: user info successfully edited, popping the current route.");
                             Navigator.pop(context);
                           } else {
                             //display error message

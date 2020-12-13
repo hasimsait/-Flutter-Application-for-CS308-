@@ -61,7 +61,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    postWidgets=[SizedBox()];
+    postWidgets = [SizedBox()];
     //EVEN THIS DOES NOT MAKE IT CREATE THE SPECIFIC POST WIDGETS FROM SCRATCH. FUCK IT I'M NOT WASTING MORE TIME ON THIS BULLSHIT. YOU COULD MAKE THE EDIT_POST RETURN A POST WHEN REQUEST IS SUCCESSFUL AND UPDATE THE SPECIFIC POST WIDGET WITH IT, IT WOULD LOOK HORRIBLE THO.
     return new Scaffold(
       appBar: new AppBar(
@@ -97,32 +97,34 @@ class _ProfileState extends State<Profile> {
       ),
       body: new Center(
         child: new ListView(
-          children:<Widget>[ new Column(
-            children: <Widget>[
-              Padding(
-                  child: Container(
-                      child: CircleAvatar(
-                    radius: 100,
-                    backgroundImage: profilePicture.image,
-                  )),
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-              Text(
-                myName,
-                style: TextStyle(fontSize: 25),
-              ),
-              userActions(isMyProfile, isFollowing, userName),
-              (userName == null || thisUser == null || thisUser.posts == null)
-                  ? Text('Please wait while we retrieve the posts.')
-                  : viewPosts(userName),
-              /*new Row(
+          children: <Widget>[
+            new Column(
+              children: <Widget>[
+                Padding(
+                    child: Container(
+                        child: CircleAvatar(
+                      radius: 100,
+                      backgroundImage: profilePicture.image,
+                    )),
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                Text(
+                  myName,
+                  style: TextStyle(fontSize: 25),
+                ),
+                userActions(isMyProfile, isFollowing, userName),
+                (userName == null || thisUser == null || thisUser.posts == null)
+                    ? Text('Please wait while we retrieve the posts.')
+                    : viewPosts(userName),
+                /*new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   switchView(),
                   switchViewToAdmin(),
                 ],
               )*/
-            ],
-          ),],
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -234,25 +236,28 @@ class _ProfileState extends State<Profile> {
         });
       //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
       postWidgets = [];
-      var posts=thisUser.getPosts();
-        print('PROFILE.DART: RECEIVED THE POSTS OF THE USER: ' + userName);
-        posts.forEach((value) {
-          var postWidget =
-              new SpecificPost(currentUserName: currUser, currPost: value);
-          postWidgets.add(postWidget);
-          postWidgets.add(Padding(
-            padding: const EdgeInsets.all(10),
-          ));
-        });
-        if (postWidgets != null) {
-          setState(() {});
-          print('PROFILE.DART: received '+(postWidgets.length/2).toString()+' specific_post widgets.');
-          return SingleChildScrollView(
-            child:
-            Column( children: postWidgets,),
-          );
-        } else
-          return Text("WTF");
+      var posts = thisUser.getPosts();
+      print('PROFILE.DART: RECEIVED THE POSTS OF THE USER: ' + userName);
+      posts.forEach((value) {
+        var postWidget =
+            new SpecificPost(currentUserName: currUser, currPost: value);
+        postWidgets.add(postWidget);
+        postWidgets.add(Padding(
+          padding: const EdgeInsets.all(10),
+        ));
+      });
+      if (postWidgets != null) {
+        setState(() {});
+        print('PROFILE.DART: received ' +
+            (postWidgets.length / 2).toString() +
+            ' specific_post widgets.');
+        return SingleChildScrollView(
+          child: Column(
+            children: postWidgets,
+          ),
+        );
+      } else
+        return Text("WTF");
     } else {
       print('PROFILE.DART: could not find a user to print the posts.');
       return SizedBox();
