@@ -144,21 +144,57 @@ class Requests {
 
   Future<Post> reloadPost(int postID, {Post oldPost}) async {
     if (Constants.DEPLOYED || oldPost == null) {
-      //TODO request the post from the server (this method is called when user edits the post or a comment is posted under the post.)
-      //var response=await http.post(Constants.backendURL+SOMETHINGENDPOINT+POSTID,headers:header)
-      //if (response.statusCode >= 400 || response.statusCode < 100) return false;
-      //       return true;
-      print("REQUESTS.DART: " +
-          "this feature has not been implemented yet, reloading the feed will not load your edit/comment too. restart the application to see your update to the post.");
+      var response = await http.get(
+          Constants.backendURL +
+              Constants.feedEndpoint +
+              currUserName +
+              '/' +
+              postID.toString(),
+          headers: header);
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(jsonDecode(response.body)['message']);
+      } else {
+        //THIS RETURNS A FEED DTO RATHER THAN POST, DUNNO WHY
+        var data = jsonDecode(response.body)['data'];
+        var text = data['postText'];
+        var image = data['postImage'];
+        var topic = data['postTopic'];
+        var videoURL = data['postVideoURL'];
+        var placeName = data['postGeoName'];
+        var postID = data['postId'];
+        var postDate = data['postDate'];
+        var postLikes = data['totalPostLike'];
+        var postDislikes = data['totalPostDislike'];
+        var postComments = data['postCommentDto']; //this may fuck up test it
+        //this.image,    this.topic,    this.videoURL,    this.placeName,    this.placeGeoID,    this.postID,    this.postOwnerName,    this.postDate,    this.postLikes,    this.postDislikes,    this.postComments,    this.userLikedIt,    this.userDislikedIt
+        Post thisPost = Post().from(
+            text: text,
+            image: image,
+            topic: topic,
+            videoURL: videoURL,
+            placeName: placeName,
+            postID: postID,
+            postOwnerName: data['postOwnerName'],
+            postDate: postDate,
+            postLikes: postLikes,
+            postDislikes: postDislikes);
+        thisPost.userDislikedIt = data['userDislikedIt'] == 'true';
+        thisPost.userLikedIt = data['userLikedIt'] == 'true';
+        try {
+          thisPost.postComments = postComments;
+        } catch (Exception) {
+          print('REQUESTS.DART: comments fucked up');
+          thisPost.postComments = null;
+        }
+        return thisPost;
+      }
     } else {
       var newComm;
       if (oldPost.postComments != null) {
         newComm = Map<String, String>.from(oldPost.postComments);
         newComm.addAll({"reload the feed": "to see your comment"});
       } else
-        newComm = {
-          "reloading posts are not implemented yet": "the post would reload"
-        };
+        newComm = {"reload the feed": "to see your comment"};
       var newPost = oldPost.from();
       newPost.postComments = newComm;
       return newPost;

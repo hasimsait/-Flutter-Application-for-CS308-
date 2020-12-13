@@ -167,6 +167,13 @@ class _SpecificPostState extends State<SpecificPost> {
                     if (value) {
                       liked = true;
                       disliked = false;
+                      Requests()
+                          .reloadPost(postID, oldPost: currPost)
+                          .then((value) {
+                        currPost = value;
+                        initializePost(value);
+                      });
+                      setState(() {});
                     }
                   });
                   setState(() {});
@@ -189,6 +196,13 @@ class _SpecificPostState extends State<SpecificPost> {
                     if (value) {
                       disliked = true;
                       liked = false;
+                      Requests()
+                          .reloadPost(postID, oldPost: currPost)
+                          .then((value) {
+                        currPost = value;
+                        initializePost(value);
+                      });
+                      setState(() {});
                     }
                   });
                   setState(() {});
