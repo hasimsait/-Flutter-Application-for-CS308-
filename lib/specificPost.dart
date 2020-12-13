@@ -39,11 +39,13 @@ class _SpecificPostState extends State<SpecificPost> {
   bool liked = false;
   bool disliked = false;
   bool deleted = false;
+  Widget followOptions = SizedBox();
   _SpecificPostState(this.currentUserName, this.currPost);
 
   void initState() {
     //this must stay here
     initializePost(currPost);
+    _followOptions();
     setState(() {});
     print("SPECIFICPOST.DART: " + postID.toString() + "initializing.");
     //this is the single handedly most helpful print line here. objects are not reinitialized by the post.displaypost when i load feed again.
@@ -243,6 +245,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   });
                 },
               ),
+              followOptions,
             ],
           ),
           _displayComments(postComments),
@@ -325,6 +328,7 @@ class _SpecificPostState extends State<SpecificPost> {
       });
     }
     currPost = newPost;
+    _followOptions();
     setState(() {});
   }
 
@@ -378,5 +382,46 @@ class _SpecificPostState extends State<SpecificPost> {
   Future<File> _localFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File('${directory.path}/tempFile');
+  }
+
+  _followOptions() {
+    if (placeName != null && placeName != '' && placeName != 'null') {
+      Requests().isFollowingLocation(placeGeoID).then((value) {
+        if (value) {
+          followOptions = RaisedButton(
+              child: Text('unsubscribe to this location'),
+              onPressed: () {
+                Requests().unfollowLocation(postID);
+              });
+        } else {
+          followOptions = RaisedButton(
+              child: Text('subscribe to this location'),
+              onPressed: () {
+                Requests().followLocation(postID);
+              });
+        }
+        setState(() {});
+      });
+    } else if (topic != null && topic != '' && topic != 'null') {
+      Requests().isFollowingTopic(topic).then((value) {
+        if (value) {
+          followOptions = RaisedButton(
+              child: Text('unsubscribe to this topic'),
+              onPressed: () {
+                Requests().unfollowTopic(postID);
+              });
+        } else {
+          followOptions = RaisedButton(
+              child: Text('subscribe to this topic'),
+              onPressed: () {
+                Requests().followTopic(postID);
+              });
+        }
+        setState(() {});
+      });
+    } else {
+      followOptions = SizedBox();
+      setState(() {});
+    }
   }
 }
