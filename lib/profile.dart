@@ -61,6 +61,8 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    postWidgets=[SizedBox()];
+    //EVEN THIS DOES NOT MAKE IT CREATE THE SPECIFIC POST WIDGETS FROM SCRATCH. FUCK IT I'M NOT WASTING MORE TIME ON THIS BULLSHIT. YOU COULD MAKE THE EDIT_POST RETURN A POST WHEN REQUEST IS SUCCESSFUL AND UPDATE THE SPECIFIC POST WIDGET WITH IT, IT WOULD LOOK HORRIBLE THO.
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(

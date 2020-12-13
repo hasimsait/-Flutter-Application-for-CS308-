@@ -49,6 +49,8 @@ class Post {
       return true;
     } else {
       bool value= await Requests().like(postID);
+      this.userLikedIt = value;
+      this.userLikedIt = !value;
       return value;
     }
   }
@@ -60,11 +62,13 @@ class Post {
           this.postID.toString() +
           " by " +
           this.postOwnerName);
-      this.userDislikedIt = false;
-      this.userLikedIt = true;
+      this.userDislikedIt = true;
+      this.userLikedIt = false;
       return true;
     } else {
       bool value= await Requests().dislike(postID);
+      this.userDislikedIt = value;
+      this.userLikedIt = !value;
       return value;
     }
   }

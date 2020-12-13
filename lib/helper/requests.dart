@@ -193,7 +193,7 @@ class Requests {
   Future<bool> editPost(Post myPost) async {
     //TODO checkimage
     if (Constants.DEPLOYED) {
-      var response = await http.post(
+      var response = await http.put(
         Constants.backendURL +
             Constants.editPostEndpoint +
             myPost.postID.toString(), //api/v1/posts/edit/postID
@@ -208,7 +208,10 @@ class Requests {
           'postGeoID': myPost.placeGeoID.toString(),
         }),
       );
-      if (response.statusCode >= 400 || response.statusCode < 100) return false;
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(jsonDecode(response.body)['message']);
+        return false;}
+      print('REQUESTS.DART: succesfully edited the post');
       return true;
     } else {
       print("REQUESTS.DART: " +
@@ -336,6 +339,10 @@ class Requests {
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body)['message']);
+      return thisUser;
+    }
     var data = json.decode(response.body)['data'];
     print('REQUESTS.DART: getUserInfo requested info of ' +
         userName +
@@ -468,7 +475,10 @@ class Requests {
             'postDislike': '0',
             'commentatorName': currUserName,
           }));
-      if (response.statusCode >= 400 || response.statusCode < 100) return false;
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(jsonDecode(response.body)['message']);
+        return false;}
+      print('REQUEST.DART: LIKE SUCCESSFUL');
       return true;
     } else {
       return true;

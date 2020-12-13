@@ -161,7 +161,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  currPost.like(currentUserName).then((value) {
+                  Requests().like(postID).then((value) {
                     if (value){
                       liked = true;
                       disliked = false;
@@ -183,7 +183,7 @@ class _SpecificPostState extends State<SpecificPost> {
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  currPost.dislike(currentUserName).then((value) {
+                  Requests().dislike(postID).then((value) {
                     if (value){
                       disliked = true;
                       liked = false;
@@ -296,8 +296,7 @@ class _SpecificPostState extends State<SpecificPost> {
           isAdmin = true;
         else
           print(
-              "SPECIFICPOST.DART: will not display edit and delete button since current user is: " +
-                  currentUserName);
+              "SPECIFICPOST.DART: will not display edit and delete buttons for admin, user is not admin");
         //which displays the buttons to edit and delete the posts.
       });
     }
@@ -348,7 +347,7 @@ class _SpecificPostState extends State<SpecificPost> {
     ).then((value) {
       Requests().reloadPost(postID, oldPost: currPost).then((value) {
         currPost = value;
-        initializePost(value);
+        initializePost(currPost);
       });
       setState(() {});
     });
