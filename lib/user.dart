@@ -54,6 +54,6 @@ class User {
   }
 
   Future<Map<int, Post>> getFeedItems() async {
-    return await Requests().getPosts(userName, "feed");
+    return await Requests().getPosts();
   }
 }

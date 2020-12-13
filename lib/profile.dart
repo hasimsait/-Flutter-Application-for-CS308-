@@ -131,12 +131,26 @@ class _ProfileState extends State<Profile> {
   }
 
   void followRequest(String userName) {
-    isFollowing = true;
-  } //TODO REQUEST replace with sending requests then assigning the value.
+    Requests().followUser(userName).then((value) {
+      if(value)
+        isFollowing=true;
+      else{
+        //todo display error message
+      }
+      setState(() {});
+    });
+  }
 
   void unfollowRequest(String userName) {
-    isFollowing = false;
-  } //TODO REQUEST replace with sending requests then assigning the value.
+    Requests().unfollowUser(userName).then((value) {
+      if(value)
+        isFollowing=false;
+      else{
+        //todo display error message
+      }
+      setState(() {});
+    });
+  }
 
   Widget userActions(bool isMyProfile, bool isFollowing, String userName) {
     if (isMyProfile)

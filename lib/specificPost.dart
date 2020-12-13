@@ -52,11 +52,6 @@ class _SpecificPostState extends State<SpecificPost> {
 
   @override
   Widget build(BuildContext context) {
-    if (postComments != null)
-      print('SPECIFICPOST.DART build function: ' +
-          postID.toString() +
-          ' last comment is: ' +
-          postComments.entries.last.value);
     //TODO turn topic/location/comment button into anchors.
     if (deleted == null || deleted == true) {
       print("SPECIFICPOST.DART: This item has been deleted.");
@@ -141,9 +136,22 @@ class _SpecificPostState extends State<SpecificPost> {
                                         postID.toString());
                               }
                             });
-                          })
+                          }),
                     ])
-                  : SizedBox(),
+                  : IconButton(
+                      icon: Icon(Icons.report),
+                      onPressed: () {
+                        Requests().reportPost(postID).then((value) {
+                          if (value) {
+                            //todo create snackbar saying post has been reported or set it to deleted
+                            setState(() {}); //so that the post disappears
+                          } else {
+                            //todo display error message
+                            print("SPECIFICPOST.DART: Couldn't report post:" +
+                                postID.toString());
+                          }
+                        });
+                      }),
             ],
           ),
 
