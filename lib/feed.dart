@@ -28,7 +28,7 @@ class _FeedState extends State<Feed> {
     postWidgets = [];
     posts.forEach((key, value) {
       print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
-      if (value.postComments != null) {
+      /*if (value.postComments != null) {
         print('FEED.DART: ' +
             value.postID.toString() +
             ' has ' +
@@ -38,7 +38,7 @@ class _FeedState extends State<Feed> {
             value.postID.toString() +
             ' last comment is: ' +
             value.postComments.entries.last.value);
-      }
+      }*/
       var postWidget =
           new SpecificPost(currentUserName: currUser.userName, currPost: value);
       //this new doesn't do shit. That's an issue since I need to clean that up

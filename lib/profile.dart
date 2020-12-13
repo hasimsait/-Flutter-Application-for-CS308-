@@ -175,8 +175,7 @@ class _ProfileState extends State<Profile> {
               child: Text("Following:" + followingCt.toString()),
             ),
           ]); //instead it returns the delete account stuff
-    if (currUser == "ADMIN") {
-      //TODO change this to whatever they do to specify admin
+    if (Requests.isAdmin) {
       return Column(children: <Widget>[
         new Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -192,7 +191,7 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 Requests().deleteAccount().then((value) {
-                  //TODO display success message or failed
+                  //todo display success message or failed
                 });
               },
               child: Text("DELETE ACCOUNT"),
@@ -276,50 +275,6 @@ class _ProfileState extends State<Profile> {
       print('PROFILE.DART: could not find a user to print the posts.');
       return SizedBox();
     }
-  }
-
-  void aaaaa() {
-    isMyProfile = !isMyProfile;
-  }
-
-  Widget switchView() {
-    return RaisedButton(
-      onPressed: () {
-        aaaaa();
-        setState(() {});
-      },
-      child: Column(children: <Widget>[
-        Text("SWITCH VIEW"),
-        Icon(Icons.remove_red_eye),
-        Text("THIS IS A DEBUG BUTTON")
-      ]),
-    );
-  }
-
-  void admin() {
-    var temp;
-    if (!Requests.isAdmin) {
-      isMyProfile = false;
-      temp = currUser;
-      currUser = "ADMIN";
-    } else {
-      isMyProfile = true;
-      currUser = temp;
-    }
-  }
-
-  Widget switchViewToAdmin() {
-    return RaisedButton(
-      onPressed: () {
-        admin();
-        setState(() {});
-      },
-      child: Column(children: <Widget>[
-        Text("SWITCH VIEW TO ADMIN"),
-        Icon(Icons.flash_on),
-        Text("THIS IS A DEBUG BUTTON")
-      ]),
-    );
   }
 
   void updateFields(User value) {

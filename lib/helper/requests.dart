@@ -395,7 +395,7 @@ class Requests {
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
-      print(jsonDecode(response.body)['message'].toString());
+      print(jsonDecode(response.body).toString());
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
@@ -505,7 +505,7 @@ class Requests {
             'commentatorName': currUserName,
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
-        print(jsonDecode(response.body)['message']);
+        print(jsonDecode(response.body));
         return false;
       }
       print('REQUEST.DART: LIKE SUCCESSFUL');
@@ -569,15 +569,6 @@ class Requests {
     }
   }
 
-  Future<bool> unfollowTopic(int postID) async {
-    if (Constants.DEPLOYED) {
-      //took a screenshot
-    } else {
-      //followedTopics.remove(topic);
-      return true;
-    }
-  }
-
   Future<bool> followLocation(int postID) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART: ' +
@@ -604,8 +595,66 @@ class Requests {
     }
   }
 
-  Future<bool> unfollowLocation(int postID) async {
+  Future<bool> unfollowTopic(String topicName) async {
     if (Constants.DEPLOYED) {
+      var response = await http.delete(
+        Constants.backendURL +
+            Constants.profileEndpoint +
+            currUserName +
+            '/unsubscribeTopic/' +
+            topicName.replaceAll('#', ''),
+        headers: header,
+      );
+      if (response.statusCode < 400 && response.statusCode >= 200) {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to unfollow " +
+            topicName +
+            'has succeeded.');
+        return true;
+      } else {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to unfollow " +
+            topicName +
+            'has failed.');
+        print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
+        followedTopics.remove(topicName);
+        return false;
+      }
+    } else {
+      //followedTopics.remove(topic);
+      return true;
+    }
+  }
+
+  Future<bool> unfollowLocation(String locationId) async {
+    if (Constants.DEPLOYED) {
+      var response = await http.delete(
+        Constants.backendURL +
+            Constants.profileEndpoint +
+            currUserName +
+            '/unsubscribeLocation/' +
+            locationId,
+        headers: header,
+      );
+      if (response.statusCode < 400 && response.statusCode >= 200) {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to unfollow " +
+            locationId +
+            'has succeeded.');
+        return true;
+      } else {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to unfollow " +
+            locationId +
+            'has failed.');
+        print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
+        followedTopics.remove(locationId);
+        return false;
+      }
     } else {
       //followedLocations.remove(locationID);
       return true;
@@ -722,7 +771,7 @@ class Requests {
             "'s request to report " +
             postID.toString() +
             'has failed.');
-        print('REQUESTS.DART: ' + jsonDecode(response.body.toString()));
+        print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
         return false;
       }
     } else {

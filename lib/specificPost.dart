@@ -391,7 +391,7 @@ class _SpecificPostState extends State<SpecificPost> {
           followOptions = RaisedButton(
               child: Text('unsubscribe to this location'),
               onPressed: () {
-                Requests().unfollowLocation(postID);
+                Requests().unfollowLocation(placeGeoID);
               });
         } else {
           followOptions = RaisedButton(
@@ -408,7 +408,7 @@ class _SpecificPostState extends State<SpecificPost> {
           followOptions = RaisedButton(
               child: Text('unsubscribe to this topic'),
               onPressed: () {
-                Requests().unfollowTopic(postID);
+                Requests().unfollowTopic(topic);
               });
         } else {
           followOptions = RaisedButton(
