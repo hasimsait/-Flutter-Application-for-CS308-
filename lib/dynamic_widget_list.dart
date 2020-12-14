@@ -76,6 +76,7 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: AppBar(),
       body: new Center(
         child: ListView(children: elementWidgets),
       ),

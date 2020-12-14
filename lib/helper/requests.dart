@@ -997,7 +997,7 @@ class Requests {
   }
 
   Future <List<List<String>>> search(String text) async {
-    print('REQUESTS.DART: getWaitingReportedUsers starts');
+    print('REQUESTS.DART: search starts');
     var response = await http.get(
         Constants.backendURL + 'admin/search/'+text,
         headers: header);
@@ -1005,7 +1005,6 @@ class Requests {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getWaitingReportedUsers received'+data.toString());
     //[{userId: 1, username: admin}]
     List<String> resultUsers=[];
     for (int i = 0; i < data.length; i++) {

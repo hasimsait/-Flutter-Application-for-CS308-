@@ -76,7 +76,7 @@ class _SearchState extends State<Search> {
             ) //flutter may not like that
           : new AppBar(
               title: new Text(
-                query,
+                'Search',
                 textAlign: TextAlign.center,
               ),
               /*actions: <Widget>[
@@ -126,6 +126,7 @@ class _SearchState extends State<Search> {
       body: Center(
         child: Column(
           children: <Widget>[
+            Padding(padding: const EdgeInsets.all(3),),
             Row(
               children: <Widget>[
                 SizedBox(
@@ -138,14 +139,15 @@ class _SearchState extends State<Search> {
                     autofocus: false,
                     maxLength: 350,
                     maxLines: 1,
+                    style: TextStyle(fontSize: 25),
                   ),
-                  height: 50,
+                  height: 70,
                   width: 350,
                 ),
                 IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () {
-                      results=Text(
+                      results = Text(
                         'Please wait a while we retrieve your results.',
                       );
                       if (_postFieldController != null &&
@@ -153,19 +155,16 @@ class _SearchState extends State<Search> {
                         Requests()
                             .search(_postFieldController.text)
                             .then((value) {
-                              //TODO FIX THIS GOOFY SHIT BY MAKING IT CREATE A NEW ROUTE OF DYNAMICWIDGETLIST FOR EACH SEARCH, WOULD WORK FOR DEMO I GUESS
-                          results = new DynamicWidgetList(value);
-                          query=_postFieldController.text;
-                          setState(() {});
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DynamicWidgetList(value)),
+                          );
                         });
                       }
                     })
               ],
-            ),
-            SizedBox(
-              child: results,
-              height: 450,
-              width: 350,
+              crossAxisAlignment: CrossAxisAlignment.start,
             ),
           ],
         ),
