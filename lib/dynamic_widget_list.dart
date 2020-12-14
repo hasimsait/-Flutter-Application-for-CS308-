@@ -63,6 +63,12 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
           print('DYNAMIC WIDGET LIST.DART: A LOCATION FUCKED UP WHILE LISTING');
         }
       }
+      if(elementWidgets==null ){
+        print("DYNAMIC WIDGET LIST.DART: nothing to list");
+        elementWidgets=[];
+        elementWidgets.add(SizedBox());
+      }
+      print("DYNAMIC WIDGET LIST.DART: done listing");
       setState(() {});
     });
   }
@@ -77,13 +83,14 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
   }
 
   Future<List<Widget>>_listUsers() async {
+    List<Widget> temp=[];
     for (int i = 0; i < elements[0].length; i++) {
       try {
         //pp and name, pp is anchor
         var user = elements[0][i];
         User thisUser = User(user);
         thisUser=await thisUser.getInfo();
-          elementWidgets.add(
+          temp.add(
             IconButton(
               icon: CircleAvatar(
                   radius: 25,
@@ -101,6 +108,8 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
       } catch (Exception) {
         print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
       }
+      print("DYNAMIC WIDGET LIST.DART: done listing users");
+      return temp;
     }
   }
 }
