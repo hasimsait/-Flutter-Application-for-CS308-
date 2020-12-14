@@ -918,7 +918,40 @@ class Requests {
     }
   }
 
-  Future<Map<int, Post>> getWaitingReportedPosts() async {}
+  Future<Map<int, Post>> getWaitingReportedPosts() async {
+    print('REQUESTS.DART: getWaitingReportedPosts starts');
+    var response = await http.get(
+        Constants.backendURL + 'admin/'+'waitingReportedPosts',
+        headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+    //[{id: 8, postOwnerName: admin, postText: my post #topic, postTopic: #topic, postGeoName: null}]
+    Map<int, Post> posts = {};
+    for (int i = 0; i < data.length; i++) {
+      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      var text = data[i]['postText'];
+      var image = data[i]['postImage'];
+      var topic = data[i]['postTopic'];
+      var videoURL = data[i]['postVideoURL'];
+      var placeName = data[i]['postGeoName'];
+      Post thisPost = Post().from(
+          text: text,
+          image: image,
+          topic: topic,
+          videoURL: videoURL,
+          placeName: placeName,
+          postOwnerName: data[i]['postOwnerName'],);
+      thisPost.userDislikedIt = data[i]['userDislikedIt'] == 'true' ||
+          data[i]['userDislikedIt'] == true;
+      thisPost.userLikedIt =
+          data[i]['userLikedIt'] == 'true' || data[i]['userLikedIt'] == true;
+      posts[i] = thisPost;
+    }
+    return posts;
+  }
 
   Future<List<List<String>>> getWaitingReportedUsers() async {
     List<List<String>> a = [];

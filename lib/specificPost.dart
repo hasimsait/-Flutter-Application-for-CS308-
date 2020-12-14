@@ -101,14 +101,14 @@ class _SpecificPostState extends State<SpecificPost> {
                               placeName,
                             )
                           : SizedBox(), //TODO topic and location are anchors which push a new route
-                      Container(
+                      postDate!=null? Container(
                         child: Text(
                           postDate.toString().substring(0, 16),
                           textAlign: TextAlign.left,
                         ),
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      ),
+                      ):SizedBox(),
                     ],
                   ),
                 ],
@@ -189,7 +189,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   setState(() {});
                 },
               ),
-              Text(postLikes.toString()),
+              postLikes!=null? Text(postLikes.toString()):SizedBox(),
               Padding(
                 padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               ),
@@ -218,7 +218,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   setState(() {});
                 },
               ),
-              Text(postDislikes.toString()),
+              postLikes!=null?Text(postDislikes.toString()):SizedBox(),
               Padding(
                 padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               ),
