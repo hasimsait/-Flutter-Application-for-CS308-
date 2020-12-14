@@ -926,17 +926,15 @@ class Requests {
           daysOfSuspension.toString() +
           ' days.');
       var response = await http.post(
-          Constants.backendURL + 'admin/'+'waitingReportedUsers/suspend/'+userName,
+          Constants.backendURL + 'admin/'+'waitingReportedUsers/suspend/'+userName+'?suspendedDaysAmount='+daysOfSuspension.toString(),
           headers: header,
-          body: jsonEncode(<String, int>{
-        'suspendedDaysAmount': daysOfSuspension,
-      }),
       );
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(response.body.toString());
       }
       var data = json.decode(response.body)['data'];
       print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+      return true;
     } else {
       return true;
     }
@@ -993,6 +991,28 @@ class Requests {
     }
     List<List<String>> a = [];
     a.add(reportedUsers);
+    a.add([]);
+    a.add([]);
+    return a;
+  }
+
+  Future <List<List<String>>> search(String text) async {
+    print('REQUESTS.DART: getWaitingReportedUsers starts');
+    var response = await http.get(
+        Constants.backendURL + 'admin/search/'+text,
+        headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print('REQUESTS.DART: getWaitingReportedUsers received'+data.toString());
+    //[{userId: 1, username: admin}]
+    List<String> resultUsers=[];
+    for (int i = 0; i < data.length; i++) {
+      resultUsers.add(data[i]['username'].toString());
+    }
+    List<List<String>> a = [];
+    a.add(resultUsers);
     a.add([]);
     a.add([]);
     return a;

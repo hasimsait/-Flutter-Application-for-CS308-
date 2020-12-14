@@ -1,5 +1,6 @@
 //TODO Clicking a location or hashtag or searching anything opens this route. Display a subscribe button on top if it is a topic
 import 'package:flutter/material.dart';
+import 'package:teamone_social_media/dynamic_widget_list.dart';
 
 import 'helper/requests.dart';
 
@@ -20,11 +21,13 @@ class _SearchState extends State<Search> {
   _SearchState(this.topic, this.locationID, this.locationName);
   String query = "";
   bool isFollowing;
-
+  final _postFieldController = TextEditingController();
+  Widget results = Text(
+    'Please wait a while we retrieve your results.',
+  );
   void initState() {
-    super.initState();
     //TODO check if the user is following the location/topic
-    if (locationID != null || locationID != "") {
+    /*if (locationID != null || locationID != "") {
       if (locationName != null || locationName != "") {
         query = locationName;
         Requests().isFollowingLocation(locationID).then((value) {
@@ -42,7 +45,22 @@ class _SearchState extends State<Search> {
         isFollowing = value;
         setState(() {});
       });
-    }
+    }*/
+    _postFieldController.addListener(() {
+      final text = _postFieldController.text;
+      _postFieldController.value = _postFieldController.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    super.initState();
+  }
+
+  void dispose() {
+    _postFieldController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +71,9 @@ class _SearchState extends State<Search> {
       //a search bar with initial value topic/locationname
       //listview with the retrieved results (may be post, may be user. be careful w that)
       appBar: (query == null || query == "")
-          ? null //flutter may not like that
+          ? AppBar(
+              title: Text('Search'),
+            ) //flutter may not like that
           : new AppBar(
               title: new Text(
                 query,
@@ -101,27 +121,67 @@ class _SearchState extends State<Search> {
                           },
                           child: Text("FOLLOW"),
                         ),
-                ]*/),
-      body: new ListView(
-        children: <Widget>[
-          //TODO add the search bar here
-          Text(
-            'Please wait a while we retrieve your results.',
-          ),
-        ],
+                ]*/
+            ),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                SizedBox(
+                  child: TextFormField(
+                    controller: _postFieldController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText:
+                            'Enter the name of the user you want to search here.'),
+                    autofocus: false,
+                    maxLength: 350,
+                    maxLines: 1,
+                  ),
+                  height: 50,
+                  width: 350,
+                ),
+                IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      results=Text(
+                        'Please wait a while we retrieve your results.',
+                      );
+                      if (_postFieldController != null &&
+                          _postFieldController.text != null) {
+                        Requests()
+                            .search(_postFieldController.text)
+                            .then((value) {
+                              //TODO FIX THIS GOOFY SHIT BY MAKING IT CREATE A NEW ROUTE OF DYNAMICWIDGETLIST FOR EACH SEARCH, WOULD WORK FOR DEMO I GUESS
+                          results = new DynamicWidgetList(value);
+                          query=_postFieldController.text;
+                          setState(() {});
+                        });
+                      }
+                    })
+              ],
+            ),
+            SizedBox(
+              child: results,
+              height: 450,
+              width: 350,
+            ),
+          ],
+        ),
       ),
-      //what if we seperate them??? like twitter.
-      // searchposts=feed.dart but with the results
-      // search users is a listview of circle avatars
-      // search location is similiar to users actually but text only.
-
-      //or I can ask for a typeOfResult and
-      // render the posts with specificPost
-      // Row (CircleAvatar... Column(...)) (same thing I do above the posts)
-      // Column(Text()) for place I guess?
-
-      //I like the first way better but we will see. TODO implement search.
     );
+    //what if we seperate them??? like twitter.
+    // searchposts=feed.dart but with the results
+    // search users is a listview of circle avatars
+    // search location is similiar to users actually but text only.
+
+    //or I can ask for a typeOfResult and
+    // render the posts with specificPost
+    // Row (CircleAvatar... Column(...)) (same thing I do above the posts)
+    // Column(Text()) for place I guess?
+
+    //I like the first way better but we will see. TODO implement search.
     //request the feed of the topic or locationID, check if user is subscribed, if not display a subscribe button,
   }
 }
