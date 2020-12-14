@@ -1,4 +1,5 @@
 import 'helper/constants.dart';
+import 'helper/requests.dart';
 
 class Post {
   String text;
@@ -12,10 +13,12 @@ class Post {
   //Below apply to posts received from feed etc.
   int postID; //dart integers == java longs
   String postOwnerName;
-  DateTime postDate;
+  String postDate;
   int postLikes;
   int postDislikes;
   Map<String, String> postComments; //yorum ve yorum yapanin usernamei
+  bool userLikedIt;
+  bool userDislikedIt;
 
   Post(
       {this.text,
@@ -29,9 +32,11 @@ class Post {
       this.postDate,
       this.postLikes,
       this.postDislikes,
-      this.postComments});
+      this.postComments,
+      this.userLikedIt,
+      this.userDislikedIt});
 
-  like(String currentUserName) {
+  Future<bool> like(String currentUserName) async {
     //currentUserName likes the post this.postID
     if (!Constants.DEPLOYED) {
       print(currentUserName +
@@ -39,22 +44,32 @@ class Post {
           this.postID.toString() +
           " by " +
           this.postOwnerName);
+      this.userDislikedIt = false;
+      this.userLikedIt = true;
       return true;
     } else {
-      //TODO REQUEST to like the post
+      bool value = await Requests().like(postID);
+      this.userLikedIt = value;
+      this.userLikedIt = !value;
+      return value;
     }
   }
 
-  dislike(String currentUserName) {
+  Future<bool> dislike(String currentUserName) async {
     if (!Constants.DEPLOYED) {
       print(currentUserName +
           " dislikes the post " +
           this.postID.toString() +
           " by " +
           this.postOwnerName);
+      this.userDislikedIt = true;
+      this.userLikedIt = false;
       return true;
     } else {
-      //TODO REQUEST to dislike the post
+      bool value = await Requests().dislike(postID);
+      this.userDislikedIt = value;
+      this.userLikedIt = !value;
+      return value;
     }
   }
 
@@ -67,7 +82,7 @@ class Post {
       String placeGeoID,
       int postID,
       String postOwnerName,
-      DateTime postDate,
+      String postDate,
       int postLikes,
       int postDislikes,
       Map<String, String> postComments}) {

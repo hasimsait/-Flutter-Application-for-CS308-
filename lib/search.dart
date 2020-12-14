@@ -59,7 +59,7 @@ class _SearchState extends State<Search> {
                 query,
                 textAlign: TextAlign.center,
               ),
-              actions: <Widget>[
+              /*actions: <Widget>[
                   isFollowing
                       ? RaisedButton(
                           onPressed: () {
@@ -101,7 +101,7 @@ class _SearchState extends State<Search> {
                           },
                           child: Text("FOLLOW"),
                         ),
-                ]),
+                ]*/),
       body: new ListView(
         children: <Widget>[
           //TODO add the search bar here

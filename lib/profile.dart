@@ -2,9 +2,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
+import 'package:teamone_social_media/dynamic_widget_list.dart';
 import 'helper/constants.dart';
+import 'helper/requests.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
+import 'specificPost.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'dart:io';
 
 class Profile extends StatefulWidget {
@@ -28,25 +32,29 @@ class _ProfileState extends State<Profile> {
   int followingCt = 0;
   User thisUser;
   _ProfileState(this.userName);
+  List<Widget> postWidgets;
+  int daysOfSuspension = 0;
 
   @override
   void initState() {
-    thisUser = User(userName);
-    FlutterSession().get('userName').then((value) {
-      currUser = value['data'];
-      if (userName == currUser)
-        //if user clicks his own profile picture or something
-        isMyProfile = true;
-    });
+    print('profile.dart: the username is: ' + Requests.currUserName.toString());
+    currUser = Requests.currUserName;
+    if (userName == currUser)
+      //if user clicks his own profile picture or something
+      isMyProfile = true;
+
     if (userName == "") {
       //if self profile page
       isMyProfile = true;
-      FlutterSession().get('userName').then((value) {
-        userName = value['data'];
-        currUser = value['data'];
-      });
+      userName = Requests.currUserName;
+      currUser = Requests.currUserName;
+      print('PROFILE.DART: looking up self profile, username set to: ' +
+          userName);
     }
+    thisUser = User(userName);
     thisUser.getInfo().then((value) {
+      thisUser = value;
+      //print(thisUser.posts.length);
       setState(() {
         updateFields(value);
       });
@@ -56,6 +64,8 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    postWidgets = [SizedBox()];
+    //EVEN THIS DOES NOT MAKE IT CREATE THE SPECIFIC POST WIDGETS FROM SCRATCH. FUCK IT I'M NOT WASTING MORE TIME ON THIS BULLSHIT. YOU COULD MAKE THE EDIT_POST RETURN A POST WHEN REQUEST IS SUCCESSFUL AND UPDATE THE SPECIFIC POST WIDGET WITH IT, IT WOULD LOOK HORRIBLE THO.
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(
@@ -73,89 +83,77 @@ class _ProfileState extends State<Profile> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                EditUserInfo(userName, myName, profilePicture)),
+                                EditUserInfo(userName, profilePicture)),
                       ).then((up) {
-                        //TODO change this with request profile->reload the widget
-                        if (up != null) {
-                          print(up.length);
-                          if (up.length == 1 && up[0] is String) {
-                            setState(() {
-                              thisUser.setName(up[0]).then((value) {
-                                setState(() {
-                                  updateFields(value);
-                                });
-                              });
-                            });
-                          } else {
-                            if (up.length == 1 && up[0] is File) {
-                              setState(() {
-                                thisUser.setPicture(up[0]).then((value) {
-                                  print("changing the profile picture");
-                                  setState(() {
-                                    updateFields(value);
-                                  });
-                                });
-                              });
-                            } else {
-                              if (up.length == 2 &&
-                                  up[0] is String &&
-                                  up[1] is File) {
-                                setState(() {
-                                  thisUser
-                                      .setNameAndPicture(up[0], up[1])
-                                      .then((value) {
-                                    setState(() {
-                                      updateFields(value);
-                                    });
-                                  });
-                                });
-                              }
-                            }
-                          }
-                        }
+                        //edit user info calls requests.edit anyways, just update the user accordingly
+                        // ie. why did I send the same request twice?
+                        // found the answer: to be able to show it update in demo
+                        thisUser.getInfo().then((value) {
+                          setState(() {
+                            updateFields(value);
+                          });
+                        });
                       });
                     })
               ]
             : null,
       ),
       body: new Center(
-        child: new SingleChildScrollView(
-          child: new Column(
-            children: <Widget>[
-              Padding(
-                  child: Container(
-                      child: CircleAvatar(
-                    radius: 100,
-                    backgroundImage: profilePicture.image,
-                  )),
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-              Text(
-                myName,
-                style: TextStyle(fontSize: 25),
-              ),
-              userActions(isMyProfile, isFollowing, userName),
-              viewPosts(userName),
-              new Row(
+        child: new ListView(
+          children: <Widget>[
+            new Column(
+              children: <Widget>[
+                Padding(
+                    child: Container(
+                        child: CircleAvatar(
+                      radius: 100,
+                      backgroundImage: profilePicture.image,
+                    )),
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                Text(
+                  myName,
+                  style: TextStyle(fontSize: 25),
+                ),
+                userActions(isMyProfile, isFollowing, userName),
+                (userName == null || thisUser == null || thisUser.posts == null)
+                    ? Text('Please wait while we retrieve the posts.')
+                    : viewPosts(userName),
+                /*new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   switchView(),
                   switchViewToAdmin(),
                 ],
-              )
-            ],
-          ),
+              )*/
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
   void followRequest(String userName) {
-    isFollowing = true;
-  } //TODO REQUEST replace with sending requests then assigning the value.
+    Requests().followUser(userName).then((value) {
+      if (value)
+        isFollowing = true;
+      else {
+        //todo display error message
+      }
+      setState(() {});
+    });
+  }
 
   void unfollowRequest(String userName) {
-    isFollowing = false;
-  } //TODO REQUEST replace with sending requests then assigning the value.
+    Requests().unfollowUser(userName).then((value) {
+      if (value)
+        isFollowing = false;
+      else {
+        //todo display error message
+      }
+      setState(() {});
+    });
+  }
 
   Widget userActions(bool isMyProfile, bool isFollowing, String userName) {
     if (isMyProfile)
@@ -164,8 +162,13 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to followers list
+                Requests().getFollowersOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
@@ -174,29 +177,34 @@ class _ProfileState extends State<Profile> {
             ),
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to following list
+                Requests().getFollowedOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Following:" + followingCt.toString()),
             ),
           ]); //instead it returns the delete account stuff
-    if (currUser == "ADMIN") {
-      //TODO change this to whatever they do to specify admin
+    if (Requests.isAdmin) {
       return Column(children: <Widget>[
         new Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null; //TODO REQUEST
-                //ADMIN gets to select the timeout length, user deactivates
+                //TODO x is selected with a dropdown, x days of suspension
+                _showDialog();
               },
               child: Text("DEACTIVATE ACCOUNT"),
-              //TODO this is a dropdown where the admin selects a date and sends request to deactivate till that picked date
             ),
             RaisedButton(
               onPressed: () {
-                return null; //TODO REQUEST
+                Requests().deleteAccount(userName).then((value) {
+                  //todo display success message or failed
+                });
               },
               child: Text("DELETE ACCOUNT"),
             ),
@@ -207,15 +215,25 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to followers list
+                Requests().getFollowersOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to following list
+                Requests().getFollowedOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Following:" + followingCt.toString()),
             ),
@@ -224,87 +242,124 @@ class _ProfileState extends State<Profile> {
       ]);
     } else {
       if (isFollowing)
-        return RaisedButton(
-          onPressed: () {
-            unfollowRequest(userName);
-            setState(() {});
-          },
-          child: Text("UNFOLLOW"),
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                unfollowRequest(userName);
+                setState(() {});
+              },
+              child: Text("UNFOLLOW"),
+            ),
+            IconButton(
+                icon: Icon(Icons.report),
+                onPressed: () {
+                  Requests().reportUser(userName).then((value) {
+                    if (value) {
+                      //todo create snackbar saying post has been reported or set it to deleted
+                      setState(() {}); //so that the post disappears
+                    } else {
+                      //todo display error message
+                      print("PROFILE.DART: Couldn't report user:" + userName);
+                    }
+                  });
+                }),
+          ],
         );
       else
-        return RaisedButton(
-          onPressed: () {
-            setState(() {
-              followRequest(userName);
-            });
-          },
-          child: Text("FOLLOW"),
-        );
+        return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    followRequest(userName);
+                  });
+                },
+                child: Text("FOLLOW"),
+              ),
+              IconButton(
+                  icon: Icon(Icons.report),
+                  onPressed: () {
+                    Requests().reportUser(userName).then((value) {
+                      if (value) {
+                        //todo create snackbar saying post has been reported or set it to deleted
+                        setState(() {}); //so that the post disappears
+                      } else {
+                        //todo display error message
+                        print("PROFILE.DART: Couldn't report user:" + userName);
+                      }
+                    });
+                  }),
+            ]);
     }
   }
 
   Widget viewPosts(String userName) {
-    return RaisedButton(
-      onPressed: () {
-        return null;
-        //TODO turn the button into a listview of posts.
-        //posts=User(userName).getPosts()
-        //return listPosts(posts)
-      },
-      child: Text("Posts by " + userName),
-    );
-  }
-
-  void aaaaa() {
-    isMyProfile = !isMyProfile;
-  }
-
-  Widget switchView() {
-    return RaisedButton(
-      onPressed: () {
-        aaaaa();
+    //THE POSTS UNDER PROFILE DO THE SAME DUMB SHIT FEED DOES, IF YOU ATTEMPT TO LIKE AFTER IT RELOADS, IT WILL THROW AN ERROR AS IF THAT SPECIFICPOST WIDGET DOES NOT EXIST (WHICH IS CORRECT, IT SHOULD'VE BEEN DELETED AND RECREATED)
+    //COPY OF FEED's one, todo move it to a helper AND FIX IT
+    if (thisUser != null) {
+      if (postWidgets != null)
+        postWidgets.forEach((element) {
+          element = SizedBox();
+        });
+      //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
+      postWidgets = [];
+      var posts = thisUser.getPosts();
+      print('PROFILE.DART: RECEIVED THE POSTS OF THE USER: ' + userName);
+      posts.forEach((value) {
+        var postWidget =
+            new SpecificPost(currentUserName: currUser, currPost: value);
+        postWidgets.add(postWidget);
+        postWidgets.add(Padding(
+          padding: const EdgeInsets.all(10),
+        ));
+      });
+      if (postWidgets != null) {
         setState(() {});
-      },
-      child: Column(children: <Widget>[
-        Text("SWITCH VIEW"),
-        Icon(Icons.remove_red_eye),
-        Text("THIS IS A DEBUG BUTTON")
-      ]),
-    );
-  }
-
-  void admin() {
-    var temp;
-    if (currUser != "ADMIN") {
-      isMyProfile = false;
-      temp = currUser;
-      currUser = "ADMIN";
+        print('PROFILE.DART: received ' +
+            (postWidgets.length / 2).toString() +
+            ' specific_post widgets.');
+        return SingleChildScrollView(
+          child: Column(
+            children: postWidgets,
+          ),
+        );
+      } else
+        return Text("WTF");
     } else {
-      isMyProfile = true;
-      currUser = temp;
+      print('PROFILE.DART: could not find a user to print the posts.');
+      return SizedBox();
     }
   }
 
-  Widget switchViewToAdmin() {
-    return RaisedButton(
-      onPressed: () {
-        admin();
-        setState(() {});
-      },
-      child: Column(children: <Widget>[
-        Text("SWITCH VIEW TO ADMIN"),
-        Icon(Icons.flash_on),
-        Text("THIS IS A DEBUG BUTTON")
-      ]),
-    );
-  }
-
   void updateFields(User value) {
-    profilePicture = value.myProfilePicture;
+    profilePicture = Image.memory(base64Decode(value.myProfilePicture));
     myName = value.myName;
     isFollowing = value.isFollowing;
     followerCt = value.followerCt;
     followingCt = value.followingCt;
     setState(() {});
+  }
+
+  void _showDialog() {
+    showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return new NumberPickerDialog.integer(
+            minValue: 0,
+            maxValue: 1000000000000,
+            title: new Text("Pick days of suspension"),
+            initialIntegerValue: daysOfSuspension,
+          );
+        }).then((value) {
+      if (value != null) {
+        setState(() => daysOfSuspension = value);
+        Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
+          //todo display success message or failed
+        });
+      }
+    });
   }
 }

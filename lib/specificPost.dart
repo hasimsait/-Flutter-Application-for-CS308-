@@ -27,7 +27,7 @@ class _SpecificPostState extends State<SpecificPost> {
   var topic;
   var placeName;
   var text = "";
-  var postDate = DateTime.now();
+  var postDate = DateTime.now().toString();
   var image;
   var videoURL;
   var postLikes = 0;
@@ -37,14 +37,15 @@ class _SpecificPostState extends State<SpecificPost> {
   var placeGeoID;
   bool isAdmin = false;
   bool liked = false;
-  //TODO get this by requesting the likes and dislikes and checking if the user is in that list, would be nice to have a flag.
   bool disliked = false;
   bool deleted = false;
+  Widget followOptions = SizedBox();
   _SpecificPostState(this.currentUserName, this.currPost);
 
   void initState() {
     //this must stay here
     initializePost(currPost);
+    _followOptions();
     setState(() {});
     print("SPECIFICPOST.DART: " + postID.toString() + "initializing.");
     //this is the single handedly most helpful print line here. objects are not reinitialized by the post.displaypost when i load feed again.
@@ -53,11 +54,6 @@ class _SpecificPostState extends State<SpecificPost> {
 
   @override
   Widget build(BuildContext context) {
-    if (postComments != null)
-      print('SPECIFICPOST.DART build function: ' +
-          postID.toString() +
-          ' last comment is: ' +
-          postComments.entries.last.value);
     //TODO turn topic/location/comment button into anchors.
     if (deleted == null || deleted == true) {
       print("SPECIFICPOST.DART: This item has been deleted.");
@@ -73,7 +69,9 @@ class _SpecificPostState extends State<SpecificPost> {
                   IconButton(
                     icon: CircleAvatar(
                         radius: 25,
-                        backgroundImage: owner.myProfilePicture.image),
+                        backgroundImage:
+                            Image.memory(base64Decode(owner.myProfilePicture))
+                                .image),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -90,30 +88,32 @@ class _SpecificPostState extends State<SpecificPost> {
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 15),
                       ),
-                      topic != null && topic != ""
+                      topic != null && topic != "" && topic != 'null'
                           ? Text(
                               topic,
                               textAlign: TextAlign.left,
                             )
                           : SizedBox(),
-                      placeName != null && placeName != ""
+                      placeName != null &&
+                              placeName != "" &&
+                              placeName != 'null'
                           ? Text(
                               placeName,
                             )
                           : SizedBox(), //TODO topic and location are anchors which push a new route
-                      Container(
+                      postDate!=null? Container(
                         child: Text(
                           postDate.toString().substring(0, 16),
                           textAlign: TextAlign.left,
                         ),
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      ),
+                      ):SizedBox(),
                     ],
                   ),
                 ],
               ),
-              (postOwnerName == currentUserName) || (isAdmin)
+              (postOwnerName == currentUserName) || (Requests.isAdmin)
                   ? Row(children: <Widget>[
                       IconButton(
                           icon: Icon(Icons.edit),
@@ -138,9 +138,22 @@ class _SpecificPostState extends State<SpecificPost> {
                                         postID.toString());
                               }
                             });
-                          })
+                          }),
                     ])
-                  : SizedBox(),
+                  : IconButton(
+                      icon: Icon(Icons.report),
+                      onPressed: () {
+                        Requests().reportPost(postID).then((value) {
+                          if (value) {
+                            //todo create snackbar saying post has been reported or set it to deleted
+                            setState(() {}); //so that the post disappears
+                          } else {
+                            //todo display error message
+                            print("SPECIFICPOST.DART: Couldn't report post:" +
+                                postID.toString());
+                          }
+                        });
+                      }),
             ],
           ),
 
@@ -155,30 +168,57 @@ class _SpecificPostState extends State<SpecificPost> {
               IconButton(
                 icon: Icon(
                   Icons.thumb_up,
-                  color: liked ? Colors.blue : Colors.black38,
+                  color:
+                      (liked != null && liked) ? Colors.blue : Colors.black38,
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  liked = currPost.like(currentUserName);
+                  Requests().like(postID).then((value) {
+                    if (value) {
+                      liked = true;
+                      disliked = false;
+                      Requests()
+                          .reloadPost(postID, oldPost: currPost)
+                          .then((value) {
+                        currPost = value;
+                        initializePost(value);
+                      });
+                      setState(() {});
+                    }
+                  });
                   setState(() {});
                 },
               ),
-              Text(postLikes.toString()),
+              postLikes!=null? Text(postLikes.toString()):SizedBox(),
               Padding(
                 padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               ),
               IconButton(
                 icon: Icon(
                   Icons.thumb_down,
-                  color: disliked ? Colors.blue : Colors.black38,
+                  color: (disliked != null && disliked)
+                      ? Colors.blue
+                      : Colors.black38,
                 ),
                 iconSize: 30,
                 onPressed: () {
-                  disliked = currPost.dislike(currentUserName);
+                  Requests().dislike(postID).then((value) {
+                    if (value) {
+                      disliked = true;
+                      liked = false;
+                      Requests()
+                          .reloadPost(postID, oldPost: currPost)
+                          .then((value) {
+                        currPost = value;
+                        initializePost(value);
+                      });
+                      setState(() {});
+                    }
+                  });
                   setState(() {});
                 },
               ),
-              Text(postDislikes.toString()),
+              postLikes!=null?Text(postDislikes.toString()):SizedBox(),
               Padding(
                 padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               ),
@@ -205,6 +245,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   });
                 },
               ),
+              followOptions,
             ],
           ),
           _displayComments(postComments),
@@ -275,18 +316,20 @@ class _SpecificPostState extends State<SpecificPost> {
         postID = newPost.postID;
         postComments = newPost.postComments;
         placeGeoID = newPost.placeGeoID;
-        liked =
-            false; //TODO get this by requesting the likes and dislikes and checking if the user is in that list.
-        disliked = false;
-        if (currentUserName == "ADMIN")
+        liked = newPost.userLikedIt == null ? false : newPost.userLikedIt;
+        disliked =
+            newPost.userDislikedIt == null ? false : newPost.userDislikedIt;
+        if (Requests.isAdmin)
           isAdmin = true;
         else
           print(
-              "SPECIFICPOST.DART: will not display edit and delete button since current user is: " +
-                  currentUserName);
+              "SPECIFICPOST.DART: will not display edit and delete buttons for admin, user is not admin");
         //which displays the buttons to edit and delete the posts.
       });
     }
+    currPost = newPost;
+    _followOptions();
+    setState(() {});
   }
 
   void editPost(context) {
@@ -330,7 +373,7 @@ class _SpecificPostState extends State<SpecificPost> {
     ).then((value) {
       Requests().reloadPost(postID, oldPost: currPost).then((value) {
         currPost = value;
-        initializePost(value);
+        initializePost(currPost);
       });
       setState(() {});
     });
@@ -339,5 +382,46 @@ class _SpecificPostState extends State<SpecificPost> {
   Future<File> _localFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File('${directory.path}/tempFile');
+  }
+
+  _followOptions() {
+    if (placeName != null && placeName != '' && placeName != 'null') {
+      Requests().isFollowingLocation(placeGeoID).then((value) {
+        if (value) {
+          followOptions = RaisedButton(
+              child: Text('unfollow this location'),
+              onPressed: () {
+                Requests().unfollowLocation(placeGeoID);
+              });
+        } else {
+          followOptions = RaisedButton(
+              child: Text('subscribe to this location'),
+              onPressed: () {
+                Requests().followLocation(postID);
+              });
+        }
+        setState(() {});
+      });
+    } else if (topic != null && topic != '' && topic != 'null') {
+      Requests().isFollowingTopic(topic).then((value) {
+        if (value) {
+          followOptions = RaisedButton(
+              child: Text('unfollow this topic'),
+              onPressed: () {
+                Requests().unfollowTopic(topic);
+              });
+        } else {
+          followOptions = RaisedButton(
+              child: Text('subscribe to this topic'),
+              onPressed: () {
+                Requests().followTopic(postID);
+              });
+        }
+        setState(() {});
+      });
+    } else {
+      followOptions = SizedBox();
+      setState(() {});
+    }
   }
 }

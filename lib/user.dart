@@ -8,28 +8,38 @@ import 'profile_picture.dart';
 import 'post.dart';
 
 class User {
-  Image myProfilePicture = Image.memory(
-      base64Decode(Constants.sampleProfilePictureBASE64)); //null protection
-  String myName = ""; //Haşim Sait Göktan//null protection
+  String myProfilePicture =
+      Constants.sampleProfilePictureBASE64; //null protection
+  String myName =
+      ""; //Haşim Sait Göktan//null protection//TODO this field does not exist???
   String userName; //hasimsait
   bool isFollowing;
   int followerCt;
   int followingCt;
+
+  String email;
+  bool active = true;
+  bool deleted = false;
+  List<Post> posts;
   User(this.userName);
 
   Future<User> getInfo() async {
     if (Constants.DEPLOYED) {
-      User info = await Requests().getUserInfo(userName);
+      print('USER.DART: requests the info of: ' + this.userName);
+      User info = await Requests().getUserInfo(this.userName);
       this.myProfilePicture = info.myProfilePicture;
       this.myName = info.myName;
       this.isFollowing =
           info.isFollowing; //true if currentUser is following this user.
       this.followerCt = info.followerCt;
       this.followingCt = info.followingCt;
+      this.email = info.email;
+      this.active = info.active;
+      this.deleted = info.deleted;
+      this.posts = info.posts;
       return this;
     } else {
-      this.myProfilePicture = await ProfilePicture(this.userName)
-          .get(image: Constants.sampleProfilePictureBASE64);
+      this.myProfilePicture = Constants.sampleProfilePictureBASE64;
       this.myName = Constants.placeHolderName;
       this.isFollowing = true; //true if currentUser is following this user.
       this.followerCt = 100;
@@ -38,42 +48,16 @@ class User {
     }
   }
 
-  Future<User> setName(String newName) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName, null);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myName = newName;
-      return this;
-    }
-  }
-
-  Future<User> setPicture(File newPicture) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(null, newPicture);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myProfilePicture = Image.file(newPicture);
-      return this;
-    }
-  }
-
-  Future<User> setNameAndPicture(String newName, File newPicture) async {
-    if (Constants.DEPLOYED) {
-      await Requests().updateUserInfo(newName, newPicture);
-      this.getInfo(); //TODO this may not work properly
-    } else {
-      this.myProfilePicture = Image.file(newPicture);
-      this.myName = newName;
-      return this;
-    }
-  }
-
-  Future<Map<int, Post>> getPosts() async {
-    return await Requests().getPosts(userName, "posts");
+  List<Post> getPosts() {
+    //return await Requests().getPosts(userName, "posts");
+    return this.posts;
   }
 
   Future<Map<int, Post>> getFeedItems() async {
-    return await Requests().getPosts(userName, "feed");
+    if (Requests.isAdmin) {
+      //admin's feed is reported posts.
+      return await Requests().getWaitingReportedPosts();
+    } else
+      return await Requests().getPosts();
   }
 }

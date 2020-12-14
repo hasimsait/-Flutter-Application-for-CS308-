@@ -1,6 +1,8 @@
 //TODO basically search but you send request for feed,
 //TODO also add messages anchor
 import 'package:flutter/material.dart';
+import 'package:teamone_social_media/dynamic_widget_list.dart';
+import 'package:teamone_social_media/helper/requests.dart';
 import 'create_post.dart';
 import 'helper/constants.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -28,7 +30,7 @@ class _FeedState extends State<Feed> {
     postWidgets = [];
     posts.forEach((key, value) {
       print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
-      if (value.postComments != null) {
+      /*if (value.postComments != null) {
         print('FEED.DART: ' +
             value.postID.toString() +
             ' has ' +
@@ -38,7 +40,7 @@ class _FeedState extends State<Feed> {
             value.postID.toString() +
             ' last comment is: ' +
             value.postComments.entries.last.value);
-      }
+      }*/
       var postWidget =
           new SpecificPost(currentUserName: currUser.userName, currPost: value);
       //this new doesn't do shit. That's an issue since I need to clean that up
@@ -61,13 +63,9 @@ class _FeedState extends State<Feed> {
 
   @override
   void initState() {
-    FlutterSession().get('userName').then((value) {
-      currUser = User(value['data']);
-      _loadFeed();
-    });
-
+    currUser = User(Requests.currUserName);
+    _loadFeed();
     print('FEED.DART: initialized feed widget');
-
     super.initState();
   }
 
@@ -78,6 +76,20 @@ class _FeedState extends State<Feed> {
         title: new Text(Constants.appName),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.refresh), onPressed: _loadFeed),
+          !Requests.isAdmin
+              ? SizedBox()
+              : IconButton(
+                  icon: Icon(Icons.people_rounded),
+                  onPressed: () {
+                    Requests().getWaitingReportedUsers().then((value) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DynamicWidgetList(value)),
+                      );
+                    });
+                  },
+                ),
         ],
       ),
       body: new Center(
@@ -111,11 +123,21 @@ class _FeedState extends State<Feed> {
     //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
     currUser.getFeedItems().then((value) {
       feedView = null;
-      displayFeed(value).then((value) {
-        print("FEED.DART: We got the listview feed.");
-        feedView = value;
-        setState(() {});
-      });
+      if (value == null) {
+        feedView = ListView(
+          children: <Widget>[
+            Text(
+              'Looks like there are no posts here, come back later!',
+            ),
+          ],
+        );
+      } else {
+        displayFeed(value).then((value) {
+          print("FEED.DART: We got the listview feed.");
+          feedView = value;
+          setState(() {});
+        });
+      }
     });
   }
 }

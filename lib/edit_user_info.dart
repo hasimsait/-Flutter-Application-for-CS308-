@@ -5,22 +5,20 @@ import 'package:image_picker/image_picker.dart';
 
 class EditUserInfo extends StatefulWidget {
   final String userName;
-  final String myName;
   final Image profilePicture;
-  EditUserInfo(this.userName, this.myName, this.profilePicture);
+  EditUserInfo(this.userName, this.profilePicture);
 
   @override
   State<StatefulWidget> createState() =>
-      _EditUserInfoState(userName, myName, profilePicture);
+      _EditUserInfoState(userName, profilePicture);
 }
 
 class _EditUserInfoState extends State<EditUserInfo> {
   final String userName;
-  String myName;
   Image profilePicture;
   File newPP;
   final picker = ImagePicker();
-  _EditUserInfoState(this.userName, this.myName, this.profilePicture);
+  _EditUserInfoState(this.userName, this.profilePicture);
   final _postFieldController = TextEditingController();
   void initState() {
     //this must stay here
@@ -99,7 +97,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
               new TextFormField(
                 controller: _postFieldController,
                 textAlign: TextAlign.center,
-                decoration: InputDecoration(hintText: myName),
+                decoration: InputDecoration(hintText: userName),
               ),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -112,17 +110,9 @@ class _EditUserInfoState extends State<EditUserInfo> {
                             .updateUserInfo(_postFieldController.text, newPP)
                             .then((value) {
                           if (value) {
-                            if (_postFieldController.text != null &&
-                                newPP == null)
-                              Navigator.pop(
-                                  context, [_postFieldController.text]);
-                            else if (_postFieldController.text == "" &&
-                                newPP != null)
-                              Navigator.pop(context, [newPP]);
-                            else if (_postFieldController.text != null &&
-                                newPP != null)
-                              Navigator.pop(
-                                  context, [_postFieldController.text, newPP]);
+                            print(
+                                "EDIT_USER_INFO.DART: user info successfully edited, popping the current route.");
+                            Navigator.pop(context);
                           } else {
                             //display error message
                           }
@@ -138,17 +128,19 @@ class _EditUserInfoState extends State<EditUserInfo> {
               ),
               RaisedButton(
                 onPressed: () {
-                  return null;
-                  //TODO REQUEST display dropdown menu and send request once the time is selected
+                  //TODO x is selected with a dropdown, x days of suspension
+                  //Requests().timeOutAccount(userName,X).then((value) {
+                  //todo display success message or failed
+                  //});
+                  //todo this is not implemented yet
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
-                //TODO this is a dropdown where the user selects a date and sends request to deactivate till that picked date
               ),
               RaisedButton(
                 onPressed: () {
-                  Requests().deleteAcccount().then((value) {
-                    //TODO display success message or failed
-                  });
+                  //Requests().deleteAccount(Requests.curUserName).then((value) {
+                  //todo this is not implemented yet
+                  //});
                 },
                 child: Text("DELETE ACCOUNT"),
               ),
