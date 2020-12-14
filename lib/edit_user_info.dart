@@ -128,15 +128,18 @@ class _EditUserInfoState extends State<EditUserInfo> {
               ),
               RaisedButton(
                 onPressed: () {
-                  //TODO this is not implemented yet
+                  //TODO x is selected with a dropdown, x days of suspension
+                  //Requests().timeOutAccount(userName,X).then((value) {
+                  //todo display success message or failed
+                  //});
+                  //todo this is not implemented yet
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
-                //TODO this is a dropdown where the user selects a date and sends request to deactivate till that picked date
               ),
               RaisedButton(
                 onPressed: () {
-                  //Requests().deleteAccount().then((value) {
-                    //TODO this is not implemented yet
+                  //Requests().deleteAccount(Requests.curUserName).then((value) {
+                  //todo this is not implemented yet
                   //});
                 },
                 child: Text("DELETE ACCOUNT"),

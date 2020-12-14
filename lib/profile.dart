@@ -8,6 +8,7 @@ import 'helper/requests.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
 import 'specificPost.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'dart:io';
 
 class Profile extends StatefulWidget {
@@ -32,6 +33,7 @@ class _ProfileState extends State<Profile> {
   User thisUser;
   _ProfileState(this.userName);
   List<Widget> postWidgets;
+  int daysOfSuspension = 0;
 
   @override
   void initState() {
@@ -163,7 +165,8 @@ class _ProfileState extends State<Profile> {
                 Requests().getFollowersOf(userName).then((value) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
                   );
                 });
               },
@@ -177,7 +180,8 @@ class _ProfileState extends State<Profile> {
                 Requests().getFollowedOf(userName).then((value) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
                   );
                 });
               },
@@ -191,15 +195,14 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null; //TODO REQUEST
-                //ADMIN gets to select the timeout length, user deactivates
+                //TODO x is selected with a dropdown, x days of suspension
+                _showDialog();
               },
               child: Text("DEACTIVATE ACCOUNT"),
-              //TODO this is a dropdown where the admin selects a date and sends request to deactivate till that picked date
             ),
             RaisedButton(
               onPressed: () {
-                Requests().deleteAccount().then((value) {
+                Requests().deleteAccount(userName).then((value) {
                   //todo display success message or failed
                 });
               },
@@ -215,7 +218,8 @@ class _ProfileState extends State<Profile> {
                 Requests().getFollowersOf(userName).then((value) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
                   );
                 });
               },
@@ -226,7 +230,8 @@ class _ProfileState extends State<Profile> {
                 Requests().getFollowedOf(userName).then((value) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                    MaterialPageRoute(
+                        builder: (context) => DynamicWidgetList(value)),
                   );
                 });
               },
@@ -266,28 +271,28 @@ class _ProfileState extends State<Profile> {
         return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-          RaisedButton(
-            onPressed: () {
-              setState(() {
-                followRequest(userName);
-              });
-            },
-            child: Text("FOLLOW"),
-          ),
-          IconButton(
-              icon: Icon(Icons.report),
-              onPressed: () {
-                Requests().reportUser(userName).then((value) {
-                  if (value) {
-                    //todo create snackbar saying post has been reported or set it to deleted
-                    setState(() {}); //so that the post disappears
-                  } else {
-                    //todo display error message
-                    print("PROFILE.DART: Couldn't report user:" + userName);
-                  }
-                });
-              }),
-        ]);
+              RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    followRequest(userName);
+                  });
+                },
+                child: Text("FOLLOW"),
+              ),
+              IconButton(
+                  icon: Icon(Icons.report),
+                  onPressed: () {
+                    Requests().reportUser(userName).then((value) {
+                      if (value) {
+                        //todo create snackbar saying post has been reported or set it to deleted
+                        setState(() {}); //so that the post disappears
+                      } else {
+                        //todo display error message
+                        print("PROFILE.DART: Couldn't report user:" + userName);
+                      }
+                    });
+                  }),
+            ]);
     }
   }
 
@@ -336,5 +341,25 @@ class _ProfileState extends State<Profile> {
     followerCt = value.followerCt;
     followingCt = value.followingCt;
     setState(() {});
+  }
+
+  void _showDialog() {
+    showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return new NumberPickerDialog.integer(
+            minValue: 0,
+            maxValue: 1000000000000,
+            title: new Text("Pick days of suspension"),
+            initialIntegerValue: daysOfSuspension,
+          );
+        }).then((value) {
+      if (value != null) {
+        setState(() => daysOfSuspension = value);
+        Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
+          //todo display success message or failed
+        });
+      }
+    });
   }
 }

@@ -54,6 +54,10 @@ class User {
   }
 
   Future<Map<int, Post>> getFeedItems() async {
-    return await Requests().getPosts();
+    if (Requests.isAdmin) {
+      //admin's feed is reported posts.
+      return await Requests().getWaitingReportedPosts();
+    } else
+      return await Requests().getPosts();
   }
 }

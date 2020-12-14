@@ -389,7 +389,7 @@ class _SpecificPostState extends State<SpecificPost> {
       Requests().isFollowingLocation(placeGeoID).then((value) {
         if (value) {
           followOptions = RaisedButton(
-              child: Text('unsubscribe to this location'),
+              child: Text('unfollow this location'),
               onPressed: () {
                 Requests().unfollowLocation(placeGeoID);
               });
@@ -406,7 +406,7 @@ class _SpecificPostState extends State<SpecificPost> {
       Requests().isFollowingTopic(topic).then((value) {
         if (value) {
           followOptions = RaisedButton(
-              child: Text('unsubscribe to this topic'),
+              child: Text('unfollow this topic'),
               onPressed: () {
                 Requests().unfollowTopic(topic);
               });

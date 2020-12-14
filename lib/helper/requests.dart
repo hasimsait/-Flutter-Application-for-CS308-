@@ -898,10 +898,33 @@ class Requests {
     return a;
   }
 
-  Future<bool> deleteAccount({String userName}) async {
+  Future<bool> deleteAccount(String userName) async {
     if (Constants.DEPLOYED) {
+      print('REQUESTS.DART ATTEMPTING TO DELETE USER ' + userName + '.');
     } else {
       return true;
     }
+  }
+
+  Future<bool> timeOutAccount(String userName, int daysOfSuspension) async {
+    if (Constants.DEPLOYED) {
+      print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
+          userName +
+          ' for ' +
+          daysOfSuspension.toString() +
+          ' days.');
+    } else {
+      return true;
+    }
+  }
+
+  Future<Map<int, Post>> getWaitingReportedPosts() async {}
+
+  Future<List<List<String>>> getWaitingReportedUsers() async {
+    List<List<String>> a = [];
+    a.add([]);
+    a.add([]);
+    a.add([]);
+    return a;
   }
 }
