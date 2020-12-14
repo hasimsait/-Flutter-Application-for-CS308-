@@ -901,6 +901,18 @@ class Requests {
   Future<bool> deleteAccount(String userName) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART ATTEMPTING TO DELETE USER ' + userName + '.');
+      /*print('REQUESTS.DART: deleteAccount starts');
+      var response = await http.delete(
+          Constants.backendURL + 'admin/'+'waitingReportedPosts/delete/'+,
+          headers: header);
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(jsonDecode(response.body).toString());
+      }
+      var data = json.decode(response.body)['data'];
+      print('REQUESTS.DART: deleteAccount received'+data.toString());
+       */
+      print('REQUESTS.DART: deleteAccount not implemented yet');
+      return false;
     } else {
       return true;
     }
@@ -913,6 +925,18 @@ class Requests {
           ' for ' +
           daysOfSuspension.toString() +
           ' days.');
+      var response = await http.post(
+          Constants.backendURL + 'admin/'+'waitingReportedUsers/suspend/'+userName,
+          headers: header,
+          body: jsonEncode(<String, int>{
+        'suspendedDaysAmount': daysOfSuspension,
+      }),
+      );
+      if (response.statusCode >= 400 || response.statusCode < 100) {
+        print(response.body.toString());
+      }
+      var data = json.decode(response.body)['data'];
+      print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
     } else {
       return true;
     }
@@ -931,7 +955,6 @@ class Requests {
     //[{id: 8, postOwnerName: admin, postText: my post #topic, postTopic: #topic, postGeoName: null}]
     Map<int, Post> posts = {};
     for (int i = 0; i < data.length; i++) {
-      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       var text = data[i]['postText'];
       var image = data[i]['postImage'];
       var topic = data[i]['postTopic'];
@@ -954,8 +977,22 @@ class Requests {
   }
 
   Future<List<List<String>>> getWaitingReportedUsers() async {
+    print('REQUESTS.DART: getWaitingReportedUsers starts');
+    var response = await http.get(
+        Constants.backendURL + 'admin/'+'waitingReportedUsers',
+        headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print('REQUESTS.DART: getWaitingReportedUsers received'+data.toString());
+    //[{userId: 1, username: admin}]
+    List<String> reportedUsers=[];
+    for (int i = 0; i < data.length; i++) {
+      reportedUsers.add(data[i]['username'].toString());
+    }
     List<List<String>> a = [];
-    a.add([]);
+    a.add(reportedUsers);
     a.add([]);
     a.add([]);
     return a;
