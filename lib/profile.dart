@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
+import 'package:teamone_social_media/dynamic_widget_list.dart';
 import 'helper/constants.dart';
 import 'helper/requests.dart';
 import 'user.dart';
@@ -132,9 +133,9 @@ class _ProfileState extends State<Profile> {
 
   void followRequest(String userName) {
     Requests().followUser(userName).then((value) {
-      if(value)
-        isFollowing=true;
-      else{
+      if (value)
+        isFollowing = true;
+      else {
         //todo display error message
       }
       setState(() {});
@@ -143,9 +144,9 @@ class _ProfileState extends State<Profile> {
 
   void unfollowRequest(String userName) {
     Requests().unfollowUser(userName).then((value) {
-      if(value)
-        isFollowing=false;
-      else{
+      if (value)
+        isFollowing = false;
+      else {
         //todo display error message
       }
       setState(() {});
@@ -159,8 +160,12 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to followers list
+                Requests().getFollowersOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
@@ -169,8 +174,12 @@ class _ProfileState extends State<Profile> {
             ),
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to following list
+                Requests().getFollowedOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Following:" + followingCt.toString()),
             ),
@@ -203,15 +212,23 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to followers list
+                Requests().getFollowersOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Followers:" + followerCt.toString()),
             ),
             RaisedButton(
               onPressed: () {
-                return null;
-                //TODO REQUEST redirect to following list
+                Requests().getFollowedOf(userName).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DynamicWidgetList(value)),
+                  );
+                });
               },
               child: Text("Following:" + followingCt.toString()),
             ),
@@ -220,22 +237,57 @@ class _ProfileState extends State<Profile> {
       ]);
     } else {
       if (isFollowing)
-        return RaisedButton(
-          onPressed: () {
-            unfollowRequest(userName);
-            setState(() {});
-          },
-          child: Text("UNFOLLOW"),
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                unfollowRequest(userName);
+                setState(() {});
+              },
+              child: Text("UNFOLLOW"),
+            ),
+            IconButton(
+                icon: Icon(Icons.report),
+                onPressed: () {
+                  Requests().reportUser(userName).then((value) {
+                    if (value) {
+                      //todo create snackbar saying post has been reported or set it to deleted
+                      setState(() {}); //so that the post disappears
+                    } else {
+                      //todo display error message
+                      print("PROFILE.DART: Couldn't report user:" + userName);
+                    }
+                  });
+                }),
+          ],
         );
       else
-        return RaisedButton(
-          onPressed: () {
-            setState(() {
-              followRequest(userName);
-            });
-          },
-          child: Text("FOLLOW"),
-        );
+        return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+          RaisedButton(
+            onPressed: () {
+              setState(() {
+                followRequest(userName);
+              });
+            },
+            child: Text("FOLLOW"),
+          ),
+          IconButton(
+              icon: Icon(Icons.report),
+              onPressed: () {
+                Requests().reportUser(userName).then((value) {
+                  if (value) {
+                    //todo create snackbar saying post has been reported or set it to deleted
+                    setState(() {}); //so that the post disappears
+                  } else {
+                    //todo display error message
+                    print("PROFILE.DART: Couldn't report user:" + userName);
+                  }
+                });
+              }),
+        ]);
     }
   }
 

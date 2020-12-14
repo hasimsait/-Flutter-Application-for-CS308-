@@ -16,6 +16,8 @@ class Requests {
   static bool isAdmin = false;
   static List<String> followedTopics;
   static List<String> followedLocations;
+  static List<String> followerUsers;
+  static List<String> followedUsers;
   //this may cause fuck-ups in certain edge cases but I do not want it to send another getInfo tbh.
 
   Future<String> auth(LoginData data) async {
@@ -422,12 +424,20 @@ class Requests {
     if (userName == currUserName) {
       followedTopics = [];
       followedLocations = [];
+      followerUsers = [];
+      followedUsers = [];
       // so that whenever we getUserInfo (we do it a lot), we get user's followed stuff updated (otherwise it would be a waste)
       for (int i = 0; i < subscribedLocationIdsList.length; i++) {
         followedLocations.add(subscribedLocationIdsList[i].toString());
       }
       for (int i = 0; i < subscribedTopicNamesList.length; i++) {
         followedTopics.add(subscribedTopicNamesList[i].toString());
+      }
+      for (int i = 0; i < followingUserList.length; i++) {
+        followedUsers.add(followingUserList[i].toString());
+      }
+      for (int i = 0; i < followerUserList.length; i++) {
+        followerUsers.add(followerUserList[i].toString());
       }
     }
     thisUser.followingCt = subscribedLocationIdsList.length +
@@ -576,13 +586,13 @@ class Requests {
           " attempts to follow to the location of post: " +
           postID.toString());
       var response =
-      await http.post(Constants.backendURL + Constants.subscribeEndpoint,
-          headers: header,
-          body: jsonEncode(<String, dynamic>{
-            'subscriberUsername': currUserName,
-            'postId': postID,
-            'subscribedContentType': 'geo',
-          }));
+          await http.post(Constants.backendURL + Constants.subscribeEndpoint,
+              headers: header,
+              body: jsonEncode(<String, dynamic>{
+                'subscriberUsername': currUserName,
+                'postId': postID,
+                'subscribedContentType': 'geo',
+              }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body).toString());
         return false;
@@ -725,7 +735,7 @@ class Requests {
 
   Future<bool> isFollowingTopic(String topic) async {
     if (Constants.DEPLOYED) {
-      if ( followedTopics!=null && followedTopics.contains(topic)) return true;
+      if (followedTopics != null && followedTopics.contains(topic)) return true;
       return false;
     } else {
       return true;
@@ -734,15 +744,9 @@ class Requests {
 
   Future<bool> isFollowingLocation(String locationID) async {
     if (Constants.DEPLOYED) {
-      if ( followedLocations!=null && followedLocations.contains(locationID)) return true;
+      if (followedLocations != null && followedLocations.contains(locationID))
+        return true;
       return false;
-    } else {
-      return true;
-    }
-  }
-
-  Future<bool> deleteAccount({String userName}) async {
-    if (Constants.DEPLOYED) {
     } else {
       return true;
     }
@@ -774,6 +778,128 @@ class Requests {
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
         return false;
       }
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> reportUser(String userName) async {
+    if (Constants.DEPLOYED) {
+      var response = await http.post(
+        Constants.backendURL +
+            'search/' +
+            userName +
+            '/profile/report/' +
+            currUserName,
+        headers: header,
+      );
+      if (response.statusCode < 400 && response.statusCode >= 200) {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to report " +
+            userName +
+            ' has succeeded.');
+        return true;
+      } else {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to report " +
+            userName +
+            ' has failed.');
+        print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  List<List<String>> getFollowedOfCurrentUser() {
+    List<List<String>> ans = [];
+    ans.add(followedUsers);
+    ans.add(followedTopics);
+    ans.add(followedLocations);
+    return ans;
+  }
+
+  List<List<String>> getFollowersOfCurrentUser() {
+    List<List<String>> ans = [];
+    ans.add(followerUsers);
+    ans.add([]);
+    ans.add([]);
+    return ans;
+  }
+
+  Future<List<List<String>>> getFollowedOf(String userName) async {
+    if (userName == currUserName) return getFollowedOfCurrentUser();
+    User thisUser = User(userName);
+    var response = await http.get(
+        Constants.backendURL + Constants.profileEndpoint + userName,
+        headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print('REQUESTS.DART: getUserInfo requested info of ' +
+        userName +
+        ' for listing its followed and received: ' +
+        data.toString());
+    var followingUserList = data['followingNamesList'];
+    //print(followingUserList.length.toString());
+    var followerUserList = data['followerNamesList'];
+    //print(followerUserList.length.toString());
+    var subscribedTopicNamesList = data['subscribedTopicNamesList'];
+    //print(subscribedTopicNamesList.length.toString());
+    var subscribedLocationIdsList = data['subscribedLocationIdsList'];
+    //print(subscribedLocationIdsList.length.toString());
+    List<String> afollowedTopics = [];
+    List<String> afollowedLocations = [];
+    List<String> afollowedUsers = [];
+    // so that whenever we getUserInfo (we do it a lot), we get user's followed stuff updated (otherwise it would be a waste)
+    for (int i = 0; i < subscribedLocationIdsList.length; i++) {
+      afollowedLocations.add(subscribedLocationIdsList[i].toString());
+    }
+    for (int i = 0; i < subscribedTopicNamesList.length; i++) {
+      afollowedTopics.add(subscribedTopicNamesList[i].toString());
+    }
+    for (int i = 0; i < followingUserList.length; i++) {
+      afollowedUsers.add(followingUserList[i].toString());
+    }
+    List<List<String>> a = [];
+    a.add(afollowedUsers);
+    a.add(afollowedTopics);
+    a.add(afollowedLocations);
+    return a;
+  }
+
+  Future<List<List<String>>> getFollowersOf(String userName) async {
+    if (userName == currUserName) return getFollowersOfCurrentUser();
+    User thisUser = User(userName);
+    var response = await http.get(
+        Constants.backendURL + Constants.profileEndpoint + userName,
+        headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print('REQUESTS.DART: getUserInfo requested info of ' +
+        userName +
+        ' for listing its followers and received: ' +
+        data.toString());
+    var followerUserList = data['followerNamesList'];
+    List<String> afollowerUsers = [];
+    for (int i = 0; i < followerUserList.length; i++) {
+      afollowerUsers.add(followerUserList[i].toString());
+    }
+    List<List<String>> a = [];
+    a.add(afollowerUsers);
+    a.add([]);
+    a.add([]);
+    return a;
+  }
+
+  Future<bool> deleteAccount({String userName}) async {
+    if (Constants.DEPLOYED) {
     } else {
       return true;
     }
