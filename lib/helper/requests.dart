@@ -401,6 +401,9 @@ class Requests {
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
+    if(data==null){
+      return thisUser;
+    }
     print('REQUESTS.DART: getUserInfo requested info of ' +
         userName +
         ' and received: ' +
@@ -998,8 +1001,13 @@ class Requests {
 
   Future <List<List<String>>> search(String text) async {
     print('REQUESTS.DART: search starts');
+    String url;
+    if(isAdmin)
+      url =Constants.backendURL + 'admin/search/'+text;
+    else
+      url=Constants.backendURL + 'search/'+text;
     var response = await http.get(
-        Constants.backendURL + 'admin/search/'+text,
+        url,
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
