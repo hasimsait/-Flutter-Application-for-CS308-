@@ -131,14 +131,15 @@ class LoginScreen extends StatelessWidget {
       },
       onLogin: (loginData) {
         print('Login info');
-        print('Username: ${loginData.name}');
+        print('Username: ${loginData.username}');
         print('Password: ${loginData.password}');
         return Requests().auth(loginData);
       },
       onSignup: (loginData) {
         print('Signup info');
-        print('Username: ${loginData.name}');
+        print('Username: ${loginData.username}');
         print('Password: ${loginData.password}');
+        print('Email: ${loginData.email}');
         return Requests().signupUser(loginData);
       },
       onSubmitAnimationCompleted: () {

@@ -31,7 +31,7 @@ class Requests {
           'Accept': 'application/json',
         },
         body: jsonEncode(<String, String>{
-          'username': data.name,
+          'username': data.username,
           'password': data.password,
         }),
       );
@@ -52,7 +52,7 @@ class Requests {
         'Authorization': 'Bearer ' + token,
         'Accept': 'application/json',
       };
-      currUserName = data.name;
+      currUserName = data.username;
       var authority = jsonDecode(response.body)['data']['authorities'];
       for (int i = 0; i < authority.length; i++) {
         if (authority[i]['authority'].toString() == 'ROLE_ADMIN')
@@ -65,7 +65,7 @@ class Requests {
       Session sessionToken =
           Session(id: 0, data: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       await FlutterSession().set('sessionToken', sessionToken);
-      Session userName = Session(id: 1, data: data.name);
+      Session userName = Session(id: 1, data: data.username);
       await FlutterSession().set('userName', userName);
       token = "MYSTATICTOKEN";
       header = {
@@ -73,7 +73,7 @@ class Requests {
         'Authorization': 'Bearer ' + token,
         'Accept': 'application/json',
       };
-      currUserName = data.name;
+      currUserName = data.username;
       return null;
     }
   }
@@ -401,7 +401,7 @@ class Requests {
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
-    if(data==null){
+    if (data == null) {
       return thisUser;
     }
     print('REQUESTS.DART: getUserInfo requested info of ' +
@@ -929,14 +929,20 @@ class Requests {
           daysOfSuspension.toString() +
           ' days.');
       var response = await http.post(
-          Constants.backendURL + 'admin/'+'waitingReportedUsers/suspend/'+userName+'?suspendedDaysAmount='+daysOfSuspension.toString(),
-          headers: header,
+        Constants.backendURL +
+            'admin/' +
+            'waitingReportedUsers/suspend/' +
+            userName +
+            '?suspendedDaysAmount=' +
+            daysOfSuspension.toString(),
+        headers: header,
       );
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(response.body.toString());
       }
       var data = json.decode(response.body)['data'];
-      print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+      print(
+          'REQUESTS.DART: getWaitingReportedPosts received' + data.toString());
       return true;
     } else {
       return true;
@@ -946,13 +952,13 @@ class Requests {
   Future<Map<int, Post>> getWaitingReportedPosts() async {
     print('REQUESTS.DART: getWaitingReportedPosts starts');
     var response = await http.get(
-        Constants.backendURL + 'admin/'+'waitingReportedPosts',
+        Constants.backendURL + 'admin/' + 'waitingReportedPosts',
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+    print('REQUESTS.DART: getWaitingReportedPosts received' + data.toString());
     //[{id: 8, postOwnerName: admin, postText: my post #topic, postTopic: #topic, postGeoName: null}]
     Map<int, Post> posts = {};
     for (int i = 0; i < data.length; i++) {
@@ -962,12 +968,13 @@ class Requests {
       var videoURL = data[i]['postVideoURL'];
       var placeName = data[i]['postGeoName'];
       Post thisPost = Post().from(
-          text: text,
-          image: image,
-          topic: topic,
-          videoURL: videoURL,
-          placeName: placeName,
-          postOwnerName: data[i]['postOwnerName'],);
+        text: text,
+        image: image,
+        topic: topic,
+        videoURL: videoURL,
+        placeName: placeName,
+        postOwnerName: data[i]['postOwnerName'],
+      );
       thisPost.userDislikedIt = data[i]['userDislikedIt'] == 'true' ||
           data[i]['userDislikedIt'] == true;
       thisPost.userLikedIt =
@@ -980,15 +987,15 @@ class Requests {
   Future<List<List<String>>> getWaitingReportedUsers() async {
     print('REQUESTS.DART: getWaitingReportedUsers starts');
     var response = await http.get(
-        Constants.backendURL + 'admin/'+'waitingReportedUsers',
+        Constants.backendURL + 'admin/' + 'waitingReportedUsers',
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getWaitingReportedUsers received'+data.toString());
+    print('REQUESTS.DART: getWaitingReportedUsers received' + data.toString());
     //[{userId: 1, username: admin}]
-    List<String> reportedUsers=[];
+    List<String> reportedUsers = [];
     for (int i = 0; i < data.length; i++) {
       reportedUsers.add(data[i]['username'].toString());
     }
@@ -999,22 +1006,20 @@ class Requests {
     return a;
   }
 
-  Future <List<List<String>>> search(String text) async {
+  Future<List<List<String>>> search(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
-    if(isAdmin)
-      url =Constants.backendURL + 'admin/search/'+text;
+    if (isAdmin)
+      url = Constants.backendURL + 'admin/search/' + text;
     else
-      url=Constants.backendURL + 'search/'+text;
-    var response = await http.get(
-        url,
-        headers: header);
+      url = Constants.backendURL + 'search/' + text;
+    var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
     //[{userId: 1, username: admin}]
-    List<String> resultUsers=[];
+    List<String> resultUsers = [];
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
     }
