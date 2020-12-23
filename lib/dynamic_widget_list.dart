@@ -25,7 +25,7 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
   void initState() {
     super.initState();
     _listUsers().then((value) {
-      elementWidgets=value;
+      elementWidgets = value;
       for (int i = 0; i < elements[1].length; i++) {
         //topic with unfollow button
         try {
@@ -63,9 +63,9 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
           print('DYNAMIC WIDGET LIST.DART: A LOCATION FUCKED UP WHILE LISTING');
         }
       }
-      if(elementWidgets==null ){
+      if (elementWidgets == null) {
         print("DYNAMIC WIDGET LIST.DART: nothing to list");
-        elementWidgets=[];
+        elementWidgets = [];
         elementWidgets.add(SizedBox());
       }
       print("DYNAMIC WIDGET LIST.DART: done listing");
@@ -83,34 +83,40 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
     );
   }
 
-  Future<List<Widget>>_listUsers() async {
-    List<Widget> temp=[];
+  Future<List<Widget>> _listUsers() async {
+    List<Widget> temp = [];
+    //print('::::::::::::::::::::::::::::::::');
+    //print(elements[0].length.toString());
     for (int i = 0; i < elements[0].length; i++) {
       try {
+        //print('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS');
         //pp and name, pp is anchor
         var user = elements[0][i];
         User thisUser = User(user);
-        thisUser=await thisUser.getInfo();
-          temp.add(
-            IconButton(
-              icon: CircleAvatar(
-                  radius: 25,
-                  backgroundImage:
-                  Image.memory(base64Decode(thisUser.myProfilePicture))
-                      .image),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Profile(user)),
-                );
-              },
-            ),
-          );
+        thisUser = await thisUser.getInfo();
+        temp.insert(
+          i,
+          IconButton(
+            icon: CircleAvatar(
+                radius: 25,
+                backgroundImage:
+                    Image.memory(base64Decode(thisUser.myProfilePicture))
+                        .image),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile(user)),
+              );
+            },
+          ),
+        );
       } catch (Exception) {
         print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
       }
-      print("DYNAMIC WIDGET LIST.DART: done listing users");
-      return temp;
     }
+    print("DYNAMIC WIDGET LIST.DART: done listing " +
+        temp.length.toString() +
+        " users");
+    return temp;
   }
 }

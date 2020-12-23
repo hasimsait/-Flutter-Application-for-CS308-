@@ -305,7 +305,7 @@ class Requests {
         print(jsonDecode(response.body));
       }
       var data = json.decode(response.body)['data'];
-      if (data==null){
+      if (data == null) {
         return null;
       }
       Map<int, Post> posts = {};
@@ -396,13 +396,12 @@ class Requests {
 
   Future<User> getUserInfo(String userName) async {
     User thisUser = User(userName);
-    print('REQUESTS.DART: getUserInfo requested info of ' +
-        userName);
+    print('REQUESTS.DART: getUserInfo requested info of ' + userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
-      print('REQUESTS.DART: ERROR: '+jsonDecode(response.body).toString());
+      print('REQUESTS.DART: ERROR: ' + jsonDecode(response.body).toString());
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
@@ -840,7 +839,7 @@ class Requests {
   }
 
   Future<List<List<String>>> getFollowedOf(String userName) async {
-    if (userName == currUserName) return getFollowedOfCurrentUser();
+    //if (userName == currUserName) return getFollowedOfCurrentUser();
     User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
@@ -878,11 +877,14 @@ class Requests {
     a.add(afollowedUsers);
     a.add(afollowedTopics);
     a.add(afollowedLocations);
+    print(
+        '-------------------------------------------------------------------------' +
+            a[0].length.toString());
     return a;
   }
 
   Future<List<List<String>>> getFollowersOf(String userName) async {
-    if (userName == currUserName) return getFollowersOfCurrentUser();
+    //if (userName == currUserName) return getFollowersOfCurrentUser();
     User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
