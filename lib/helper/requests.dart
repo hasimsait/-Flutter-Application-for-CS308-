@@ -22,7 +22,6 @@ class Requests {
 
   Future<String> auth(LoginData data) async {
     if (Constants.DEPLOYED) {
-      //TODO admin (how does authorities look when admin?)
       var response = await http.post(
         Constants.backendURL + Constants.signInEndpoint,
         headers: <String, String>{
@@ -78,10 +77,26 @@ class Requests {
     }
   }
 
-  Future<String> signupUser(LoginData data) {
-    //TODO send email username pwwd
-    /*honestly I want to launch a webview or create a new route here and be done with it but we will see what I end up doing, I mentioned it in retro too*/
-    return null; //
+  Future<String> signupUser(LoginData data) async {
+    if (Constants.DEPLOYED) {
+      var response = await http.post(
+        Constants.backendURL + Constants.signUpEndpoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + 'aaa',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'email': data.email,
+          'username': data.username,
+          'password': data.password,
+        }),
+      );
+      if (response.statusCode >= 400 || response.statusCode < 100)
+        return json.decode(response.body)["message"];
+      return auth(data);
+    }
+    return auth(data);
   }
 
   Future<String> recoverPassword(String name) {
