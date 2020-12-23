@@ -241,7 +241,7 @@ class _ProfileState extends State<Profile> {
         ),
       ]);
     } else {
-      if (isFollowing)
+      if (isFollowing!=null && isFollowing)
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

@@ -137,12 +137,12 @@ class _SearchState extends State<Search> {
                         hintText:
                             'Enter the name of the user you want to search here.'),
                     autofocus: false,
-                    maxLength: 350,
+                    maxLength: 340,
                     maxLines: 1,
                     style: TextStyle(fontSize: 25),
                   ),
                   height: 70,
-                  width: 350,
+                  width: 340,
                 ),
                 IconButton(
                     icon: Icon(Icons.search),

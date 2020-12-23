@@ -161,7 +161,7 @@ class Requests {
               postID.toString(),
           headers: header);
       if (response.statusCode >= 400 || response.statusCode < 100) {
-        print(jsonDecode(response.body)['message']);
+        print(jsonDecode(response.body).toString());
       } else {
         //THIS RETURNS A FEED DTO RATHER THAN POST, DUNNO WHY
         var data = jsonDecode(response.body)['data'];
@@ -305,6 +305,9 @@ class Requests {
         print(jsonDecode(response.body));
       }
       var data = json.decode(response.body)['data'];
+      if (data==null){
+        return null;
+      }
       Map<int, Post> posts = {};
       for (int i = 0; i < data.length; i++) {
         var text = data[i]['postText'];
@@ -393,21 +396,24 @@ class Requests {
 
   Future<User> getUserInfo(String userName) async {
     User thisUser = User(userName);
+    print('REQUESTS.DART: getUserInfo requested info of ' +
+        userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
-      print(jsonDecode(response.body).toString());
+      print('REQUESTS.DART: ERROR: '+jsonDecode(response.body).toString());
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
+    print(json.decode(response.body).toString());
     if (data == null) {
       return thisUser;
     }
     print('REQUESTS.DART: getUserInfo requested info of ' +
         userName +
         ' and received: ' +
-        data.toString());
+        json.decode(response.body).toString());
     thisUser.email = data['email'];
     if (data['profilePicture'] == null)
       thisUser.myProfilePicture = Constants.sampleProfilePictureBASE64;
@@ -1020,6 +1026,7 @@ class Requests {
     var data = json.decode(response.body)['data'];
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
+    //it throws an error here when query is null but i think it works properly with that, may need to change
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
     }
