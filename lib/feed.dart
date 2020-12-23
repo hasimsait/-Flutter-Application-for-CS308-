@@ -123,7 +123,24 @@ class _FeedState extends State<Feed> {
     //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
     currUser.getFeedItems().then((value) {
       feedView = null;
-      if (value == null) {
+      if (value != null) {
+        if (value.length != 0) {
+          displayFeed(value).then((value) {
+            print("FEED.DART: We got the listview feed.");
+            feedView = value;
+            setState(() {});
+          });
+        } else {
+          feedView = ListView(
+            children: <Widget>[
+              Text(
+                'Looks like there are no posts here, come back later!',
+              ),
+            ],
+          );
+          print('FEED.DART: no feed items.');
+        }
+      } else {
         feedView = ListView(
           children: <Widget>[
             Text(
@@ -131,12 +148,7 @@ class _FeedState extends State<Feed> {
             ),
           ],
         );
-      } else {
-        displayFeed(value).then((value) {
-          print("FEED.DART: We got the listview feed.");
-          feedView = value;
-          setState(() {});
-        });
+        print('FEED.DART: no feed items.');
       }
     });
   }

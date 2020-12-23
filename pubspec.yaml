@@ -23,7 +23,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_login: ^1.0.14
+  flutter_login: 
+    git:
+      url: https://github.com/hasimsait/flutter_login
   intl: ^0.16.1
   image_picker: ^0.6.7+14
   http: ^0.12.2

@@ -22,7 +22,6 @@ class Requests {
 
   Future<String> auth(LoginData data) async {
     if (Constants.DEPLOYED) {
-      //TODO admin (how does authorities look when admin?)
       var response = await http.post(
         Constants.backendURL + Constants.signInEndpoint,
         headers: <String, String>{
@@ -31,7 +30,7 @@ class Requests {
           'Accept': 'application/json',
         },
         body: jsonEncode(<String, String>{
-          'username': data.name,
+          'username': data.username,
           'password': data.password,
         }),
       );
@@ -52,7 +51,7 @@ class Requests {
         'Authorization': 'Bearer ' + token,
         'Accept': 'application/json',
       };
-      currUserName = data.name;
+      currUserName = data.username;
       var authority = jsonDecode(response.body)['data']['authorities'];
       for (int i = 0; i < authority.length; i++) {
         if (authority[i]['authority'].toString() == 'ROLE_ADMIN')
@@ -65,7 +64,7 @@ class Requests {
       Session sessionToken =
           Session(id: 0, data: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       await FlutterSession().set('sessionToken', sessionToken);
-      Session userName = Session(id: 1, data: data.name);
+      Session userName = Session(id: 1, data: data.username);
       await FlutterSession().set('userName', userName);
       token = "MYSTATICTOKEN";
       header = {
@@ -73,15 +72,31 @@ class Requests {
         'Authorization': 'Bearer ' + token,
         'Accept': 'application/json',
       };
-      currUserName = data.name;
+      currUserName = data.username;
       return null;
     }
   }
 
-  Future<String> signupUser(LoginData data) {
-    //TODO send email username pwwd
-    /*honestly I want to launch a webview or create a new route here and be done with it but we will see what I end up doing, I mentioned it in retro too*/
-    return null; //
+  Future<String> signupUser(LoginData data) async {
+    if (Constants.DEPLOYED) {
+      var response = await http.post(
+        Constants.backendURL + Constants.signUpEndpoint,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + 'aaa',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'email': data.email,
+          'username': data.username,
+          'password': data.password,
+        }),
+      );
+      if (response.statusCode >= 400 || response.statusCode < 100)
+        return json.decode(response.body)["message"];
+      return auth(data);
+    }
+    return auth(data);
   }
 
   Future<String> recoverPassword(String name) {
@@ -161,7 +176,7 @@ class Requests {
               postID.toString(),
           headers: header);
       if (response.statusCode >= 400 || response.statusCode < 100) {
-        print(jsonDecode(response.body)['message']);
+        print(jsonDecode(response.body).toString());
       } else {
         //THIS RETURNS A FEED DTO RATHER THAN POST, DUNNO WHY
         var data = jsonDecode(response.body)['data'];
@@ -305,6 +320,9 @@ class Requests {
         print(jsonDecode(response.body));
       }
       var data = json.decode(response.body)['data'];
+      if (data == null) {
+        return null;
+      }
       Map<int, Post> posts = {};
       for (int i = 0; i < data.length; i++) {
         var text = data[i]['postText'];
@@ -393,21 +411,23 @@ class Requests {
 
   Future<User> getUserInfo(String userName) async {
     User thisUser = User(userName);
+    print('REQUESTS.DART: getUserInfo requested info of ' + userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
-      print(jsonDecode(response.body).toString());
+      print('REQUESTS.DART: ERROR: ' + jsonDecode(response.body).toString());
       return thisUser;
     }
     var data = json.decode(response.body)['data'];
-    if(data==null){
+    print(json.decode(response.body).toString());
+    if (data == null) {
       return thisUser;
     }
     print('REQUESTS.DART: getUserInfo requested info of ' +
         userName +
         ' and received: ' +
-        data.toString());
+        json.decode(response.body).toString());
     thisUser.email = data['email'];
     if (data['profilePicture'] == null)
       thisUser.myProfilePicture = Constants.sampleProfilePictureBASE64;
@@ -834,7 +854,7 @@ class Requests {
   }
 
   Future<List<List<String>>> getFollowedOf(String userName) async {
-    if (userName == currUserName) return getFollowedOfCurrentUser();
+    //if (userName == currUserName) return getFollowedOfCurrentUser();
     User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
@@ -872,11 +892,14 @@ class Requests {
     a.add(afollowedUsers);
     a.add(afollowedTopics);
     a.add(afollowedLocations);
+    print(
+        '-------------------------------------------------------------------------' +
+            a[0].length.toString());
     return a;
   }
 
   Future<List<List<String>>> getFollowersOf(String userName) async {
-    if (userName == currUserName) return getFollowersOfCurrentUser();
+    //if (userName == currUserName) return getFollowersOfCurrentUser();
     User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
@@ -929,14 +952,20 @@ class Requests {
           daysOfSuspension.toString() +
           ' days.');
       var response = await http.post(
-          Constants.backendURL + 'admin/'+'waitingReportedUsers/suspend/'+userName+'?suspendedDaysAmount='+daysOfSuspension.toString(),
-          headers: header,
+        Constants.backendURL +
+            'admin/' +
+            'waitingReportedUsers/suspend/' +
+            userName +
+            '?suspendedDaysAmount=' +
+            daysOfSuspension.toString(),
+        headers: header,
       );
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(response.body.toString());
       }
       var data = json.decode(response.body)['data'];
-      print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+      print(
+          'REQUESTS.DART: getWaitingReportedPosts received' + data.toString());
       return true;
     } else {
       return true;
@@ -946,13 +975,13 @@ class Requests {
   Future<Map<int, Post>> getWaitingReportedPosts() async {
     print('REQUESTS.DART: getWaitingReportedPosts starts');
     var response = await http.get(
-        Constants.backendURL + 'admin/'+'waitingReportedPosts',
+        Constants.backendURL + 'admin/' + 'waitingReportedPosts',
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getWaitingReportedPosts received'+data.toString());
+    print('REQUESTS.DART: getWaitingReportedPosts received' + data.toString());
     //[{id: 8, postOwnerName: admin, postText: my post #topic, postTopic: #topic, postGeoName: null}]
     Map<int, Post> posts = {};
     for (int i = 0; i < data.length; i++) {
@@ -962,12 +991,13 @@ class Requests {
       var videoURL = data[i]['postVideoURL'];
       var placeName = data[i]['postGeoName'];
       Post thisPost = Post().from(
-          text: text,
-          image: image,
-          topic: topic,
-          videoURL: videoURL,
-          placeName: placeName,
-          postOwnerName: data[i]['postOwnerName'],);
+        text: text,
+        image: image,
+        topic: topic,
+        videoURL: videoURL,
+        placeName: placeName,
+        postOwnerName: data[i]['postOwnerName'],
+      );
       thisPost.userDislikedIt = data[i]['userDislikedIt'] == 'true' ||
           data[i]['userDislikedIt'] == true;
       thisPost.userLikedIt =
@@ -980,15 +1010,15 @@ class Requests {
   Future<List<List<String>>> getWaitingReportedUsers() async {
     print('REQUESTS.DART: getWaitingReportedUsers starts');
     var response = await http.get(
-        Constants.backendURL + 'admin/'+'waitingReportedUsers',
+        Constants.backendURL + 'admin/' + 'waitingReportedUsers',
         headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getWaitingReportedUsers received'+data.toString());
+    print('REQUESTS.DART: getWaitingReportedUsers received' + data.toString());
     //[{userId: 1, username: admin}]
-    List<String> reportedUsers=[];
+    List<String> reportedUsers = [];
     for (int i = 0; i < data.length; i++) {
       reportedUsers.add(data[i]['username'].toString());
     }
@@ -999,22 +1029,21 @@ class Requests {
     return a;
   }
 
-  Future <List<List<String>>> search(String text) async {
+  Future<List<List<String>>> search(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
-    if(isAdmin)
-      url =Constants.backendURL + 'admin/search/'+text;
+    if (isAdmin)
+      url = Constants.backendURL + 'admin/search/' + text;
     else
-      url=Constants.backendURL + 'search/'+text;
-    var response = await http.get(
-        url,
-        headers: header);
+      url = Constants.backendURL + 'search/' + text;
+    var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
     //[{userId: 1, username: admin}]
-    List<String> resultUsers=[];
+    List<String> resultUsers = [];
+    //it throws an error here when query is null but i think it works properly with that, may need to change
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
     }

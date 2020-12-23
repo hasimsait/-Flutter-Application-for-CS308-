@@ -182,9 +182,11 @@ packages:
   flutter_login:
     dependency: "direct main"
     description:
-      name: flutter_login
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: ec07b80a7789be04e96a0e7d8f16fc6f40e6a398
+      url: "https://github.com/hasimsait/flutter_login"
+    source: git
     version: "1.0.14"
   flutter_plugin_android_lifecycle:
     dependency: transitive
