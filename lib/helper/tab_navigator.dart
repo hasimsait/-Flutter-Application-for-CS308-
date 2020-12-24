@@ -3,6 +3,7 @@ import '../feed.dart';
 import '../search.dart';
 import '../profile.dart';
 import '../notifications.dart';
+import '../messages.dart';
 
 class TabNavigatorRoutes {
   static const String root = '/';
@@ -22,6 +23,7 @@ class TabNavigator extends StatelessWidget {
       child = Feed();
     else if (tabItem == "Search")
       child = Search();
+    else if (tabItem == "Messages") child = Messages();
     else if (tabItem == "Notifications")
       child = Notifications();
     else if (tabItem == "Profile") child = Profile("");
