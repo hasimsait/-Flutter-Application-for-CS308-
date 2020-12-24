@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:teamone_social_media/helper/requests.dart';
 import 'package:web_socket_channel/io.dart';
 import '../feed.dart';
 import '../search.dart';
 import '../profile.dart';
 import '../notifications.dart';
 import '../messages.dart';
+import 'constants.dart';
 
 class TabNavigatorRoutes {
   static const String root = '/';
@@ -24,9 +26,9 @@ class TabNavigator extends StatelessWidget {
       child = Feed();
     else if (tabItem == "Search")
       child = Search();
-    else if (tabItem == "Messages") child = Messages(channel: IOWebSocketChannel.connect('ws://echo.websocket.org'),);
+    else if (tabItem == "Messages") child = Messages(channel: IOWebSocketChannel.connect(Constants.UrL+'chat/topic/messages/'+Requests.currUserName),);//TODO fix this
     else if (tabItem == "Notifications")
-      child = Notifications();
+      child = Notifications(channel: IOWebSocketChannel.connect(Constants.UrL+'chat/topic/messages/'+Requests.currUserName),);//TODO replace w notif
     else if (tabItem == "Profile") child = Profile("");
     return Navigator(
       key: navigatorKey,

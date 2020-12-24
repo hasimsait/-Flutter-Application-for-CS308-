@@ -10,6 +10,7 @@ class Constants {
   //static const String backendURL ="https://www.teamone_social.ml/api/v1/";//.ml is free
   static const String backendURL =
       "http://206.81.17.79:8080/api/v1/"; //it has not been deployed yet
+  static const String UrL='ws://206.81.17.79:8080/';
   //Some of them are not really endpoints, I'm aware of it.
   static const String signInEndpoint = "auth/login";
   static const String signUpEndpoint = "auth/sign-up";

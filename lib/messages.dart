@@ -1,7 +1,8 @@
-//TODO Clicking a location or hashtag or searching anything opens this route. Display a subscribe button on top if it is a topic
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'helper/constants.dart';
 import 'helper/requests.dart';
 
 class Messages extends StatefulWidget {
@@ -15,10 +16,10 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   final WebSocketChannel channel;
   _MessagesState(this.channel);
-  String query = "";
   Widget prewMessages=Padding(padding: EdgeInsets.all(0.3));
   List<Widget> aaaaaaaaaaaa=[Padding(padding:EdgeInsets.all(0.3) )];
   final _postFieldController = TextEditingController();
+  final _receiverFieldController = TextEditingController();
 
   void initState() {
     _postFieldController.addListener(() {
@@ -30,6 +31,15 @@ class _MessagesState extends State<Messages> {
         composing: TextRange.empty,
       );
     });
+    _receiverFieldController.addListener(() {
+      final text = _receiverFieldController.text;
+      _receiverFieldController.value = _receiverFieldController.value.copyWith(
+        text: text,
+        selection:
+        TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
     aaaaaaaaaaaa=[Padding(padding:EdgeInsets.all(0.3) )];
     super.initState();
   }
@@ -37,13 +47,19 @@ class _MessagesState extends State<Messages> {
   void dispose() {
     widget.channel.sink.close();
     _postFieldController.dispose();
+    _receiverFieldController.dispose();
     super.dispose();
   }
 
   void _sendMessage() {
-    if (_postFieldController.text.isNotEmpty) {
-      widget.channel.sink.add(_postFieldController.text);
-      aaaaaaaaaaaa.add(Text(_postFieldController.text));
+    if (_postFieldController.text.isNotEmpty && _receiverFieldController.text.isNotEmpty) {
+
+
+      WebSocketChannel sendTo=IOWebSocketChannel.connect(Constants.UrL+'/app/chat/'+_receiverFieldController.text);
+      sendTo.sink.add(_postFieldController.text);
+      sendTo.sink.close();
+
+      aaaaaaaaaaaa.add(Text(  _postFieldController.text+ 'to: '+ _receiverFieldController.text));
     }
   }
 
@@ -51,13 +67,9 @@ class _MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
 
     return new Scaffold(
-      appBar: (query == null || query == "")
-          ? AppBar(
-              title: Text('Search'),
-            ) //flutter may not like that
-          : new AppBar(
+      appBar:  AppBar(
               title: new Text(
-                'Search',
+                'Messages',
                 textAlign: TextAlign.center,
               ),
             ),
@@ -68,12 +80,29 @@ class _MessagesState extends State<Messages> {
               stream: widget.channel.stream,
               builder: (context, snapshot) {
                 aaaaaaaaaaaa.add(Text(snapshot.hasData ? '${snapshot.data}' : ''));
+                print(snapshot.toString());
                 return _displayMessages(aaaaaaaaaaaa);
               },
             ),
             Padding(
               padding: const EdgeInsets.all(3),
             ),
+            SizedBox(
+              child: TextFormField(
+                controller: _receiverFieldController,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText:
+                    'Enter the receiver\'s name here.'),
+                autofocus: false,
+                maxLength: 340,
+                maxLines: 1,
+                style: TextStyle(fontSize: 25),
+              ),
+              height: 70,
+              width: 340,
+            ),
+
             Row(
               children: <Widget>[
                 SizedBox(
@@ -82,7 +111,7 @@ class _MessagesState extends State<Messages> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText:
-                            'Enter the name of the user you want to search here.'),
+                            'Enter your message here.'),
                     autofocus: false,
                     maxLength: 340,
                     maxLines: 1,
