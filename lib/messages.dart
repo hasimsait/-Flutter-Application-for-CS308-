@@ -53,10 +53,13 @@ class _MessagesState extends State<Messages> {
     client = StompClient(
         config: StompConfig.SockJS(
             url: Constants.socketUrL,
-            onConnect: onConnectCallback
+            onConnect: onConnectCallback,
+            webSocketConnectHeaders: Requests.header,
+            stompConnectHeaders: Requests.header,
+            onWebSocketError: (frame) => print(frame.toString()),
+            onStompError: (frame) => print(frame.toString())
         )
     );
-
     super.initState();
   }
   void onConnectCallback(StompClient client, StompFrame connectFrame) {
