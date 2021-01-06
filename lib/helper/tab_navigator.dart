@@ -26,9 +26,9 @@ class TabNavigator extends StatelessWidget {
       child = Feed();
     else if (tabItem == "Search")
       child = Search();
-    else if (tabItem == "Messages") child = Messages(channel: IOWebSocketChannel.connect(Constants.UrL+'chat/topic/messages/'+Requests.currUserName),);//TODO fix this
+    else if (tabItem == "Messages") child = Messages(channel: IOWebSocketChannel.connect('ws://echo.websocket.org'),);//TODO fix this
     else if (tabItem == "Notifications")
-      child = Notifications(channel: IOWebSocketChannel.connect(Constants.UrL+'chat/topic/messages/'+Requests.currUserName),);//TODO replace w notif
+      child = Notifications(channel: IOWebSocketChannel.connect('ws://echo.websocket.org'),);//TODO replace w notif
     else if (tabItem == "Profile") child = Profile("");
     return Navigator(
       key: navigatorKey,

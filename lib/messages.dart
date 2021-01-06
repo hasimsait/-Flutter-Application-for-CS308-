@@ -55,11 +55,14 @@ class _MessagesState extends State<Messages> {
     if (_postFieldController.text.isNotEmpty && _receiverFieldController.text.isNotEmpty) {
 
 
-      WebSocketChannel sendTo=IOWebSocketChannel.connect(Constants.UrL+'/app/chat/'+_receiverFieldController.text);
+      //WebSocketChannel sendTo=IOWebSocketChannel.connect('ws://echo.websocket.org');
+      var sendTo=channel;
+      print('MESSAGES.DART: connected to socket');
       sendTo.sink.add(_postFieldController.text);
-      sendTo.sink.close();
-
-      aaaaaaaaaaaa.add(Text(  _postFieldController.text+ 'to: '+ _receiverFieldController.text));
+      print('MESSAGES.DART: connected and added to sink');
+      //sendTo.sink.close();
+      //print('MESSAGES.DART: sink closed');
+      aaaaaaaaaaaa.add(Text( '"'+ _postFieldController.text+'"'+ ' to: '+ _receiverFieldController.text));
     }
   }
 
@@ -135,6 +138,7 @@ class _MessagesState extends State<Messages> {
   }
 
   Widget _displayMessages(List<Widget> aaaaaaaaaaaa) {
+
     return Column( children: aaaaaaaaaaaa
     );
   }
