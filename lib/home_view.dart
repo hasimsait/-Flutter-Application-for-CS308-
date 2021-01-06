@@ -8,10 +8,11 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String _currentPage = "Feed";
-  List<String> pageKeys = ["Feed", "Search", "Notifications", "Profile"];
+  List<String> pageKeys = ["Feed", "Search", 'Messages',"Notifications", "Profile"];
   Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
     "Feed": GlobalKey<NavigatorState>(),
     "Search": GlobalKey<NavigatorState>(),
+    "Messages": GlobalKey<NavigatorState>(),
     "Notifications": GlobalKey<NavigatorState>(),
     "Profile": GlobalKey<NavigatorState>(),
   };
@@ -47,6 +48,7 @@ class _HomeViewState extends State<HomeView> {
         body: Stack(children: <Widget>[
           _buildOffstageNavigator("Feed"),
           _buildOffstageNavigator("Search"),
+          _buildOffstageNavigator("Messages"),
           _buildOffstageNavigator("Notifications"),
           _buildOffstageNavigator("Profile"),
         ]),
@@ -64,6 +66,10 @@ class _HomeViewState extends State<HomeView> {
             BottomNavigationBarItem(
               icon: new Icon(Icons.search),
               label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.email),
+              label: 'Messages',
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.notifications),

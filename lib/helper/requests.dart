@@ -22,6 +22,7 @@ class Requests {
 
   Future<String> auth(LoginData data) async {
     if (Constants.DEPLOYED) {
+      print('REQUESTS.DART: logging in with the credentials.');
       var response = await http.post(
         Constants.backendURL + Constants.signInEndpoint,
         headers: <String, String>{

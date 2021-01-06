@@ -36,6 +36,10 @@ dependencies:
   video_thumbnail: ^0.2.4
   path_provider:
   place_picker: ^0.9.17
+  web_socket_channel:
+  stomp_dart_client:
+    git:
+      https://github.com/blackhorse-one/stomp_dart_client.git
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
