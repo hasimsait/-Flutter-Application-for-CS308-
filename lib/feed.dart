@@ -17,7 +17,8 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   User currUser;
-  List<Widget> postWidgets=[];
+  List<Widget> postWidgets = [];
+  Widget fml =Text("Please wait while we retrieve your feed");
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
     if (postWidgets != null && postWidgets != []) {
@@ -30,22 +31,28 @@ class _FeedState extends State<Feed> {
       setState(() {});
     }
 
-    List<Widget> temp=[];
-    setState(() {
+    List<Widget> temp = [];
 
+    setState(() {
+      fml=Text("Please wait while we retrieve your feed");
     });
+    /*todo add some delay here so the old ones are deleted*/
+
     posts.forEach((key, value) {
       print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
-
       temp.add(
           SpecificPost(currentUserName: currUser.userName, currPost: value));
       temp.add(Padding(
         padding: const EdgeInsets.all(10),
       ));
     });
-setState(() {
-    postWidgets=temp;
-});
+    postWidgets = temp;
+    fml=ListView(
+      children: postWidgets,
+    );
+    setState(() {
+
+    });
   }
 
   @override
@@ -79,9 +86,9 @@ setState(() {
                 ),
         ],
       ),
-      body: new Center(
-        child: ListView(
-          children: postWidgets,
+      body: Center(
+        child: Container(
+          child: fml,
         ),
       ),
       floatingActionButton: new FloatingActionButton(
@@ -92,6 +99,9 @@ setState(() {
           ).then((value) {
             if (Constants.DEPLOYED) {
               _loadFeed();
+              setState(() {
+
+              });
             } else {}
           });
         },
@@ -102,10 +112,10 @@ setState(() {
   }
 
   void _loadFeed() {
-    postWidgets.clear();
-    postWidgets.add(Text(
-      'Please wait while we retrieve your feed.',
-    ));
+    fml=Text("Please wait while we retrieve your feed");
+    setState(() {
+
+    });
     //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
     currUser.getFeedItems().then((feedItems) {
       if (feedItems != null) {
@@ -115,18 +125,17 @@ setState(() {
             setState(() {});
           });
         } else {
-          postWidgets.clear();
-          postWidgets.add(Text(
+          fml=Text(
             'Looks like there are no posts here, come back later!',
-          ));
+          );
           print('FEED.DART: no feed items. but not null');
           setState(() {});
         }
       } else {
         postWidgets.clear();
-        postWidgets.add(Text(
+        fml=Text(
           'Looks like there are no posts here, come back later!',
-        ));
+        );
         print('FEED.DART: no feed items. and null');
         setState(() {});
       }
