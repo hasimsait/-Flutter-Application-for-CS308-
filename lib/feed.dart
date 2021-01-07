@@ -17,48 +17,35 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   User currUser;
-  ListView feedView;
-  List<Widget> postWidgets;
+  List<Widget> postWidgets=[];
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
-    if (postWidgets != null)
+    if (postWidgets != null && postWidgets != []) {
       postWidgets.forEach((element) {
-        element = null;
+        setState(() {
+          element = SizedBox();
+        });
       });
-    postWidgets = null;
-    //this should be getting rid of the specificpost instances. somehow it doesn't. FUCK flutter.
-    postWidgets = [];
+      postWidgets.clear();
+      setState(() {});
+    }
+
+    List<Widget> temp=[];
+    setState(() {
+
+    });
     posts.forEach((key, value) {
       print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
-      /*if (value.postComments != null) {
-        print('FEED.DART: ' +
-            value.postID.toString() +
-            ' has ' +
-            value.postComments.length.toString() +
-            ' comments.');
-        print('FEED.DART: ' +
-            value.postID.toString() +
-            ' last comment is: ' +
-            value.postComments.entries.last.value);
-      }*/
-      var postWidget =
-          new SpecificPost(currentUserName: currUser.userName, currPost: value);
-      //this new doesn't do shit. That's an issue since I need to clean that up
-      //in terms of deleting posts and displaying new ones it will be fine but it will not display comments in realtime unless if that new does what it's supposed to do.
-      //TODO find a fix for that. setting it to null etc did not fix it. Garbage collector should've picked them up.
-      //https://dart.dev/guides/language/effective-dart/usage#dont-use-new GREAT IDEA. CAN'T DELETE OBJECT, CAN'T CREATE NEW.
-      //I'll deal with it later. I already spent 3+ hours bc of this dumb thing.
-      postWidgets.add(postWidget);
-      postWidgets.add(Padding(
+
+      temp.add(
+          SpecificPost(currentUserName: currUser.userName, currPost: value));
+      temp.add(Padding(
         padding: const EdgeInsets.all(10),
       ));
     });
-    if (postWidgets != null) {
-      return ListView(
-        children: postWidgets,
-      );
-    } else
-      return Text("WTF");
+setState(() {
+    postWidgets=temp;
+});
   }
 
   @override
@@ -93,7 +80,9 @@ class _FeedState extends State<Feed> {
         ],
       ),
       body: new Center(
-        child: feedView,
+        child: ListView(
+          children: postWidgets,
+        ),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
@@ -113,42 +102,33 @@ class _FeedState extends State<Feed> {
   }
 
   void _loadFeed() {
-    feedView = ListView(
-      children: <Widget>[
-        Text(
-          'Please wait while we retrieve your feed.',
-        ),
-      ],
-    );
+    postWidgets.clear();
+    postWidgets.add(Text(
+      'Please wait while we retrieve your feed.',
+    ));
     //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
-    currUser.getFeedItems().then((value) {
-      feedView = null;
-      if (value != null) {
-        if (value.length != 0) {
-          displayFeed(value).then((value) {
+    currUser.getFeedItems().then((feedItems) {
+      if (feedItems != null) {
+        if (feedItems.length != 0) {
+          displayFeed(feedItems).then((value) {
             print("FEED.DART: We got the listview feed.");
-            feedView = value;
             setState(() {});
           });
         } else {
-          feedView = ListView(
-            children: <Widget>[
-              Text(
-                'Looks like there are no posts here, come back later!',
-              ),
-            ],
-          );
-          print('FEED.DART: no feed items.');
+          postWidgets.clear();
+          postWidgets.add(Text(
+            'Looks like there are no posts here, come back later!',
+          ));
+          print('FEED.DART: no feed items. but not null');
+          setState(() {});
         }
       } else {
-        feedView = ListView(
-          children: <Widget>[
-            Text(
-              'Looks like there are no posts here, come back later!',
-            ),
-          ],
-        );
-        print('FEED.DART: no feed items.');
+        postWidgets.clear();
+        postWidgets.add(Text(
+          'Looks like there are no posts here, come back later!',
+        ));
+        print('FEED.DART: no feed items. and null');
+        setState(() {});
       }
     });
   }

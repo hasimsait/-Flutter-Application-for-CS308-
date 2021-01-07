@@ -186,6 +186,7 @@ class Requests {
         var topic = data['postTopic'];
         var videoURL = data['postVideoURL'];
         var placeName = data['postGeoName'];
+        var placeGeoID = data['postGeoId'];
         var postID = data['postId'];
         var postDate = data['postDate'];
         var postLikes = data['totalPostLike'];
@@ -198,6 +199,7 @@ class Requests {
             topic: topic,
             videoURL: videoURL,
             placeName: placeName,
+            placeGeoID: placeGeoID,
             postID: postID,
             postOwnerName: data['postOwnerName'],
             postDate: postDate,
@@ -320,6 +322,8 @@ class Requests {
         print('error');
         print(jsonDecode(response.body));
       }
+      print(jsonDecode(response.body));
+      print('___________________________________________________________________');
       var data = json.decode(response.body)['data'];
       if (data == null) {
         return null;
@@ -331,6 +335,7 @@ class Requests {
         var topic = data[i]['postTopic'];
         var videoURL = data[i]['postVideoURL'];
         var placeName = data[i]['postGeoName'];
+        var placeGeoID = data[i]['postGeoId'];
         var postID = data[i]['postId'];
         var postDate = data[i]['postDate'];
         var postLikes = data[i]['totalPostLike'];
@@ -342,6 +347,7 @@ class Requests {
             topic: topic,
             videoURL: videoURL,
             placeName: placeName,
+            placeGeoID: placeGeoID,
             postID: postID,
             postOwnerName: data[i]['postOwnerName'],
             postDate: postDate,
@@ -362,10 +368,13 @@ class Requests {
           thisPost.postComments = comments;
         } catch (Exception) {
           print('REQUESTS.DART: comments fucked up');
+          print('___________________________________________________________________');
+
           thisPost.postComments = null;
         }
         posts[i] = thisPost;
       }
+      print("REQUESTS.DART sending "+posts.length.toString()+" posts.");
       return posts;
       //parse the response so it looks like the static map below.
     } else {
@@ -482,6 +491,7 @@ class Requests {
       var topic = data['userPostsList'][i]['postTopic'];
       var videoURL = data['userPostsList'][i]['postVideoURL'];
       var placeName = data['userPostsList'][i]['postGeoName'];
+      var placeGeoID = data['userPostsList'][i]['postGeoId'];
       var postID = data['userPostsList'][i]['postId'];
       var postDate = data['userPostsList'][i]['postDate'];
       var postLikes = data['userPostsList'][i]['totalPostLike'];
@@ -493,6 +503,7 @@ class Requests {
           topic: topic,
           videoURL: videoURL,
           placeName: placeName,
+          placeGeoID: placeGeoID,
           postID: postID,
           postOwnerName: userName,
           postDate: postDate,
@@ -864,7 +875,7 @@ class Requests {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getUserInfo requested info of ' +
+    print('REQUESTS.DART: getFollowedOf requested info of ' +
         userName +
         ' for listing its followed and received: ' +
         data.toString());
@@ -893,9 +904,6 @@ class Requests {
     a.add(afollowedUsers);
     a.add(afollowedTopics);
     a.add(afollowedLocations);
-    print(
-        '-------------------------------------------------------------------------' +
-            a[0].length.toString());
     return a;
   }
 
@@ -909,7 +917,7 @@ class Requests {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print('REQUESTS.DART: getUserInfo requested info of ' +
+    print('REQUESTS.DART: getFollowersOf requested info of ' +
         userName +
         ' for listing its followers and received: ' +
         data.toString());
@@ -1030,7 +1038,7 @@ class Requests {
     return a;
   }
 
-  Future<List<List<String>>> search(String text) async {
+  Future<List<List<String>>> searchUser(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
     if (isAdmin)
@@ -1042,9 +1050,17 @@ class Requests {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
+    print(data.toString());
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
+    if (data==null) {
+        List<List<String>> a = [];
+        a.add([]);
+        a.add([]);
+        a.add([]);
+        return a;
+    }
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
     }
@@ -1052,6 +1068,69 @@ class Requests {
     a.add(resultUsers);
     a.add([]);
     a.add([]);
+    return a;
+  }
+
+  Future<List<List<String>>> searchTopic(String text) async {
+    print('REQUESTS.DART: search starts');
+    String url;
+    if(text.indexOf('#')!=-1){
+      text=text.substring(1);
+    }
+    url = Constants.backendURL + 'search/topic/' + text;
+    var response = await http.get(url, headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print(data.toString());
+    //[{contentName: #topic}]
+    List<String> resultTopics = [];
+    //it throws an error here when query is null but i think it works properly with that, may need to change
+    if (data==null) {
+      List<List<String>> a = [];
+      a.add([]);
+      a.add([]);
+      a.add([]);
+      return a;
+    }
+    for (int i = 0; i < data.length; i++) {
+      resultTopics.add(data[i]['contentName'].toString());
+    }
+    List<List<String>> a = [];
+    a.add([]);
+    a.add(resultTopics);
+    a.add([]);
+    return a;
+  }
+
+  Future<List<List<String>>>searchLocation(String text)async {
+    print('REQUESTS.DART: search starts');
+    String url;
+    url = Constants.backendURL + 'search/location/' + text;
+    var response = await http.get(url, headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    print(data.toString());
+    //[{userId: 1, username: admin}]
+    List<String> resultUsers = [];
+    //it throws an error here when query is null but i think it works properly with that, may need to change
+    if (data==null) {
+      List<List<String>> a = [];
+      a.add([]);
+      a.add([]);
+      a.add([]);
+      return a;
+    }
+    for (int i = 0; i < data.length; i++) {
+      resultUsers.add(data[i]['username'].toString());
+    }
+    List<List<String>> a = [];
+    a.add([]);
+    a.add([]);
+    a.add(resultUsers);
     return a;
   }
 }

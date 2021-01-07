@@ -8,18 +8,20 @@ import 'helper/requests.dart';
 
 class DynamicWidgetList extends StatefulWidget {
   final List<List<dynamic>> elements;
+  final bool noAppBar;
   //[username],
   //[topicName],
   //[locationId],
   //in this order, always.
-  DynamicWidgetList(this.elements);
+  DynamicWidgetList(this.elements,{this.noAppBar});
   @override
-  State<StatefulWidget> createState() => _DynamicWidgetListState(this.elements);
+  State<StatefulWidget> createState() => _DynamicWidgetListState(this.elements,(this.noAppBar!=null&&this.noAppBar==true));
 }
 
 class _DynamicWidgetListState extends State<DynamicWidgetList> {
   List<List<dynamic>> elements;
-  _DynamicWidgetListState(this.elements);
+  bool noAppBar;
+  _DynamicWidgetListState(this.elements,this.noAppBar);
   List<Widget> elementWidgets = [];
 
   void initState() {
@@ -75,6 +77,12 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
 
   @override
   Widget build(BuildContext context) {
+    if (this.noAppBar!=null && this.noAppBar==true)
+      return new Scaffold(
+        body: new Center(
+          child: ListView(children: elementWidgets),
+        ),
+      );
     return new Scaffold(
       appBar: AppBar(),
       body: new Center(
@@ -96,9 +104,11 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
         thisUser = await thisUser.getInfo();
         temp.insert(
           i,
+          Row(children:<Widget>[
           IconButton(
+            iconSize: 50,
             icon: CircleAvatar(
-                radius: 25,
+                radius: 50,
                 backgroundImage:
                     Image.memory(base64Decode(thisUser.myProfilePicture))
                         .image),
@@ -109,7 +119,13 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
               );
             },
           ),
-        );
+            Text(
+              user,
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 25),
+            ),
+          ]
+        ));
       } catch (Exception) {
         print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
       }
