@@ -25,26 +25,6 @@ class _SearchState extends State<Search> {
     'You can search users, topics and locations now!.',
   );
   void initState() {
-    //TODO check if the user is following the location/topic
-    /*if (locationID != null || locationID != "") {
-      if (locationName != null || locationName != "") {
-        query = locationName;
-        Requests().isFollowingLocation(locationID).then((value) {
-          isFollowing = value;
-          setState(() {});
-        });
-      }
-    } else {
-      print(
-          "SEARCH.DART: YOU FORGOT TO PASS THE LOCATION NAME ALONG WITH THE LOCATION ID :))))");
-    }
-    if (topic != null || topic != "") {
-      query = topic;
-      Requests().isFollowingTopic(topic).then((value) {
-        isFollowing = value;
-        setState(() {});
-      });
-    }*/
     _postFieldController.addListener(() {
       final text = _postFieldController.text;
       _postFieldController.value = _postFieldController.value.copyWith(
@@ -113,6 +93,7 @@ class _SearchState extends State<Search> {
                     results = Text(
                       'Please wait a while we retrieve your results.',
                     );
+                    setState(() {});
                     if (_postFieldController != null &&
                         _postFieldController.text != null) {
                       Requests()
@@ -127,6 +108,7 @@ class _SearchState extends State<Search> {
                     results = Text(
                       'Please wait a while we retrieve your results.',
                     );
+                    setState(() {});
                     if (_postFieldController != null &&
                         _postFieldController.text != null) {
                       Requests()
@@ -141,6 +123,7 @@ class _SearchState extends State<Search> {
                     results = Text(
                       'Please wait a while we retrieve your results.',
                     );
+                    setState(() {});
                     if (_postFieldController != null &&
                         _postFieldController.text != null) {
                       Requests()
@@ -162,17 +145,5 @@ class _SearchState extends State<Search> {
         ),
       ),
     );
-    //what if we seperate them??? like twitter.
-    // searchposts=feed.dart but with the results
-    // search users is a listview of circle avatars
-    // search location is similiar to users actually but text only.
-
-    //or I can ask for a typeOfResult and
-    // render the posts with specificPost
-    // Row (CircleAvatar... Column(...)) (same thing I do above the posts)
-    // Column(Text()) for place I guess?
-
-    //I like the first way better but we will see. TODO implement search.
-    //request the feed of the topic or locationID, check if user is subscribed, if not display a subscribe button,
   }
 }
