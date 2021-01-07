@@ -18,11 +18,11 @@ class _SearchState extends State<Search> {
   String locationID = "";
   String locationName = "";
   _SearchState(this.topic, this.locationID, this.locationName);
-  String query = "";
+  String query = 'Search';
   bool isFollowing;
   final _postFieldController = TextEditingController();
   Widget results = Text(
-    'Please wait a while we retrieve your results.',
+    'You can search users, topics and locations now!.',
   );
   void initState() {
     //TODO check if the user is following the location/topic
@@ -65,85 +65,29 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      //appbar displays the search query
-      //if the query is a topic or a location (passed as a param) display a follow button
-      //a search bar with initial value topic/locationname
-      //listview with the retrieved results (may be post, may be user. be careful w that)
-      appBar: (query == null || query == "")
-          ? AppBar(
-              title: Text('Search'),
-            ) //flutter may not like that
-          : new AppBar(
-              title: new Text(
-                'Search',
-                textAlign: TextAlign.center,
-              ),
-              /*actions: <Widget>[
-                  isFollowing
-                      ? RaisedButton(
-                          onPressed: () {
-                            if (topic != null || topic != "")
-                              Requests().followTopic(topic).then((value) {
-                                isFollowing = value;
-                                setState(() {});
-                              });
-                            else if (locationID != null || locationID != "")
-                              Requests()
-                                  .followLocation(locationID)
-                                  .then((value) {
-                                isFollowing = value;
-                                setState(() {});
-                              });
-                            else {
-                              //display nothing, it's usual search
-                            }
-                          },
-                          child: Text("UNFOLLOW"),
-                        )
-                      : RaisedButton(
-                          onPressed: () {
-                            if (topic != null || topic != "")
-                              Requests().unfollowTopic(topic).then((value) {
-                                isFollowing = !value;
-                                setState(() {});
-                              });
-                            else if (locationID != null || locationID != "")
-                              Requests()
-                                  .unfollowLocation(locationID)
-                                  .then((value) {
-                                isFollowing = !value;
-                                setState(() {});
-                              });
-                            else {
-                              //display nothing, it's usual search
-                            }
-                          },
-                          child: Text("FOLLOW"),
-                        ),
-                ]*/
-            ),
       body: Center(
         child: Column(
           children: <Widget>[
-            Padding(padding: const EdgeInsets.all(3),),
+            Padding(
+              padding: const EdgeInsets.all(15),
+            ),
             Row(
               children: <Widget>[
                 SizedBox(
                   child: TextFormField(
                     controller: _postFieldController,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText:
-                            'Enter the name of the user you want to search here.'),
+                        border: OutlineInputBorder(), hintText: query),
                     autofocus: false,
-                    maxLength: 340,
                     maxLines: 1,
                     style: TextStyle(fontSize: 25),
+                    textAlignVertical: TextAlignVertical.bottom,
                   ),
-                  height: 70,
-                  width: 340,
+                  height: 35,
+                  width: 320,
                 ),
                 IconButton(
+                    padding: EdgeInsets.all(0),
                     icon: Icon(Icons.search),
                     onPressed: () {
                       results = Text(
@@ -152,18 +96,67 @@ class _SearchState extends State<Search> {
                       if (_postFieldController != null &&
                           _postFieldController.text != null) {
                         Requests()
-                            .search(_postFieldController.text)
+                            .searchUser(_postFieldController.text)
                             .then((value) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DynamicWidgetList(value)),
-                          );
+                          results = DynamicWidgetList(value, noAppBar: true);
+                          setState(() {});
                         });
                       }
                     })
               ],
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            ButtonBar(
+                children: <Widget>[
+                  FlatButton(onPressed: () {
+                    results = Text(
+                      'Please wait a while we retrieve your results.',
+                    );
+                    if (_postFieldController != null &&
+                        _postFieldController.text != null) {
+                      Requests()
+                          .searchUser(_postFieldController.text)
+                          .then((value) {
+                        results = DynamicWidgetList(value, noAppBar: true);
+                        setState(() {});
+                      });
+                    }
+                  }, child: Text("People")),
+                  FlatButton(onPressed: () {
+                    results = Text(
+                      'Please wait a while we retrieve your results.',
+                    );
+                    if (_postFieldController != null &&
+                        _postFieldController.text != null) {
+                      Requests()
+                          .searchTopic(_postFieldController.text)
+                          .then((value) {
+                        results = DynamicWidgetList(value, noAppBar: true);
+                        setState(() {});
+                      });
+                    }
+                  }, child: Text("Topic")),
+                  FlatButton(onPressed: () {
+                    results = Text(
+                      'Please wait a while we retrieve your results.',
+                    );
+                    if (_postFieldController != null &&
+                        _postFieldController.text != null) {
+                      Requests()
+                          .searchLocation(_postFieldController.text)
+                          .then((value) {
+                        results = DynamicWidgetList(value, noAppBar: true);
+                        setState(() {});
+                      });
+                    }
+                  }, child: Text("Location")),
+                ],
+                alignment: MainAxisAlignment.center,
+                buttonPadding: EdgeInsets.all(0)),
+            Container(
+              height: 577.0,
+              child: results == null ? SizedBox() : results,
             ),
           ],
         ),

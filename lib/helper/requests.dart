@@ -1030,7 +1030,7 @@ class Requests {
     return a;
   }
 
-  Future<List<List<String>>> search(String text) async {
+  Future<List<List<String>>> searchUser(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
     if (isAdmin)
@@ -1045,6 +1045,13 @@ class Requests {
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
+    if (data==null) {
+        List<List<String>> a = [];
+        a.add([]);
+        a.add([]);
+        a.add([]);
+        return a;
+    }
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
     }
@@ -1054,4 +1061,8 @@ class Requests {
     a.add([]);
     return a;
   }
+
+  Future<List<List<String>>> searchTopic(String text) async {}
+
+  Future<List<List<String>>>searchLocation(String text)async {}
 }
