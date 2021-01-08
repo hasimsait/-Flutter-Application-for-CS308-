@@ -9,6 +9,7 @@ import 'user.dart';
 import 'edit_user_info.dart';
 import 'specificPost.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:teamone_social_media/recommendations.dart';
 import 'dart:io';
 
 class Profile extends StatefulWidget {
@@ -34,6 +35,7 @@ class _ProfileState extends State<Profile> {
   _ProfileState(this.userName);
   List<Widget> postWidgets;
   int daysOfSuspension = 0;
+  Widget recommendations=Text('Please wait while we retrieve recommendations');
 
   @override
   void initState() {
@@ -58,6 +60,9 @@ class _ProfileState extends State<Profile> {
       setState(() {
         updateFields(value);
       });
+    });
+    getRecommended();
+    setState(() {
     });
     super.initState();
   }
@@ -115,6 +120,7 @@ class _ProfileState extends State<Profile> {
                   style: TextStyle(fontSize: 25),
                 ),
                 userActions(isMyProfile, isFollowing, userName),
+                recommendations,
                 (userName == null || thisUser == null || thisUser.posts == null)
                     ? Text('Please wait while we retrieve the posts.')
                     : viewPosts(userName),
@@ -360,6 +366,16 @@ class _ProfileState extends State<Profile> {
           //todo display success message or failed
         });
       }
+    });
+  }
+
+  void getRecommended() {
+    Requests().getRecommended().then((value) {
+      List<String> userNames=value[0];
+      List<String> commonConnectionCounts=value[1];
+      recommendations=Container(height: 140,width: 250, child:Card(child:Recommendations(userNames: userNames,commonConnectionCounts: commonConnectionCounts)));
+      setState(() {
+      });
     });
   }
 }
