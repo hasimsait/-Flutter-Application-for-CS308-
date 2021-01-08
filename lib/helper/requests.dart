@@ -1113,7 +1113,7 @@ class Requests {
       print(jsonDecode(response.body).toString());
     }
     var data = json.decode(response.body)['data'];
-    print(data.toString());
+    print(json.decode(response.body));
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
@@ -1125,12 +1125,43 @@ class Requests {
       return a;
     }
     for (int i = 0; i < data.length; i++) {
-      resultUsers.add(data[i]['username'].toString());
+      resultUsers.add(data[i]['contentName'].toString());
     }
     List<List<String>> a = [];
     a.add([]);
     a.add([]);
     a.add(resultUsers);
+    return a;
+  }
+  Future<List<List<String>>>getRecommended()async {
+    //todo the mapping is nowhere to be found. Dto is included in another pr.
+    return [['hasimsait','zeynep'],['1','2']];
+    String url;
+    url = Constants.backendURL + 'search/location/' ;
+    throw UnimplementedError();
+    var response = await http.get(url, headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+    }
+    var data = json.decode(response.body)['data'];
+    //print(json.decode(response.body));
+    //[{userId: 1, username: admin}]
+    List<String> resultUsers = [];
+    List<String> commonConnectionCounts=[];
+    //it throws an error here when query is null but i think it works properly with that, may need to change
+    if (data==null) {
+      List<List<String>> a = [];
+      a.add([]);
+      a.add([]);
+      return a;
+    }
+    for (int i = 0; i < data.length; i++) {
+      resultUsers.add(data[i]['username'].toString());
+      commonConnectionCounts.add(data[i]['recommendationCount'].toString());
+    }
+    List<List<String>> a = [];
+    a.add(resultUsers);
+    a.add(commonConnectionCounts);
     return a;
   }
 }
