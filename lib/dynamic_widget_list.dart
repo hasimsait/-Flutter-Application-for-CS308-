@@ -32,16 +32,18 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
         //topic with unfollow button
         try {
           elementWidgets.add(
+              Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
             Row(
               children: <Widget>[
-                Text(elements[1][i]),
+            Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(elements[1][i])]),),
                 RaisedButton(
                     child: Text('unfollow this topic'),
                     onPressed: () {
                       Requests().unfollowTopic(elements[1][i]);
                     })
               ],
-            ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),),),
           );
         } catch (Exception) {
           print('DYNAMIC WIDGET LIST.DART: A TOPIC FUCKED UP WHILE LISTING');
@@ -50,16 +52,18 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
       for (int i = 0; i < elements[2].length; i++) {
         try {
           elementWidgets.add(
+              Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
             Row(
               children: <Widget>[
-                Text(elements[2][i]),
+            Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(elements[2][i]),],),),
                 RaisedButton(
                     child: Text('unfollow this location'),
                     onPressed: () {
                       Requests().unfollowLocation(elements[2][i]);
                     })
               ],
-            ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),),),
           );
         } catch (Exception) {
           print('DYNAMIC WIDGET LIST.DART: A LOCATION FUCKED UP WHILE LISTING');
@@ -104,6 +108,7 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
         thisUser = await thisUser.getInfo();
         temp.insert(
           i,
+            Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
           Row(children:<Widget>[
           IconButton(
             iconSize: 50,
@@ -119,13 +124,13 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
               );
             },
           ),
-            Text(
+                Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(
               user,
               textAlign: TextAlign.left,
               style: TextStyle(fontSize: 25),
-            ),
-          ]
-        ));
+            ),]))
+          ],
+        ))));
       } catch (Exception) {
         print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
       }

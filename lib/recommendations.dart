@@ -66,13 +66,13 @@ class _RecommendationState extends State<Recommendations> {
                       Text(
                         user,
                         textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 20,color: Colors.white),
+                        style: TextStyle(fontSize: 20,),
                       ),
                       Text(
                         commonConnectionCounts[i].toString() +
                             ' common connections',
                         textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 12.4,color: Colors.white),
+                        style: TextStyle(fontSize: 12.4,),
                       ),
                     ],
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -84,7 +84,6 @@ class _RecommendationState extends State<Recommendations> {
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              color: Colors.transparent,
               elevation: 0,
             ),
           ),
