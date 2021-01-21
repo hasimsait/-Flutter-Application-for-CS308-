@@ -1134,11 +1134,10 @@ class Requests {
     return a;
   }
   Future<List<List<String>>>getRecommended()async {
-    //todo the mapping is nowhere to be found. Dto is included in another pr.
-    return [['hasimsait','zeynep'],['1','2']];
+    if(!Constants.DEPLOYED)
+      return [['hasimsait','zeynep'],['1','2']];
     String url;
-    url = Constants.backendURL + 'search/location/' ;
-    throw UnimplementedError();
+    url = Constants.backendURL +'profile/'+currUserName+'recommendations';
     var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
