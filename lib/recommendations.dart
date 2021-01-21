@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:teamone_social_media/profile.dart';
 import 'package:teamone_social_media/user.dart';
-
 
 class Recommendations extends StatefulWidget {
   final List<String> userNames;
@@ -37,52 +37,68 @@ class _RecommendationState extends State<Recommendations> {
     listing = Text('Please wait while we retrieve recommendations');
     setState(() {});
     List<Widget> temp = [];
-    temp.insert(0,Text('Who to follow?',style: TextStyle(fontSize: 25),));
     for (int i = 0; i < userNames.length; i++) {
       try {
         var user = userNames[i];
         User thisUser = User(user);
         thisUser = await thisUser.getInfo();
         temp.insert(
-            i+1,
-            Row(children: <Widget>[
-              IconButton(
-                iconSize: 35,
-                icon: CircleAvatar(
-                    radius: 35,
-                    backgroundImage:
-                        Image.memory(base64Decode(thisUser.myProfilePicture))
-                            .image),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Profile(user)),
-                  );
-                },
-              ),
-              Column(
+          i,
+          FlatButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile(user)),
+              );
+            },
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            color: Colors.transparent,
+            child: Card(
+              child: Row(
                 children: <Widget>[
-                  Text(
-                    user,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 20),
+                  CircleAvatar(
+                      radius: 24,
+                      backgroundImage:
+                          Image.memory(base64Decode(thisUser.myProfilePicture))
+                              .image),
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        user,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 20,color: Colors.white),
+                      ),
+                      Text(
+                        commonConnectionCounts[i].toString() +
+                            ' common connections',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 12.4,color: Colors.white),
+                      ),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                   ),
-                  Text(
-                    commonConnectionCounts[i].toString()+' common connections.',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 15),
-                  ),
+                  Padding(padding: EdgeInsets.all(1.75))
                 ],
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
               ),
-            ],
-              mainAxisAlignment: MainAxisAlignment.center,
+              margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              color: Colors.transparent,
+              elevation: 0,
             ),
+          ),
         );
-      } catch (Exception) {
-        print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
+      } catch (e) {
+        print('RECOMMENDATIONS.DART: A USER FUCKED UP WHILE LISTING');
       }
     }
-    listing = Column(children: temp,crossAxisAlignment: CrossAxisAlignment.center,mainAxisSize: MainAxisSize.min);
+    listing = Container(
+        child: ListView(
+          children: temp,
+          scrollDirection: Axis.horizontal,
+        ),
+        color: Colors.blue);
     setState(() {});
   }
 }

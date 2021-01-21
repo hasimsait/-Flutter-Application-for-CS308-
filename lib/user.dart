@@ -40,7 +40,7 @@ class User {
       return this;
     } else {
       this.myProfilePicture = Constants.sampleProfilePictureBASE64;
-      this.myName = Constants.placeHolderName;
+      this.myName = userName;
       this.isFollowing = true; //true if currentUser is following this user.
       this.followerCt = 100;
       this.followingCt = 99;

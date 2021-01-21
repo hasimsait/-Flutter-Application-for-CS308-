@@ -23,44 +23,51 @@ class Requests {
   Future<String> auth(LoginData data) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART: logging in with the credentials.');
-      var response = await http.post(
-        Constants.backendURL + Constants.signInEndpoint,
-        headers: <String, String>{
+      try {
+        var response = await http.post(
+          Constants.backendURL + Constants.signInEndpoint,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + 'aaa',
+            'Accept': 'application/json',
+          },
+          body: jsonEncode(<String, String>{
+            'username': data.username,
+            'password': data.password,
+          }),
+        );
+        if (response.statusCode >= 400 || response.statusCode < 100)
+          return json.decode(response.body)["message"] == null
+              ? 'Please try again later.'
+              : json.decode(response.body)["message"];
+        Session sessionToken =
+            Session(id: 0, data: json.decode(response.body)["data"]["token"]);
+        await FlutterSession().set('sessionToken', sessionToken);
+        Session userName = Session(
+            id: 1, data: json.decode(response.body)["data"]["userName"]);
+        await FlutterSession().set('userName', userName);
+        print('requests.dart received: ' +
+            json.decode(response.body)["data"].toString() +
+            ' after login.');
+        token = json.decode(response.body)["data"]["token"];
+        header = {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + 'aaa',
+          'Authorization': 'Bearer ' + token,
           'Accept': 'application/json',
-        },
-        body: jsonEncode(<String, String>{
-          'username': data.username,
-          'password': data.password,
-        }),
-      );
-      if (response.statusCode >= 400 || response.statusCode < 100)
-        return json.decode(response.body)["message"];
-      Session sessionToken =
-          Session(id: 0, data: json.decode(response.body)["data"]["token"]);
-      await FlutterSession().set('sessionToken', sessionToken);
-      Session userName =
-          Session(id: 1, data: json.decode(response.body)["data"]["userName"]);
-      await FlutterSession().set('userName', userName);
-      print('requests.dart received: ' +
-          json.decode(response.body)["data"].toString() +
-          ' after login.');
-      token = json.decode(response.body)["data"]["token"];
-      header = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token,
-        'Accept': 'application/json',
-      };
-      currUserName = data.username;
-      var authority = jsonDecode(response.body)['data']['authorities'];
-      for (int i = 0; i < authority.length; i++) {
-        if (authority[i]['authority'].toString() == 'ROLE_ADMIN')
-          isAdmin = true;
-        else
-          isAdmin = false;
+        };
+        currUserName = data.username;
+        var authority = jsonDecode(response.body)['data']['authorities'];
+        for (int i = 0; i < authority.length; i++) {
+          if (authority[i]['authority'].toString() == 'ROLE_ADMIN')
+            isAdmin = true;
+          else
+            isAdmin = false;
+        }
+        return null;
+      } catch (e) {
+        print('REQUESTS.DART: ERROR: '+e.toString());
+        return 'Please try again later.';
       }
-      return null;
     } else {
       Session sessionToken =
           Session(id: 0, data: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -323,7 +330,8 @@ class Requests {
         print(jsonDecode(response.body));
       }
       print(jsonDecode(response.body));
-      print('___________________________________________________________________');
+      print(
+          '___________________________________________________________________');
       var data = json.decode(response.body)['data'];
       if (data == null) {
         return null;
@@ -368,13 +376,14 @@ class Requests {
           thisPost.postComments = comments;
         } catch (Exception) {
           print('REQUESTS.DART: comments fucked up');
-          print('___________________________________________________________________');
+          print(
+              '___________________________________________________________________');
 
           thisPost.postComments = null;
         }
         posts[i] = thisPost;
       }
-      print("REQUESTS.DART sending "+posts.length.toString()+" posts.");
+      print("REQUESTS.DART sending " + posts.length.toString() + " posts.");
       return posts;
       //parse the response so it looks like the static map below.
     } else {
@@ -1054,12 +1063,12 @@ class Requests {
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
-    if (data==null) {
-        List<List<String>> a = [];
-        a.add([]);
-        a.add([]);
-        a.add([]);
-        return a;
+    if (data == null) {
+      List<List<String>> a = [];
+      a.add([]);
+      a.add([]);
+      a.add([]);
+      return a;
     }
     for (int i = 0; i < data.length; i++) {
       resultUsers.add(data[i]['username'].toString());
@@ -1074,8 +1083,8 @@ class Requests {
   Future<List<List<String>>> searchTopic(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
-    if(text.indexOf('#')!=-1){
-      text=text.substring(1);
+    if (text.indexOf('#') != -1) {
+      text = text.substring(1);
     }
     url = Constants.backendURL + 'search/topic/' + text;
     var response = await http.get(url, headers: header);
@@ -1087,7 +1096,7 @@ class Requests {
     //[{contentName: #topic}]
     List<String> resultTopics = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
-    if (data==null) {
+    if (data == null) {
       List<List<String>> a = [];
       a.add([]);
       a.add([]);
@@ -1104,7 +1113,7 @@ class Requests {
     return a;
   }
 
-  Future<List<List<String>>>searchLocation(String text)async {
+  Future<List<List<String>>> searchLocation(String text) async {
     print('REQUESTS.DART: search starts');
     String url;
     url = Constants.backendURL + 'search/location/' + text;
@@ -1117,7 +1126,7 @@ class Requests {
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
-    if (data==null) {
+    if (data == null) {
       List<List<String>> a = [];
       a.add([]);
       a.add([]);
@@ -1133,11 +1142,15 @@ class Requests {
     a.add(resultUsers);
     return a;
   }
-  Future<List<List<String>>>getRecommended()async {
-    if(!Constants.DEPLOYED)
-      return [['hasimsait','zeynep'],['1','2']];
+
+  Future<List<List<String>>> getRecommended() async {
+    if (!Constants.DEPLOYED)
+      return [
+        ['hasimsait', 'zeynep','ahmet'],
+        ['1', '2','99']
+      ];
     String url;
-    url = Constants.backendURL +'profile/'+currUserName+'recommendations';
+    url = Constants.backendURL + 'profile/' + currUserName + 'recommendations';
     var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
@@ -1146,9 +1159,9 @@ class Requests {
     //print(json.decode(response.body));
     //[{userId: 1, username: admin}]
     List<String> resultUsers = [];
-    List<String> commonConnectionCounts=[];
+    List<String> commonConnectionCounts = [];
     //it throws an error here when query is null but i think it works properly with that, may need to change
-    if (data==null) {
+    if (data == null) {
       List<List<String>> a = [];
       a.add([]);
       a.add([]);

@@ -35,7 +35,8 @@ class _ProfileState extends State<Profile> {
   _ProfileState(this.userName);
   List<Widget> postWidgets;
   int daysOfSuspension = 0;
-  Widget recommendations=Text('Please wait while we retrieve recommendations');
+  Widget recommendations =
+      Text('Please wait while we retrieve recommendations');
 
   @override
   void initState() {
@@ -62,8 +63,7 @@ class _ProfileState extends State<Profile> {
       });
     });
     getRecommended();
-    setState(() {
-    });
+    setState(() {});
     super.initState();
   }
 
@@ -111,7 +111,7 @@ class _ProfileState extends State<Profile> {
                 Padding(
                     child: Container(
                         child: CircleAvatar(
-                      radius: 100,
+                      radius: 50,
                       backgroundImage: profilePicture.image,
                     )),
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
@@ -176,7 +176,8 @@ class _ProfileState extends State<Profile> {
                   );
                 });
               },
-              child: Text("Followers:" + followerCt.toString()),
+              child: Container(child:Text("Followers:" + followerCt.toString(),style: TextStyle(color: Colors.white),),width: 90,alignment: Alignment.center,),
+              color: Colors.blue,
             ),
             Padding(
               padding: EdgeInsets.all(10),
@@ -191,7 +192,8 @@ class _ProfileState extends State<Profile> {
                   );
                 });
               },
-              child: Text("Following:" + followingCt.toString()),
+              child: Container(child:Text("Following:" + followingCt.toString(),style: TextStyle(color: Colors.white),),width: 90,alignment: Alignment.center,),
+              color:Colors.blue,
             ),
           ]); //instead it returns the delete account stuff
     if (Requests.isAdmin) {
@@ -251,12 +253,14 @@ class _ProfileState extends State<Profile> {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Padding(padding: EdgeInsets.all(23.5)),
             RaisedButton(
               onPressed: () {
                 unfollowRequest(userName);
                 setState(() {});
               },
-              child: Text("UNFOLLOW"),
+              child: Text("UNFOLLOW",style: TextStyle(color: Colors.white),),
+              color: Colors.blue,
             ),
             IconButton(
                 icon: Icon(Icons.report),
@@ -277,13 +281,15 @@ class _ProfileState extends State<Profile> {
         return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Padding(padding: EdgeInsets.all(23.5)),
               RaisedButton(
                 onPressed: () {
                   setState(() {
                     followRequest(userName);
                   });
                 },
-                child: Text("FOLLOW"),
+                child: Text("FOLLOW", style: TextStyle(color: Colors.white),),
+                color: Colors.blue,
               ),
               IconButton(
                   icon: Icon(Icons.report),
@@ -371,11 +377,19 @@ class _ProfileState extends State<Profile> {
 
   void getRecommended() {
     Requests().getRecommended().then((value) {
-      List<String> userNames=value[0];
-      List<String> commonConnectionCounts=value[1];
-      recommendations=Container(height: 140,width: 250, child:Card(child:Recommendations(userNames: userNames,commonConnectionCounts: commonConnectionCounts)));
-      setState(() {
-      });
+      List<String> userNames = value[0];
+      List<String> commonConnectionCounts = value[1];
+      recommendations = Card(child:Column(children: <Widget>[
+        Container(child:Text('Who to follow?',style: TextStyle(fontSize: 20,backgroundColor: Colors.blue,color: Colors.white),textAlign: TextAlign.start,),),
+        Container(
+            height: 55,
+            width: 450,
+            child: Card(
+                child: Recommendations(
+                    userNames: userNames,
+                    commonConnectionCounts: commonConnectionCounts)))
+      ]),color: Colors.blue,);
+      setState(() {});
     });
   }
 }
