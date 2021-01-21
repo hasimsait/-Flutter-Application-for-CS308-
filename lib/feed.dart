@@ -32,7 +32,9 @@ class _FeedState extends State<Feed> {
     }
 
     List<Widget> temp = [];
-
+    temp.add(Padding(
+      padding: const EdgeInsets.all(2),
+    ));
     setState(() {
       fml=Text("Please wait while we retrieve your feed");
     });
@@ -43,7 +45,7 @@ class _FeedState extends State<Feed> {
       temp.add(
           SpecificPost(currentUserName: currUser.userName, currPost: value));
       temp.add(Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(0),
       ));
     });
     postWidgets = temp;
@@ -88,6 +90,7 @@ class _FeedState extends State<Feed> {
       ),
       body: Center(
         child: Container(
+          color: Colors.white,
           child: fml,
         ),
       ),

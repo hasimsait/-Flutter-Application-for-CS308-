@@ -238,6 +238,9 @@ class _CreatePostState extends State<CreatePost> {
         composing: TextRange.empty,
       );
     });
+    setState(() {
+
+    });
   }
 
   void dispose() {

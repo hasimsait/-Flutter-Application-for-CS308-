@@ -325,7 +325,7 @@ class _ProfileState extends State<Profile> {
             new SpecificPost(currentUserName: currUser, currPost: value);
         postWidgets.add(postWidget);
         postWidgets.add(Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(0),
         ));
       });
       if (postWidgets != null) {
@@ -390,6 +390,7 @@ class _ProfileState extends State<Profile> {
                     commonConnectionCounts: commonConnectionCounts)))
       ]),color: Colors.blue,);
       setState(() {});
+      print('PROFILE.DART: listed '+userNames.length.toString()+' user recommendations_________________________________________________________________');
     });
   }
 }

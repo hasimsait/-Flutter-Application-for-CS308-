@@ -59,198 +59,221 @@ class _SpecificPostState extends State<SpecificPost> {
       print("SPECIFICPOST.DART: This item has been deleted.");
       return SizedBox();
     } else {
-      return new Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: CircleAvatar(
-                        radius: 25,
-                        backgroundImage:
-                            Image.memory(base64Decode(owner.myProfilePicture))
-                                .image),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Profile(postOwnerName)),
-                      );
-                    },
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        owner.myName,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      topic != null && topic != "" && topic != 'null'
-                          ? Text(
-                              topic,
-                              textAlign: TextAlign.left,
-                            )
-                          : SizedBox(),
-                      placeName != null &&
-                              placeName != "" &&
-                              placeName != 'null'
-                          ? Text(
-                              placeName,
-                            )
-                          : SizedBox(), //TODO topic and location are anchors which push a new route
-                      postDate!=null? Container(
-                        child: Text(
-                          postDate.toString().substring(0, 16),
-                          textAlign: TextAlign.left,
-                        ),
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      ):SizedBox(),
-                    ],
-                  ),
-                ],
-              ),
-              (postOwnerName == currentUserName) || (Requests.isAdmin)
-                  ? Row(children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            editPost(context);
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.cancel),
-                          onPressed: () {
-                            Requests().deletePost(postID).then((value) {
-                              if (value) {
-                                //if post is deleted successfully
-                                print("SPECIFICPOST.DART: Post:" +
-                                    postID.toString() +
-                                    " deleted successfully");
-                                initializePost(currPost, delete: true);
-                                setState(() {}); //so that the post disappears
-                              } else {
-                                //TODO display error message
-                                print(
-                                    "SPECIFICPOST.DART: Couldn't delete post:" +
-                                        postID.toString());
-                              }
-                            });
-                          }),
-                    ])
-                  : IconButton(
-                      icon: Icon(Icons.report),
+      return Card(
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              Image.memory(base64Decode(owner.myProfilePicture))
+                                  .image),
                       onPressed: () {
-                        Requests().reportPost(postID).then((value) {
-                          if (value) {
-                            //todo create snackbar saying post has been reported or set it to deleted
-                            setState(() {}); //so that the post disappears
-                          } else {
-                            //todo display error message
-                            print("SPECIFICPOST.DART: Couldn't report post:" +
-                                postID.toString());
-                          }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Profile(postOwnerName)),
+                        );
+                      },
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          owner.myName,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        topic != null && topic != "" && topic != 'null'
+                            ? Container(child: Flex(children:<Widget>[Text(
+                                topic,
+                                textAlign: TextAlign.start,
+                              ),],direction: Axis.vertical,),width: 150,alignment: Alignment.centerLeft,)
+                            : SizedBox(),
+                        placeName != null &&
+                                placeName != "" &&
+                                placeName != 'null'
+                            ? Container(child: Flex(children:<Widget>[Text(
+                                placeName,
+                              ),],direction: Axis.vertical,),width: 150,alignment: Alignment.centerLeft,)
+                            : SizedBox(), //TODO topic and location are anchors which push a new route
+                        postDate != null
+                            ? Container(
+                                child: Text(
+                                  postDate.toString().substring(0, 16).replaceAll('T', ' '),
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                alignment: Alignment.centerLeft,
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                (postOwnerName == currentUserName) || (Requests.isAdmin)
+                    ? Row(
+                        children: <Widget>[
+                          followOptions,
+                          IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                editPost(context);
+                              }),
+                          IconButton(
+                              icon: Icon(Icons.cancel),
+                              onPressed: () {
+                                Requests().deletePost(postID).then((value) {
+                                  if (value) {
+                                    //if post is deleted successfully
+                                    print("SPECIFICPOST.DART: Post:" +
+                                        postID.toString() +
+                                        " deleted successfully");
+                                    initializePost(currPost, delete: true);
+                                    setState(
+                                        () {}); //so that the post disappears
+                                  } else {
+                                    //TODO display error message
+                                    print(
+                                        "SPECIFICPOST.DART: Couldn't delete post:" +
+                                            postID.toString());
+                                  }
+                                });
+                              }),
+                        ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                      )
+                    : Row(children: <Widget>[
+                        followOptions,
+                        Padding(padding: EdgeInsets.all(25)),
+                        IconButton(
+                            icon: Icon(Icons.report),
+                            onPressed: () {
+                              Requests().reportPost(postID).then((value) {
+                                if (value) {
+                                  //todo create snackbar saying post has been reported or set it to deleted
+                                  setState(() {}); //so that the post disappears
+                                } else {
+                                  //todo display error message
+                                  print(
+                                      "SPECIFICPOST.DART: Couldn't report post:" +
+                                          postID.toString());
+                                }
+                              });
+                            }),
+                      ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+              ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            Padding(padding: EdgeInsets.all(5)),
+            Text(text, style: TextStyle(fontSize: 20)),
+            Padding(padding: EdgeInsets.all(5)),
+            image != null && image != ""
+                ? Image.memory(base64Decode(image))
+                : _displayVideo(videoURL),
+            //A post can't have both video and image and displaying video is messy.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.thumb_up,
+                    color:
+                        (liked != null && liked) ? Colors.blue : Colors.black38,
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    Requests().like(postID).then((value) {
+                      if (value) {
+                        liked = true;
+                        disliked = false;
+                        Requests()
+                            .reloadPost(postID, oldPost: currPost)
+                            .then((value) {
+                          currPost = value;
+                          initializePost(value);
                         });
-                      }),
-            ],
-          ),
-
-          Text(text, style: TextStyle(fontSize: 20)),
-          image != null && image != ""
-              ? Image.memory(base64Decode(image))
-              : _displayVideo(videoURL),
-          //A post can't have both video and image and displaying video is messy.
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.thumb_up,
-                  color:
-                      (liked != null && liked) ? Colors.blue : Colors.black38,
-                ),
-                iconSize: 30,
-                onPressed: () {
-                  Requests().like(postID).then((value) {
-                    if (value) {
-                      liked = true;
-                      disliked = false;
-                      Requests()
-                          .reloadPost(postID, oldPost: currPost)
-                          .then((value) {
-                        currPost = value;
-                        initializePost(value);
-                      });
-                      setState(() {});
-                    }
-                  });
-                  setState(() {});
-                },
-              ),
-              postLikes!=null? Text(postLikes.toString()):SizedBox(),
-              Padding(
-                padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.thumb_down,
-                  color: (disliked != null && disliked)
-                      ? Colors.blue
-                      : Colors.black38,
-                ),
-                iconSize: 30,
-                onPressed: () {
-                  Requests().dislike(postID).then((value) {
-                    if (value) {
-                      disliked = true;
-                      liked = false;
-                      Requests()
-                          .reloadPost(postID, oldPost: currPost)
-                          .then((value) {
-                        currPost = value;
-                        initializePost(value);
-                      });
-                      setState(() {});
-                    }
-                  });
-                  setState(() {});
-                },
-              ),
-              postLikes!=null?Text(postDislikes.toString()):SizedBox(),
-              Padding(
-                padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.add_comment,
-                  color: Colors.black38,
-                ),
-                iconSize: 30,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CreateComment(postID, currentUserName)),
-                  ).then((value) {
-                    Requests()
-                        .reloadPost(postID, oldPost: currPost)
-                        .then((value) {
-                      currPost = value;
-                      initializePost(value);
+                        setState(() {});
+                      }
                     });
                     setState(() {});
-                  });
-                },
-              ),
-              followOptions,
-            ],
-          ),
-          _displayComments(postComments),
-        ],
+                  },
+                ),
+                postLikes != null ? Text(postLikes.toString()) : SizedBox(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.thumb_down,
+                    color: (disliked != null && disliked)
+                        ? Colors.blue
+                        : Colors.black38,
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    Requests().dislike(postID).then((value) {
+                      if (value) {
+                        disliked = true;
+                        liked = false;
+                        Requests()
+                            .reloadPost(postID, oldPost: currPost)
+                            .then((value) {
+                          currPost = value;
+                          initializePost(value);
+                        });
+                        setState(() {});
+                      }
+                    });
+                    setState(() {});
+                  },
+                ),
+                postLikes != null ? Text(postDislikes.toString()) : SizedBox(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.add_comment,
+                    color: Colors.black38,
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CreateComment(postID, currentUserName)),
+                    ).then((value) {
+                      Requests()
+                          .reloadPost(postID, oldPost: currPost)
+                          .then((value) {
+                        currPost = value;
+                        initializePost(value);
+                      });
+                      setState(() {});
+                    });
+                  },
+                ),
+              ],
+            ),
+            _displayComments(postComments),
+            Padding(padding: EdgeInsets.all(2))
+          ],
+        ),
+        elevation: 5,
+        shadowColor: Colors.blue,
       );
+      //TODO check if card broke the feed
     }
   }
 
@@ -389,13 +412,23 @@ class _SpecificPostState extends State<SpecificPost> {
       Requests().isFollowingLocation(placeGeoID).then((value) {
         if (value) {
           followOptions = RaisedButton(
-              child: Text('unfollow this location'),
+              padding: EdgeInsets.all(0),
+              child: Container(
+                width: 55,
+                child: Text('unfollow location'),
+                padding: EdgeInsets.all(0),
+              ),
               onPressed: () {
                 Requests().unfollowLocation(placeGeoID);
               });
         } else {
           followOptions = RaisedButton(
-              child: Text('subscribe to this location'),
+              padding: EdgeInsets.all(0),
+              child: Container(
+                width: 55,
+                child: Text('follow location'),
+                padding: EdgeInsets.all(0),
+              ),
               onPressed: () {
                 Requests().followLocation(postID);
               });
@@ -406,13 +439,15 @@ class _SpecificPostState extends State<SpecificPost> {
       Requests().isFollowingTopic(topic).then((value) {
         if (value) {
           followOptions = RaisedButton(
-              child: Text('unfollow this topic'),
+              padding: EdgeInsets.all(0),
+              child: Text('unfollow topic'),
               onPressed: () {
                 Requests().unfollowTopic(topic);
               });
         } else {
           followOptions = RaisedButton(
-              child: Text('subscribe to this topic'),
+              padding: EdgeInsets.all(0),
+              child: Text('follow topic'),
               onPressed: () {
                 Requests().followTopic(postID);
               });

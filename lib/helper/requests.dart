@@ -1150,11 +1150,12 @@ class Requests {
         ['1', '2','99']
       ];
     String url;
-    url = Constants.backendURL + 'profile/' + currUserName + 'recommendations';
+    url = Constants.backendURL + 'profile/' + currUserName + '/recommendations';
     var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
+    print('REQUESTS.DART: received:'+json.decode(response.body).toString()+'______________________________');
     var data = json.decode(response.body)['data'];
     //print(json.decode(response.body));
     //[{userId: 1, username: admin}]
