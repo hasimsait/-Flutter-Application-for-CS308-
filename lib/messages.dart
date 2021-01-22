@@ -5,6 +5,7 @@ import 'package:teamone_social_media/user.dart';
 import 'message.dart';
 import 'helper/constants.dart';
 import 'helper/requests.dart';
+import 'messageWith.dart';
 
 class Messages extends StatefulWidget {
   const Messages();
@@ -16,12 +17,12 @@ class _MessagesState extends State<Messages> {
   _MessagesState();
   List<String> people = [];
   Map<String, List<Message>> messages = {};
-  Widget prewMessages = Padding(padding: EdgeInsets.all(0.3));
+  GlobalKey<RefreshIndicatorState> refreshKey;
   final _postFieldController = TextEditingController();
-  final _receiverFieldController = TextEditingController();
+
   void initState() {
     super.initState();
-    //TODO getinfo get followed add them to the dropdown of receiver.
+    refreshKey = GlobalKey<RefreshIndicatorState>();
     _postFieldController.addListener(() {
       final text = _postFieldController.text;
       _postFieldController.value = _postFieldController.value.copyWith(
@@ -31,15 +32,7 @@ class _MessagesState extends State<Messages> {
         composing: TextRange.empty,
       );
     });
-    _receiverFieldController.addListener(() {
-      final text = _receiverFieldController.text;
-      _receiverFieldController.value = _receiverFieldController.value.copyWith(
-        text: text,
-        selection:
-            TextSelection(baseOffset: text.length, extentOffset: text.length),
-        composing: TextRange.empty,
-      );
-    });
+
     _getMessages();
     const oneSec = const Duration(seconds: 1);
     new Timer.periodic(oneSec, (Timer t) => _checkUpdates());
@@ -47,7 +40,7 @@ class _MessagesState extends State<Messages> {
 
   void dispose() {
     _postFieldController.dispose();
-    _receiverFieldController.dispose();
+
     //ideally you would dispose the timer here but whatever
     super.dispose();
   }
@@ -80,11 +73,6 @@ class _MessagesState extends State<Messages> {
     return people;
   }
 
-  void _sendMessage() {
-    if (_postFieldController.text.isNotEmpty &&
-        _receiverFieldController.text.isNotEmpty) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -103,44 +91,6 @@ class _MessagesState extends State<Messages> {
               Padding(
                 padding: const EdgeInsets.all(3),
               ),
-              /* SizedBox(
-                child: TextFormField(
-                  controller: _receiverFieldController,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter the receiver\'s name here.'),
-                  autofocus: false,
-                  maxLength: 340,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 25),
-                ),
-                height: 70,
-                width: 340,
-              ),
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    child: TextFormField(
-                      controller: _postFieldController,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter your message here.'),
-                      autofocus: false,
-                      maxLength: 340,
-                      maxLines: 1,
-                      style: TextStyle(fontSize: 25),
-                    ),
-                    height: 70,
-                    width: 340,
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () {
-                        _sendMessage();
-                      })
-                ],
-                crossAxisAlignment: CrossAxisAlignment.start,
-              ),*/
             ],
           ),
         ),
@@ -165,10 +115,18 @@ class _MessagesState extends State<Messages> {
     try {
       if (messages != null && messages.isNotEmpty)
         return Container(
+          key: Key(people[index]),
           child: Card(
             child: RaisedButton(
               onPressed: () {
-
+                var name=people[index];
+                print('/*/*/*-/*-/-*/*-/-*/--*'+name);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MessageWith(name)),
+                );
               },
               padding: EdgeInsets.all(0),
               child: ListTile(
