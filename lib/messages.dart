@@ -60,7 +60,6 @@ class _MessagesState extends State<Messages> {
   }
 
   Future<List<String>> _listUsers() async {
-    //TODO this will be replaced with the new endpoint
     List<List<String>> response =
         await Requests().getFollowedOf(Requests.currUserName);
     List<String> following = List.from(response[0]);
@@ -119,13 +118,11 @@ class _MessagesState extends State<Messages> {
           child: Card(
             child: RaisedButton(
               onPressed: () {
-                var name=people[index];
-                print('/*/*/*-/*-/-*/*-/-*/--*'+name);
+                var name = people[index];
+                print('/*/*/*-/*-/-*/*-/-*/--*' + name);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MessageWith(name)),
+                  MaterialPageRoute(builder: (context) => MessageWith(name)),
                 );
               },
               padding: EdgeInsets.all(0),

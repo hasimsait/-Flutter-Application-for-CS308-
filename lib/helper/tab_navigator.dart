@@ -26,7 +26,8 @@ class TabNavigator extends StatelessWidget {
       child = Feed();
     else if (tabItem == "Search")
       child = Search();
-    else if (tabItem == "Messages") child = Messages();
+    else if (tabItem == "Messages")
+      child = Messages();
     else if (tabItem == "Notifications")
       child = Notifications();
     else if (tabItem == "Profile") child = Profile("");

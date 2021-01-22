@@ -8,7 +8,13 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   String _currentPage = "Feed";
-  List<String> pageKeys = ["Feed", "Search", 'Messages',"Notifications", "Profile"];
+  List<String> pageKeys = [
+    "Feed",
+    "Search",
+    'Messages',
+    "Notifications",
+    "Profile"
+  ];
   Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
     "Feed": GlobalKey<NavigatorState>(),
     "Search": GlobalKey<NavigatorState>(),

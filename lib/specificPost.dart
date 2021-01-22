@@ -523,7 +523,9 @@ class _SpecificPostState extends State<SpecificPost> {
               ),
               onPressed: () {
                 Requests().followLocation(postID).then((value) {
-                  print('_______________'+value.toString()+'_______________________');
+                  print('_______________' +
+                      value.toString() +
+                      '_______________________');
                   if (value) {
                     Flushbar(
                       title: "Success!",
@@ -534,7 +536,7 @@ class _SpecificPostState extends State<SpecificPost> {
                     Flushbar(
                       title: "Something went wrong.",
                       message:
-                      "Post's location could not be followed, please try again later.",
+                          "Post's location could not be followed, please try again later.",
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }
@@ -549,7 +551,7 @@ class _SpecificPostState extends State<SpecificPost> {
         if (value) {
           followOptions = RaisedButton(
               padding: EdgeInsets.all(0),
-              child:Container(
+              child: Container(
                 width: 55,
                 child: Text('unfollow topic'),
                 padding: EdgeInsets.all(0),
@@ -566,7 +568,7 @@ class _SpecificPostState extends State<SpecificPost> {
                     Flushbar(
                       title: "Something went wrong.",
                       message:
-                      "Post's topic could not be unfollowed, please try again later.",
+                          "Post's topic could not be unfollowed, please try again later.",
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }
@@ -589,7 +591,7 @@ class _SpecificPostState extends State<SpecificPost> {
                     Flushbar(
                       title: "Something went wrong.",
                       message:
-                      "Post's topic could not be followed, please try again later.",
+                          "Post's topic could not be followed, please try again later.",
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }

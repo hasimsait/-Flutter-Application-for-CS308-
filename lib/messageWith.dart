@@ -50,7 +50,6 @@ class _MessageWithState extends State<MessageWith> {
       messages = value;
       setState(() {});
     });
-
   }
 
   void _sendMessage() {
@@ -74,39 +73,42 @@ class _MessageWithState extends State<MessageWith> {
           child: Column(
             children: <Widget>[
               messageList(),
-
-              Container(color:Colors.white,
-                child:Row(
-                children: <Widget>[
-                  Container(
-                    child: TextFormField(
-                      controller: _postFieldController,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Start a message'),
-                      autofocus: false,
-                      expands: true,
-                      minLines: null,
-                      maxLines: null,
-                      textAlignVertical: TextAlignVertical.center,
-                      style: TextStyle(fontSize: 15,),
+              Container(
+                color: Colors.white,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      child: TextFormField(
+                        controller: _postFieldController,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Start a message'),
+                        autofocus: false,
+                        expands: true,
+                        minLines: null,
+                        maxLines: null,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
+                      height: 60,
+                      width: 340,
+                      color: Colors.white,
+                      alignment: Alignment.bottomCenter,
                     ),
-                    height: 60,
-                    width: 340,
-                    color: Colors.white,
-                    alignment: Alignment.bottomCenter,
-                  ),
-                  IconButton(
-                    color: Colors.blue,
-                      enableFeedback: true,
-                      icon: Icon(Icons.send),
-                      onPressed: () {
-                        _sendMessage();
-                      })
-                ],
-                crossAxisAlignment: CrossAxisAlignment.center,
+                    IconButton(
+                        color: Colors.blue,
+                        enableFeedback: true,
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+                          _sendMessage();
+                        })
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              ),),
+                ),
+              ),
             ],
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,7 +126,6 @@ class _MessageWithState extends State<MessageWith> {
         itemBuilder: (BuildContext context, int index) {
           return row(context, index);
         },
-
       ),
       height: 563,
       color: Colors.white,
@@ -149,13 +150,14 @@ class _MessageWithState extends State<MessageWith> {
                 )
               ]),
             ),
-            color: messages[index].messageFrom == Requests.currUserName? Colors.blue[700]: Colors.blueGrey[700],
+            color: messages[index].messageFrom == Requests.currUserName
+                ? Colors.blue[700]
+                : Colors.blueGrey[700],
           ),
           width: 300,
           alignment: messages[index].messageFrom == Requests.currUserName
               ? Alignment.centerRight
               : Alignment.centerLeft,
-
         );
     } catch (e) {
       return SizedBox();
@@ -169,15 +171,12 @@ class _MessageWithState extends State<MessageWith> {
         if (messages == null) messages = [];
         messages = List.from(value);
       }
-      if (messages.last.messageDate != value.last.messageDate)
-        {messages = List.from(value);
-        _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 200),
-            curve: Curves.fastOutSlowIn);
-        }
+      if (messages.last.messageDate != value.last.messageDate) {
+        messages = List.from(value);
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 200), curve: Curves.fastOutSlowIn);
+      }
       setState(() {});
-
     });
   }
 }

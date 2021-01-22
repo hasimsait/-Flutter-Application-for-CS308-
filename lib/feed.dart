@@ -18,7 +18,7 @@ class _FeedState extends State<Feed> {
   User currUser;
   List<Widget> postWidgets = [];
   GlobalKey<RefreshIndicatorState> refreshKey;
-  Widget fml =Text("Please wait while we retrieve your feed");
+  Widget fml = Text("Please wait while we retrieve your feed");
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
     if (postWidgets != null && postWidgets != []) {
@@ -36,7 +36,7 @@ class _FeedState extends State<Feed> {
       padding: const EdgeInsets.all(2),
     ));
     setState(() {
-      fml=Text("Please wait while we retrieve your feed");
+      fml = Text("Please wait while we retrieve your feed");
     });
 
     posts.forEach((key, value) {
@@ -48,12 +48,10 @@ class _FeedState extends State<Feed> {
       ));
     });
     postWidgets = temp;
-    fml=ListView(
+    fml = ListView(
       children: postWidgets,
     );
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -88,13 +86,12 @@ class _FeedState extends State<Feed> {
         ],
       ),
       body: RefreshIndicator(
-      key: refreshKey,
-      onRefresh: () async {
-        _loadFeed();
-      },
-      child: fml,
-        ),
-
+        key: refreshKey,
+        onRefresh: () async {
+          _loadFeed();
+        },
+        child: fml,
+      ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -103,23 +100,22 @@ class _FeedState extends State<Feed> {
           ).then((value) {
             if (Constants.DEPLOYED) {
               _loadFeed();
-              setState(() {
-
-              });
+              setState(() {});
             } else {}
-            if(value!=null && value){
-              print('_______________'+value.toString()+'_______________________');
+            if (value != null && value) {
+              print('_______________' +
+                  value.toString() +
+                  '_______________________');
               if (value) {
                 Flushbar(
                   title: "Success!",
                   message: "Post created successfully",
                   duration: Duration(seconds: 1),
                 )..show(context);
-              } else if(value!=null){
+              } else if (value != null) {
                 Flushbar(
                   title: "Something went wrong.",
-                  message:
-                  "Failed to create the post, please try again later.",
+                  message: "Failed to create the post, please try again later.",
                   duration: Duration(seconds: 3),
                 )..show(context);
               }
@@ -134,10 +130,8 @@ class _FeedState extends State<Feed> {
   }
 
   void _loadFeed() {
-    fml=Text("Please wait while we retrieve your feed");
-    setState(() {
-
-    });
+    fml = Text("Please wait while we retrieve your feed");
+    setState(() {});
     //if currUser admin make it retrieve the reports (in the backend) its that simple. done.
     currUser.getFeedItems().then((feedItems) {
       if (feedItems != null) {
@@ -147,7 +141,7 @@ class _FeedState extends State<Feed> {
             setState(() {});
           });
         } else {
-          fml=Text(
+          fml = Text(
             'Looks like there are no posts here, come back later!',
           );
           print('FEED.DART: no feed items. but not null');
@@ -155,7 +149,7 @@ class _FeedState extends State<Feed> {
         }
       } else {
         postWidgets.clear();
-        fml=Text(
+        fml = Text(
           'Looks like there are no posts here, come back later!',
         );
         print('FEED.DART: no feed items. and null');

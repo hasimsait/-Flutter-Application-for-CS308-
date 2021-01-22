@@ -66,7 +66,7 @@ class Requests {
         }
         return null;
       } catch (e) {
-        print('REQUESTS.DART: ERROR: '+e.toString());
+        print('REQUESTS.DART: ERROR: ' + e.toString());
         return 'Please try again later.';
       }
     } else {
@@ -1148,8 +1148,8 @@ class Requests {
   Future<List<List<String>>> getRecommended() async {
     if (!Constants.DEPLOYED)
       return [
-        ['hasimsait', 'zeynep','ahmet'],
-        ['1', '2','99']
+        ['hasimsait', 'zeynep', 'ahmet'],
+        ['1', '2', '99']
       ];
     String url;
     url = Constants.backendURL + 'profile/' + currUserName + '/recommendations';
@@ -1157,7 +1157,9 @@ class Requests {
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
     }
-    print('REQUESTS.DART: received:'+json.decode(response.body).toString()+'______________________________');
+    print('REQUESTS.DART: received:' +
+        json.decode(response.body).toString() +
+        '______________________________');
     var data = json.decode(response.body)['data'];
     //print(json.decode(response.body));
     //[{userId: 1, username: admin}]
@@ -1179,36 +1181,61 @@ class Requests {
     a.add(commonConnectionCounts);
     return a;
   }
+
   Future<List<Message>> getMessages(String secondUsername) async {
     String url;
-    url = Constants.backendURL + 'optchat/' + currUserName + '/'+secondUsername;
+    url =
+        Constants.backendURL + 'optchat/' + currUserName + '/' + secondUsername;
     var response = await http.get(url, headers: header);
     if (response.statusCode >= 400 || response.statusCode < 100) {
       print(jsonDecode(response.body).toString());
       return null;
     }
-    print('REQUESTS.DART: asked for getmessages with '+secondUsername+' and received:'+json.decode(response.body).toString());
+    print('REQUESTS.DART: asked for getmessages with ' +
+        secondUsername +
+        ' and received:' +
+        json.decode(response.body).toString());
     var data = json.decode(response.body)['data'];
     //REQUESTS.DART: asked for getmessages with zeynep and received:{data: [{messageFrom: hasimsait, messageTo: zeynep, messageDate: 2021-48-22 04:48:57, messageContent: gefrewfgwewe}], status: 0, message: }
-    List<Message> result=[];
-    if (data == null || data == [] || data.toString() == '[]'||data.length==0) {
+    List<Message> result = [];
+    if (data == null ||
+        data == [] ||
+        data.toString() == '[]' ||
+        data.length == 0) {
       //if there are no messages
-      return [Message(messageFrom:Constants.appName,messageTo: currUserName,messageDate: '',messageContent: 'Your messages are not encrypted and we sell it to the Russians. Give it a try!')];
+      return [
+        Message(
+            messageFrom: Constants.appName,
+            messageTo: currUserName,
+            messageDate: '',
+            messageContent:
+                'Your messages are not encrypted and we sell it to the Russians. Give it a try!')
+      ];
     }
     for (int i = 0; i < data.length; i++) {
-      String messageFrom=data[i]['messageFrom'].toString();
-      String messageTo=data[i]['messageTo'].toString();
-      String messageDate=data[i]['messageDate'].toString();
-      String messageContent=data[i]['messageContent'].toString();
-      result.add(Message(messageFrom: messageFrom,messageTo:messageTo ,messageDate:messageDate ,messageContent:messageContent));
+      String messageFrom = data[i]['messageFrom'].toString();
+      String messageTo = data[i]['messageTo'].toString();
+      String messageDate = data[i]['messageDate'].toString();
+      String messageContent = data[i]['messageContent'].toString();
+      result.add(Message(
+          messageFrom: messageFrom,
+          messageTo: messageTo,
+          messageDate: messageDate,
+          messageContent: messageContent));
     }
     return result;
   }
-  Future<bool> sendMessageTo(String secondUsername,String message) async {
+
+  Future<bool> sendMessageTo(String secondUsername, String message) async {
     String url;
-    url = Constants.backendURL + 'optchat/send/' + currUserName + '/'+secondUsername;
+    url = Constants.backendURL +
+        'optchat/send/' +
+        currUserName +
+        '/' +
+        secondUsername;
     var response = await http.post(
-        url, headers: header,
+      url,
+      headers: header,
       body: jsonEncode(<String, String>{
         'messageFrom': currUserName,
         'messageTo': secondUsername,
@@ -1220,13 +1247,15 @@ class Requests {
       print(jsonDecode(response.body).toString());
       return false;
     }
-    print('REQUESTS.DART: asked to sendmessage to '+secondUsername+' and received:'+json.decode(response.body).toString());
+    print('REQUESTS.DART: asked to sendmessage to ' +
+        secondUsername +
+        ' and received:' +
+        json.decode(response.body).toString());
     var data = json.decode(response.body)['data'];
     //print(json.decode(response.body));
     //[{userId: 1, username: admin}]
-    List<Message> result=[];
-    if (data == 'Message is sent')
-      return true;
+    List<Message> result = [];
+    if (data == 'Message is sent') return true;
     return false;
   }
 }

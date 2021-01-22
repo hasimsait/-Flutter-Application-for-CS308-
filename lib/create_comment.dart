@@ -78,9 +78,9 @@ class _CreateCommentState extends State<CreateComment> {
         Navigator.pop(context, true);
       } else {
         Flushbar(
-          title:  "Something went wrong.",
-          message:  "Comment could not be posted, please try again later.",
-          duration:  Duration(seconds: 3),
+          title: "Something went wrong.",
+          message: "Comment could not be posted, please try again later.",
+          duration: Duration(seconds: 3),
         )..show(context);
       }
     });

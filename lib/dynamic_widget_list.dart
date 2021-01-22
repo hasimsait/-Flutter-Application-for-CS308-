@@ -13,15 +13,16 @@ class DynamicWidgetList extends StatefulWidget {
   //[topicName],
   //[locationId],
   //in this order, always.
-  DynamicWidgetList(this.elements,{this.noAppBar});
+  DynamicWidgetList(this.elements, {this.noAppBar});
   @override
-  State<StatefulWidget> createState() => _DynamicWidgetListState(this.elements,(this.noAppBar!=null&&this.noAppBar==true));
+  State<StatefulWidget> createState() => _DynamicWidgetListState(
+      this.elements, (this.noAppBar != null && this.noAppBar == true));
 }
 
 class _DynamicWidgetListState extends State<DynamicWidgetList> {
   List<List<dynamic>> elements;
   bool noAppBar;
-  _DynamicWidgetListState(this.elements,this.noAppBar);
+  _DynamicWidgetListState(this.elements, this.noAppBar);
   List<Widget> elementWidgets = [];
 
   void initState() {
@@ -32,18 +33,28 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
         //topic with unfollow button
         try {
           elementWidgets.add(
-              Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
-            Row(
-              children: <Widget>[
-            Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(elements[1][i])]),),
-                RaisedButton(
-                    child: Text('unfollow this topic'),
-                    onPressed: () {
-                      Requests().unfollowTopic(elements[1][i]);
-                    })
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            ),),),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      width: 205,
+                      child: Flex(
+                          direction: Axis.vertical,
+                          children: <Widget>[Text(elements[1][i])]),
+                    ),
+                    RaisedButton(
+                        child: Text('unfollow this topic'),
+                        onPressed: () {
+                          Requests().unfollowTopic(elements[1][i]);
+                        })
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+              ),
+            ),
           );
         } catch (Exception) {
           print('DYNAMIC WIDGET LIST.DART: A TOPIC FUCKED UP WHILE LISTING');
@@ -52,18 +63,31 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
       for (int i = 0; i < elements[2].length; i++) {
         try {
           elementWidgets.add(
-              Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
-            Row(
-              children: <Widget>[
-            Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(elements[2][i]),],),),
-                RaisedButton(
-                    child: Text('unfollow this location'),
-                    onPressed: () {
-                      Requests().unfollowLocation(elements[2][i]);
-                    })
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            ),),),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      width: 205,
+                      child: Flex(
+                        direction: Axis.vertical,
+                        children: <Widget>[
+                          Text(elements[2][i]),
+                        ],
+                      ),
+                    ),
+                    RaisedButton(
+                        child: Text('unfollow this location'),
+                        onPressed: () {
+                          Requests().unfollowLocation(elements[2][i]);
+                        })
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+              ),
+            ),
           );
         } catch (Exception) {
           print('DYNAMIC WIDGET LIST.DART: A LOCATION FUCKED UP WHILE LISTING');
@@ -81,7 +105,7 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
 
   @override
   Widget build(BuildContext context) {
-    if (this.noAppBar!=null && this.noAppBar==true)
+    if (this.noAppBar != null && this.noAppBar == true)
       return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new Center(
@@ -109,30 +133,41 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
         User thisUser = User(user);
         thisUser = await thisUser.getInfo();
         temp.insert(
-          i,
-            Card(child:Padding(padding:EdgeInsets.fromLTRB(5, 0, 5, 0) ,child:
-          Row(children:<Widget>[
-          IconButton(
-            iconSize: 50,
-            icon: CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                    Image.memory(base64Decode(thisUser.myProfilePicture))
-                        .image),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Profile(user)),
-              );
-            },
-          ),
-                Container(alignment: Alignment.centerLeft,width: 205,child:Flex(direction: Axis.vertical,children:<Widget>[Text(
-              user,
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 25),
-            ),]))
-          ],
-        ))));
+            i,
+            Card(
+                child: Padding(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          iconSize: 50,
+                          icon: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: Image.memory(
+                                      base64Decode(thisUser.myProfilePicture))
+                                  .image),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Profile(user)),
+                            );
+                          },
+                        ),
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            width: 205,
+                            child: Flex(
+                                direction: Axis.vertical,
+                                children: <Widget>[
+                                  Text(
+                                    user,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(fontSize: 25),
+                                  ),
+                                ]))
+                      ],
+                    ))));
       } catch (Exception) {
         print('DYNAMIC WIDGET LIST.DART: A USER FUCKED UP WHILE LISTING');
       }

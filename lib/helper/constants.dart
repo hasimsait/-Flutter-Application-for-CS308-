@@ -8,9 +8,8 @@ class Constants {
   static const String placeHolderName = "Haşim Sait Göktan";
   static const bool DEPLOYED = true;
   //static const String backendURL ="https://www.teamone_social.ml/api/v1/";//.ml is free
-  static const String backendURL =
-      "http://206.81.17.79:8080/api/v1/";
-  static const String socketUrL='http://206.81.17.79:8080';
+  static const String backendURL = "http://206.81.17.79:8080/api/v1/";
+  static const String socketUrL = 'http://206.81.17.79:8080';
   //Some of them are not really endpoints, I'm aware of it.
   static const String signInEndpoint = "auth/login";
   static const String signUpEndpoint = "auth/sign-up";

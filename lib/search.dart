@@ -68,7 +68,8 @@ class _SearchState extends State<Search> {
                           textAlignVertical: TextAlignVertical.bottom,
                         ),
                         height: 35,
-                        width: 320, color: Colors.white,
+                        width: 320,
+                        color: Colors.white,
                       ),
                       IconButton(
                           padding: EdgeInsets.all(0),
@@ -112,25 +113,32 @@ class _SearchState extends State<Search> {
                                 });
                               }
                             },
-                            child: Text("People",style: TextStyle(color: Colors.white),)),
+                            child: Text(
+                              "People",
+                              style: TextStyle(color: Colors.white),
+                            )),
                         FlatButton(
-                            onPressed: () {
-                              results = Text(
-                                'Please wait a while we retrieve your results.',
-                              );
-                              setState(() {});
-                              if (_postFieldController != null &&
-                                  _postFieldController.text != null) {
-                                Requests()
-                                    .searchTopic(_postFieldController.text)
-                                    .then((value) {
-                                  results =
-                                      DynamicWidgetList(value, noAppBar: true);
-                                  setState(() {});
-                                });
-                              }
-                            },
-                            child: Text("Topic",style: TextStyle(color: Colors.white),),),
+                          onPressed: () {
+                            results = Text(
+                              'Please wait a while we retrieve your results.',
+                            );
+                            setState(() {});
+                            if (_postFieldController != null &&
+                                _postFieldController.text != null) {
+                              Requests()
+                                  .searchTopic(_postFieldController.text)
+                                  .then((value) {
+                                results =
+                                    DynamicWidgetList(value, noAppBar: true);
+                                setState(() {});
+                              });
+                            }
+                          },
+                          child: Text(
+                            "Topic",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                         FlatButton(
                             onPressed: () {
                               results = Text(
@@ -147,9 +155,11 @@ class _SearchState extends State<Search> {
                                   setState(() {});
                                 });
                               }
-
                             },
-                            child: Text("Location",style: TextStyle(color: Colors.white),)),
+                            child: Text(
+                              "Location",
+                              style: TextStyle(color: Colors.white),
+                            )),
                       ],
                       alignment: MainAxisAlignment.center,
                       buttonPadding: EdgeInsets.all(0)),

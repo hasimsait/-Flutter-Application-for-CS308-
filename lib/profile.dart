@@ -146,9 +146,9 @@ class _ProfileState extends State<Profile> {
         isFollowing = true;
       else {
         Flushbar(
-          title:  "Something went wrong.",
-          message:  "User could not be followed, please try again later.",
-          duration:  Duration(seconds: 3),
+          title: "Something went wrong.",
+          message: "User could not be followed, please try again later.",
+          duration: Duration(seconds: 3),
         )..show(context);
       }
       setState(() {});
@@ -161,9 +161,9 @@ class _ProfileState extends State<Profile> {
         isFollowing = false;
       else {
         Flushbar(
-          title:  "Something went wrong.",
-          message:  "User could not be unfollowed, please try again later.",
-          duration:  Duration(seconds: 3),
+          title: "Something went wrong.",
+          message: "User could not be unfollowed, please try again later.",
+          duration: Duration(seconds: 3),
         )..show(context);
       }
       setState(() {});
@@ -185,7 +185,14 @@ class _ProfileState extends State<Profile> {
                   );
                 });
               },
-              child: Container(child:Text("Followers:" + followerCt.toString(),style: TextStyle(color: Colors.white),),width: 90,alignment: Alignment.center,),
+              child: Container(
+                child: Text(
+                  "Followers:" + followerCt.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                width: 90,
+                alignment: Alignment.center,
+              ),
               color: Colors.blue,
             ),
             Padding(
@@ -201,8 +208,15 @@ class _ProfileState extends State<Profile> {
                   );
                 });
               },
-              child: Container(child:Text("Following:" + followingCt.toString(),style: TextStyle(color: Colors.white),),width: 90,alignment: Alignment.center,),
-              color:Colors.blue,
+              child: Container(
+                child: Text(
+                  "Following:" + followingCt.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                width: 90,
+                alignment: Alignment.center,
+              ),
+              color: Colors.blue,
             ),
           ]); //instead it returns the delete account stuff
     if (Requests.isAdmin) {
@@ -220,17 +234,18 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 Requests().deleteAccount(userName).then((value) {
-                  if (value){
+                  if (value) {
                     Flushbar(
-                      title:  "Success!",
-                      message:  "Account successfully deleted!",
-                      duration:  Duration(seconds: 3),
+                      title: "Success!",
+                      message: "Account successfully deleted!",
+                      duration: Duration(seconds: 3),
                     )..show(context);
-                  }else{
+                  } else {
                     Flushbar(
-                      title:  "Something went wrong.",
-                      message:  "Account could not be deleted, please try again later.",
-                      duration:  Duration(seconds: 3),
+                      title: "Something went wrong.",
+                      message:
+                          "Account could not be deleted, please try again later.",
+                      duration: Duration(seconds: 3),
                     )..show(context);
                   }
                 });
@@ -280,7 +295,10 @@ class _ProfileState extends State<Profile> {
                 unfollowRequest(userName);
                 setState(() {});
               },
-              child: Text("UNFOLLOW",style: TextStyle(color: Colors.white),),
+              child: Text(
+                "UNFOLLOW",
+                style: TextStyle(color: Colors.white),
+              ),
               color: Colors.blue,
             ),
             IconButton(
@@ -289,16 +307,18 @@ class _ProfileState extends State<Profile> {
                   Requests().reportUser(userName).then((value) {
                     if (value) {
                       Flushbar(
-                        title:  "Success!.",
-                        message:  "You've reported this user, their account will be reviewed.",
-                        duration:  Duration(seconds: 3),
+                        title: "Success!.",
+                        message:
+                            "You've reported this user, their account will be reviewed.",
+                        duration: Duration(seconds: 3),
                       )..show(context);
                       setState(() {}); //so that the post disappears
                     } else {
                       Flushbar(
-                        title:  "Something went wrong.",
-                        message:  "User could not be reported, please try again later.",
-                        duration:  Duration(seconds: 3),
+                        title: "Something went wrong.",
+                        message:
+                            "User could not be reported, please try again later.",
+                        duration: Duration(seconds: 3),
                       )..show(context);
                       print("PROFILE.DART: Couldn't report user:" + userName);
                     }
@@ -317,7 +337,10 @@ class _ProfileState extends State<Profile> {
                     followRequest(userName);
                   });
                 },
-                child: Text("FOLLOW", style: TextStyle(color: Colors.white),),
+                child: Text(
+                  "FOLLOW",
+                  style: TextStyle(color: Colors.white),
+                ),
                 color: Colors.blue,
               ),
               IconButton(
@@ -326,16 +349,18 @@ class _ProfileState extends State<Profile> {
                     Requests().reportUser(userName).then((value) {
                       if (value) {
                         Flushbar(
-                          title:  "Success!.",
-                          message:  "You've reported this user, their account will be reviewed.",
-                          duration:  Duration(seconds: 3),
+                          title: "Success!.",
+                          message:
+                              "You've reported this user, their account will be reviewed.",
+                          duration: Duration(seconds: 3),
                         )..show(context);
                         setState(() {}); //so that the post disappears
                       } else {
                         Flushbar(
-                          title:  "Something went wrong.",
-                          message:  "User could not be reported, please try again later.",
-                          duration:  Duration(seconds: 3),
+                          title: "Something went wrong.",
+                          message:
+                              "User could not be reported, please try again later.",
+                          duration: Duration(seconds: 3),
                         )..show(context);
                         print("PROFILE.DART: Couldn't report user:" + userName);
                       }
@@ -408,16 +433,16 @@ class _ProfileState extends State<Profile> {
         Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
           if (value) {
             Flushbar(
-              title:  "Success!.",
-              message:  "User successfully suspended!",
-              duration:  Duration(seconds: 3),
+              title: "Success!.",
+              message: "User successfully suspended!",
+              duration: Duration(seconds: 3),
             )..show(context);
             setState(() {}); //so that the post disappears
           } else {
             Flushbar(
-              title:  "Something went wrong.",
-              message:  "User could not be suspended, please try again later.",
-              duration:  Duration(seconds: 3),
+              title: "Something went wrong.",
+              message: "User could not be suspended, please try again later.",
+              duration: Duration(seconds: 3),
             )..show(context);
             print("PROFILE.DART: Couldn't report user:" + userName);
           }
@@ -430,18 +455,32 @@ class _ProfileState extends State<Profile> {
     Requests().getRecommended().then((value) {
       List<String> userNames = value[0];
       List<String> commonConnectionCounts = value[1];
-      recommendations = Card(child:Column(children: <Widget>[
-        Container(child:Text('Who to follow?',style: TextStyle(fontSize: 20,backgroundColor: Colors.blue,color: Colors.white),textAlign: TextAlign.start,),),
-        Container(
-            height: 55,
-            width: 450,
-            child: Card(
-                child: Recommendations(
-                    userNames: userNames,
-                    commonConnectionCounts: commonConnectionCounts)))
-      ]),color: Colors.blue,);
+      recommendations = Card(
+        child: Column(children: <Widget>[
+          Container(
+            child: Text(
+              'Who to follow?',
+              style: TextStyle(
+                  fontSize: 20,
+                  backgroundColor: Colors.blue,
+                  color: Colors.white),
+              textAlign: TextAlign.start,
+            ),
+          ),
+          Container(
+              height: 55,
+              width: 450,
+              child: Card(
+                  child: Recommendations(
+                      userNames: userNames,
+                      commonConnectionCounts: commonConnectionCounts)))
+        ]),
+        color: Colors.blue,
+      );
       setState(() {});
-      print('PROFILE.DART: listed '+userNames.length.toString()+' user recommendations_________________________________________________________________');
+      print('PROFILE.DART: listed ' +
+          userNames.length.toString() +
+          ' user recommendations_________________________________________________________________');
     });
   }
 }
