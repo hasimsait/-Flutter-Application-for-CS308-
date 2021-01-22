@@ -880,8 +880,6 @@ class Requests {
   }
 
   Future<List<List<String>>> getFollowedOf(String userName) async {
-    //if (userName == currUserName) return getFollowedOfCurrentUser();
-    User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
@@ -947,7 +945,7 @@ class Requests {
     return a;
   }
 
-  Future<bool> deleteAccount(String userName) async {
+  Future<Result> deleteAccount(String userName) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART ATTEMPTING TO DELETE USER ' + userName + '.');
       var response = await http.delete(
@@ -961,20 +959,20 @@ class Requests {
         print('REQUESTS.DART: ' +
             currUserName +
             "'s request to delete account has succeeded.");
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
             "'s request to delete account has failed.");
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> timeOutAccount(String userName, int daysOfSuspension) async {
+  Future<Result> timeOutAccount(String userName, int daysOfSuspension) async {
     if (Constants.DEPLOYED) {
       if (isAdmin) {
         print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
@@ -993,11 +991,11 @@ class Requests {
         );
         if (response.statusCode >= 400 || response.statusCode < 100) {
           print(response.body.toString());
-          return false;
+          return Result(false, message: jsonDecode(response.body)['message']);
         }
         var data = json.decode(response.body)['data'];
         print('REQUESTS.DART: timeOutAccount received' + data.toString());
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
             userName +
@@ -1014,14 +1012,14 @@ class Requests {
         );
         if (response.statusCode >= 400 || response.statusCode < 100) {
           print(response.body.toString());
-          return false;
+          return Result(false, message: jsonDecode(response.body)['message']);
         }
         var data = json.decode(response.body)['data'];
         print('REQUESTS.DART: timeOutAccount received' + data.toString());
-        return true;
+        return Result(true);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 

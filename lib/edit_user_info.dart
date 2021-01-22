@@ -151,7 +151,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
               RaisedButton(
                 onPressed: () {
                   Requests().deleteAccount(userName).then((value) {
-                    if (value) {
+                    if (value.status) {
                       Flushbar(
                         title: "Success!",
                         message: "Account successfully deleted!",
@@ -159,9 +159,10 @@ class _EditUserInfoState extends State<EditUserInfo> {
                       )..show(context);
                     } else {
                       Flushbar(
-                        title: "Something went wrong.",
-                        message:
-                            "Account could not be deleted, please try again later.",
+                        title: "Something went wrong",
+                        message: value.message == null || value.message == 'null'
+                            ? 'Please try again later'
+                            : value.message,
                         duration: Duration(seconds: 3),
                       )..show(context);
                     }
@@ -213,7 +214,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
       if (value != null) {
         setState(() => daysOfSuspension = value);
         Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
-          if (value) {
+          if (value.status) {
             Flushbar(
               title: "Success!.",
               message: "User successfully suspended!",
@@ -222,11 +223,12 @@ class _EditUserInfoState extends State<EditUserInfo> {
             setState(() {}); //so that the post disappears
           } else {
             Flushbar(
-              title: "Something went wrong.",
-              message: "User could not be suspended, please try again later.",
+              title: "Something went wrong",
+              message: value.message == null || value.message == 'null'
+                  ? 'Please try again later'
+                  : value.message,
               duration: Duration(seconds: 3),
             )..show(context);
-            print("PROFILE.DART: Couldn't report user:" + userName);
           }
         });
       }
