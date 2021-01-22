@@ -153,8 +153,10 @@ class Requests {
       );
       print('REQUESTS.DART: trying to updateUserInfo of: ' + currUserName);
       if (response.statusCode >= 400 || response.statusCode < 100) {
-        print('REQUESTS.DART: failed to updateUserInfo'+json.encode(response.body));
-        return Result(false,message:json.decode(response.body)['message'].toString());
+        print('REQUESTS.DART: failed to updateUserInfo' +
+            json.encode(response.body));
+        return Result(false,
+            message: json.decode(response.body)['message'].toString());
       }
       return Result(true);
     }
@@ -546,7 +548,7 @@ class Requests {
     return thisUser;
   }
 
-  Future<bool> like(int postID) async {
+  Future<Result> like(int postID) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART: ' +
           currUserName +
@@ -563,16 +565,16 @@ class Requests {
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body));
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
       print('REQUEST.DART: LIKE SUCCESSFUL');
-      return true;
+      return Result(true);
     } else {
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> dislike(int postID) async {
+  Future<Result> dislike(int postID) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART: ' +
           currUserName +
@@ -589,16 +591,16 @@ class Requests {
           }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body)['message']);
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
       print('REQUEST.DART: DISLIKE SUCCESSFUL');
-      return true;
+      return Result(true);
     } else {
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> followTopic(int postID) async {
+  Future<Result> followTopic(int postID) async {
     if (Constants.DEPLOYED) {
       //displayed under a post which is posted under topic,
       //body:{'subscriberUsername':currUserName,'postId':postId, 'subscribedContentType':'geo' or 'topic'}
@@ -616,17 +618,17 @@ class Requests {
               }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
       print('REQUEST.DART: FOLLOW SUCCESSFUL');
-      return true;
+      return Result(true);
     } else {
       //followedTopics.add(topic);
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> followLocation(int postID) async {
+  Future<Result> followLocation(int postID) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART: ' +
           currUserName +
@@ -642,17 +644,17 @@ class Requests {
               }));
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
       print('REQUEST.DART: FOLLOW SUCCESSFUL');
-      return true;
+      return Result(true);
     } else {
       //followedLocations.add(locationID)
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> unfollowTopic(String topicName) async {
+  Future<Result> unfollowTopic(String topicName) async {
     if (Constants.DEPLOYED) {
       var response = await http.delete(
         Constants.backendURL +
@@ -668,7 +670,7 @@ class Requests {
             "'s request to unfollow " +
             topicName +
             'has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -677,15 +679,15 @@ class Requests {
             'has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
         followedTopics.remove(topicName);
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
       //followedTopics.remove(topic);
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> unfollowLocation(String locationId) async {
+  Future<Result> unfollowLocation(String locationId) async {
     if (Constants.DEPLOYED) {
       var response = await http.delete(
         Constants.backendURL +
@@ -701,7 +703,7 @@ class Requests {
             "'s request to unfollow " +
             locationId +
             'has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -710,15 +712,15 @@ class Requests {
             'has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
         followedTopics.remove(locationId);
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
       //followedLocations.remove(locationID);
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> followUser(String userName) async {
+  Future<Result> followUser(String userName) async {
     if (Constants.DEPLOYED) {
       var response = await http.post(
         Constants.backendURL + 'connections/follow',
@@ -734,7 +736,7 @@ class Requests {
             "'s request to follow " +
             userName +
             'has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -742,14 +744,14 @@ class Requests {
             userName +
             'has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> unfollowUser(String userName) async {
+  Future<Result> unfollowUser(String userName) async {
     if (Constants.DEPLOYED) {
       var response = await http.delete(
         Constants.backendURL +
@@ -765,7 +767,7 @@ class Requests {
             "'s request to unfollow " +
             userName +
             'has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -773,10 +775,10 @@ class Requests {
             userName +
             'has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 
@@ -799,7 +801,7 @@ class Requests {
     }
   }
 
-  Future<bool> reportPost(int postID) async {
+  Future<Result> reportPost(int postID) async {
     if (Constants.DEPLOYED) {
       var response = await http.post(
         Constants.backendURL +
@@ -815,7 +817,7 @@ class Requests {
             "'s request to report " +
             postID.toString() +
             'has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -823,14 +825,14 @@ class Requests {
             postID.toString() +
             'has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 
-  Future<bool> reportUser(String userName) async {
+  Future<Result> reportUser(String userName) async {
     if (Constants.DEPLOYED) {
       var response = await http.post(
         Constants.backendURL +
@@ -846,7 +848,7 @@ class Requests {
             "'s request to report " +
             userName +
             ' has succeeded.');
-        return true;
+        return Result(true);
       } else {
         print('REQUESTS.DART: ' +
             currUserName +
@@ -854,10 +856,10 @@ class Requests {
             userName +
             ' has failed.');
         print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
-        return false;
+        return Result(false, message: jsonDecode(response.body)['message']);
       }
     } else {
-      return true;
+      return Result(true);
     }
   }
 

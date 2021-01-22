@@ -1,5 +1,6 @@
 import 'helper/constants.dart';
 import 'helper/requests.dart';
+import 'result.dart';
 
 class Post {
   String text;
@@ -36,7 +37,7 @@ class Post {
       this.userLikedIt,
       this.userDislikedIt});
 
-  Future<bool> like(String currentUserName) async {
+  Future<Result> like(String currentUserName) async {
     //currentUserName likes the post this.postID
     if (!Constants.DEPLOYED) {
       print(currentUserName +
@@ -46,16 +47,18 @@ class Post {
           this.postOwnerName);
       this.userDislikedIt = false;
       this.userLikedIt = true;
-      return true;
+      return Result(true);
     } else {
-      bool value = await Requests().like(postID);
-      this.userLikedIt = value;
-      this.userLikedIt = !value;
-      return value;
+      Result res = await Requests().like(postID);
+      if (res.status) {
+        this.userLikedIt = true;
+        this.userDislikedIt = false;
+      }
+      return res;
     }
   }
 
-  Future<bool> dislike(String currentUserName) async {
+  Future<Result> dislike(String currentUserName) async {
     if (!Constants.DEPLOYED) {
       print(currentUserName +
           " dislikes the post " +
@@ -64,12 +67,14 @@ class Post {
           this.postOwnerName);
       this.userDislikedIt = true;
       this.userLikedIt = false;
-      return true;
+      return Result(true);
     } else {
-      bool value = await Requests().dislike(postID);
-      this.userDislikedIt = value;
-      this.userLikedIt = !value;
-      return value;
+      Result res = await Requests().dislike(postID);
+      if (res.status) {
+        this.userDislikedIt = true;
+        this.userLikedIt = false;
+      }
+      return res;
     }
   }
 

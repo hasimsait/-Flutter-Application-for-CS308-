@@ -142,12 +142,14 @@ class _ProfileState extends State<Profile> {
 
   void followRequest(String userName) {
     Requests().followUser(userName).then((value) {
-      if (value)
+      if (value.status)
         isFollowing = true;
       else {
         Flushbar(
-          title: "Something went wrong.",
-          message: "User could not be followed, please try again later.",
+          title: "Something went wrong",
+          message: value.message == null || value.message == 'null'
+              ? 'Please try again later'
+              : value.message,
           duration: Duration(seconds: 3),
         )..show(context);
       }
@@ -157,12 +159,14 @@ class _ProfileState extends State<Profile> {
 
   void unfollowRequest(String userName) {
     Requests().unfollowUser(userName).then((value) {
-      if (value)
+      if (value.status)
         isFollowing = false;
       else {
         Flushbar(
-          title: "Something went wrong.",
-          message: "User could not be unfollowed, please try again later.",
+          title: "Something went wrong",
+          message: value.message == null || value.message == 'null'
+              ? 'Please try again later'
+              : value.message,
           duration: Duration(seconds: 3),
         )..show(context);
       }
@@ -304,7 +308,7 @@ class _ProfileState extends State<Profile> {
                 icon: Icon(Icons.report),
                 onPressed: () {
                   Requests().reportUser(userName).then((value) {
-                    if (value) {
+                    if (value.status) {
                       Flushbar(
                         title: "Success!.",
                         message:
@@ -314,9 +318,11 @@ class _ProfileState extends State<Profile> {
                       setState(() {}); //so that the post disappears
                     } else {
                       Flushbar(
-                        title: "Something went wrong.",
+                        title: "Something went wrong",
                         message:
-                            "User could not be reported, please try again later.",
+                            value.message == null || value.message == 'null'
+                                ? 'Please try again later'
+                                : value.message,
                         duration: Duration(seconds: 3),
                       )..show(context);
                       print("PROFILE.DART: Couldn't report user:" + userName);
@@ -346,7 +352,7 @@ class _ProfileState extends State<Profile> {
                   icon: Icon(Icons.report),
                   onPressed: () {
                     Requests().reportUser(userName).then((value) {
-                      if (value) {
+                      if (value.status) {
                         Flushbar(
                           title: "Success!.",
                           message:
@@ -356,9 +362,11 @@ class _ProfileState extends State<Profile> {
                         setState(() {}); //so that the post disappears
                       } else {
                         Flushbar(
-                          title: "Something went wrong.",
+                          title: "Something went wrong",
                           message:
-                              "User could not be reported, please try again later.",
+                              value.message == null || value.message == 'null'
+                                  ? 'Please try again later'
+                                  : value.message,
                           duration: Duration(seconds: 3),
                         )..show(context);
                         print("PROFILE.DART: Couldn't report user:" + userName);

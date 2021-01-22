@@ -190,7 +190,7 @@ class _SpecificPostState extends State<SpecificPost> {
                               icon: Icon(Icons.report),
                               onPressed: () {
                                 Requests().reportPost(postID).then((value) {
-                                  if (value) {
+                                  if (value.status) {
                                     Flushbar(
                                       title: "Success.",
                                       message: "Post successfully reported!.",
@@ -200,9 +200,11 @@ class _SpecificPostState extends State<SpecificPost> {
                                         () {}); //so that the post disappears
                                   } else {
                                     Flushbar(
-                                      title: "Something went wrong.",
-                                      message:
-                                          "Post could not be reported, please try again later.",
+                                      title: "Something went wrong",
+                                      message: value.message == null ||
+                                              value.message == 'null'
+                                          ? 'Please try again later'
+                                          : value.message,
                                       duration: Duration(seconds: 3),
                                     )..show(context);
                                     print(
@@ -236,7 +238,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   iconSize: 30,
                   onPressed: () {
                     Requests().like(postID).then((value) {
-                      if (value) {
+                      if (value.status) {
                         liked = true;
                         disliked = false;
                         Flushbar(
@@ -253,9 +255,11 @@ class _SpecificPostState extends State<SpecificPost> {
                         setState(() {});
                       } else {
                         Flushbar(
-                          title: "Something went wrong.",
-                          message:
-                              "Post could not be liked, please try again later.",
+                          title: "Something went wrong",
+                          message: value.message == null ||
+                                  value.message == 'null'
+                              ? "Post could not be liked, please try again later."
+                              : value.message,
                           duration: Duration(seconds: 3),
                         )..show(context);
                       }
@@ -277,7 +281,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   iconSize: 30,
                   onPressed: () {
                     Requests().dislike(postID).then((value) {
-                      if (value) {
+                      if (value.status) {
                         disliked = true;
                         liked = false;
                         Flushbar(
@@ -294,9 +298,11 @@ class _SpecificPostState extends State<SpecificPost> {
                         setState(() {});
                       } else {
                         Flushbar(
-                          title: "Something went wrong.",
-                          message:
-                              "Post could not be disliked, please try again later.",
+                          title: "Something went wrong",
+                          message: value.message == null ||
+                                  value.message == 'null'
+                              ? "Post could not be disliked, please try again later."
+                              : value.message,
                           duration: Duration(seconds: 3),
                         )..show(context);
                       }
@@ -496,7 +502,7 @@ class _SpecificPostState extends State<SpecificPost> {
               ),
               onPressed: () {
                 Requests().unfollowLocation(placeGeoID).then((value) {
-                  if (value) {
+                  if (value.status) {
                     Flushbar(
                       title: "Success!",
                       message: "Post's location unfollowed successfully",
@@ -504,9 +510,10 @@ class _SpecificPostState extends State<SpecificPost> {
                     )..show(context);
                   } else {
                     Flushbar(
-                      title: "Something went wrong.",
-                      message:
-                          "Post's location could not be unfollowed, please try again later.",
+                      title: "Something went wrong",
+                      message: value.message == null || value.message == 'null'
+                          ? 'Please try again later'
+                          : value.message,
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }
@@ -526,7 +533,7 @@ class _SpecificPostState extends State<SpecificPost> {
                   print('_______________' +
                       value.toString() +
                       '_______________________');
-                  if (value) {
+                  if (value.status) {
                     Flushbar(
                       title: "Success!",
                       message: "Post's location followed successfully",
@@ -534,9 +541,10 @@ class _SpecificPostState extends State<SpecificPost> {
                     )..show(context);
                   } else {
                     Flushbar(
-                      title: "Something went wrong.",
-                      message:
-                          "Post's location could not be followed, please try again later.",
+                      title: "Something went wrong",
+                      message: value.message == null || value.message == 'null'
+                          ? 'Please try again later'
+                          : value.message,
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }
@@ -558,7 +566,7 @@ class _SpecificPostState extends State<SpecificPost> {
               ),
               onPressed: () {
                 Requests().unfollowTopic(topic).then((value) {
-                  if (value) {
+                  if (value.status) {
                     Flushbar(
                       title: "Success!",
                       message: "Post's topic unfollowed successfully",
@@ -566,9 +574,10 @@ class _SpecificPostState extends State<SpecificPost> {
                     )..show(context);
                   } else {
                     Flushbar(
-                      title: "Something went wrong.",
-                      message:
-                          "Post's topic could not be unfollowed, please try again later.",
+                      title: "Something went wrong",
+                      message: value.message == null || value.message == 'null'
+                          ? 'Please try again later'
+                          : value.message,
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }
@@ -581,7 +590,7 @@ class _SpecificPostState extends State<SpecificPost> {
               child: Text('follow topic'),
               onPressed: () {
                 Requests().followTopic(postID).then((value) {
-                  if (value) {
+                  if (value.status) {
                     Flushbar(
                       title: "Success!",
                       message: "Post's topic followed successfully",
@@ -589,9 +598,10 @@ class _SpecificPostState extends State<SpecificPost> {
                     )..show(context);
                   } else {
                     Flushbar(
-                      title: "Something went wrong.",
-                      message:
-                          "Post's topic could not be followed, please try again later.",
+                      title: "Something went wrong",
+                      message: value.message == null || value.message == 'null'
+                          ? 'Please try again later'
+                          : value.message,
                       duration: Duration(seconds: 3),
                     )..show(context);
                   }

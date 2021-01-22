@@ -68,7 +68,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
                           context, [_postFieldController.text, newPP]);
                   } else {
                     Flushbar(
-                      title: "Error",
+                      title: "Something went wrong",
                       message: value.message == null || value.message == 'null'
                           ? 'Please try again later'
                           : value.message,
@@ -124,7 +124,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
                             Navigator.pop(context);
                           } else {
                             Flushbar(
-                              title: "Error",
+                              title: "Something went wrong",
                               message: value.message == null ||
                                       value.message == 'null'
                                   ? 'Please try again later'
