@@ -7,6 +7,7 @@ import 'package:teamone_social_media/helper/session.dart';
 import 'constants.dart';
 import 'package:teamone_social_media/post.dart';
 import 'package:teamone_social_media/user.dart';
+import 'package:teamone_social_media/message.dart';
 
 class Requests {
   static String token;
@@ -1177,5 +1178,31 @@ class Requests {
     a.add(resultUsers);
     a.add(commonConnectionCounts);
     return a;
+  }
+  Future<List<Message>> getMessages(String secondUsername) async {
+    String url;
+    url = Constants.backendURL + 'optchat/' + currUserName + '/'+secondUsername;
+    var response = await http.get(url, headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+      return null;
+    }
+    print('REQUESTS.DART: asked for getmessages with '+secondUsername+' and received:'+json.decode(response.body).toString());
+    var data = json.decode(response.body)['data'];
+    //print(json.decode(response.body));
+    //[{userId: 1, username: admin}]
+    List<Message> result=[];
+    if (data == null || data == [] || data.toString() == '[]'|| data['optionalMessageDtoList']==null || data['optionalMessageDtoList']==[] || data['optionalMessageDtoList']=='[]' || data['optionalMessageDtoList'].length==0) {
+      //if there are no messages
+      return [Message(messageFrom:Constants.appName,messageTo: currUserName,messageDate: '',messageContent: 'Your messages are not encrypted and we sell it to the Russians. Give it a try!')];
+    }
+    for (int i = 0; i < data['optionalMessageDtoList'].length; i++) {
+      String messageFrom=data['optionalMessageDtoList'][i]['messageFrom'].toString();
+      String messageTo=data['optionalMessageDtoList'][i]['messageTo'].toString();
+      String messageDate=data['optionalMessageDtoList'][i]['messageDate'].toString();
+      String messageContent=data['optionalMessageDtoList'][i]['messageContent'].toString();
+      result.add(Message(messageFrom: messageFrom,messageTo:messageTo ,messageDate:messageDate ,messageContent:messageContent));
+    }
+    return result;
   }
 }
