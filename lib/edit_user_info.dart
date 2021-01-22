@@ -58,7 +58,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
                 Requests()
                     .updateUserInfo(_postFieldController.text, newPP)
                     .then((value) {
-                  if (value) {
+                  if (value.status) {
                     if (_postFieldController.text != null && newPP == null)
                       Navigator.pop(context, [_postFieldController.text]);
                     else if (_postFieldController.text == "" && newPP != null)
@@ -67,7 +67,13 @@ class _EditUserInfoState extends State<EditUserInfo> {
                       Navigator.pop(
                           context, [_postFieldController.text, newPP]);
                   } else {
-                    //display error message
+                    Flushbar(
+                      title: "Error",
+                      message: value.message == null || value.message == 'null'
+                          ? 'Please try again later'
+                          : value.message,
+                      duration: Duration(seconds: 3),
+                    )..show(context);
                   }
                 });
               }),
@@ -112,12 +118,19 @@ class _EditUserInfoState extends State<EditUserInfo> {
                         Requests()
                             .updateUserInfo(_postFieldController.text, newPP)
                             .then((value) {
-                          if (value) {
+                          if (value.status) {
                             print(
                                 "EDIT_USER_INFO.DART: user info successfully edited, popping the current route.");
                             Navigator.pop(context);
                           } else {
-                            //display error message
+                            Flushbar(
+                              title: "Error",
+                              message: value.message == null ||
+                                      value.message == 'null'
+                                  ? 'Please try again later'
+                                  : value.message,
+                              duration: Duration(seconds: 3),
+                            )..show(context);
                           }
                         });
                       }),

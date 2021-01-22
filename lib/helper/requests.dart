@@ -5,6 +5,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:teamone_social_media/helper/session.dart';
 import 'package:teamone_social_media/myNotification.dart';
+import '../result.dart';
 import 'constants.dart';
 import 'package:teamone_social_media/post.dart';
 import 'package:teamone_social_media/user.dart';
@@ -114,9 +115,9 @@ class Requests {
     return null;
   }
 
-  Future<bool> updateUserInfo(String newName, File newPP) async {
+  Future<Result> updateUserInfo(String newName, File newPP) async {
     if (!Constants.DEPLOYED)
-      return true;
+      return Result(true);
     //the part below depends on how the edit works in the backend. worst case we create an user instance getInfo then set the fields to those and send that.
     else {
       String url = Constants.backendURL +
@@ -152,10 +153,10 @@ class Requests {
       );
       print('REQUESTS.DART: trying to updateUserInfo of: ' + currUserName);
       if (response.statusCode >= 400 || response.statusCode < 100) {
-        print('REQUESTS.DART: failed to updateUserInfo');
-        return false;
+        print('REQUESTS.DART: failed to updateUserInfo'+json.encode(response.body));
+        return Result(false,message:json.decode(response.body)['message'].toString());
       }
-      return true;
+      return Result(true);
     }
   }
 
