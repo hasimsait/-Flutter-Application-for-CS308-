@@ -7,6 +7,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'dart:convert';
 import 'package:place_picker/place_picker.dart';
 import 'helper/requests.dart';
+import 'package:flushbar/flushbar.dart';
 
 class CreatePost extends StatefulWidget {
   final File imageFile;
@@ -77,7 +78,11 @@ class _CreatePostState extends State<CreatePost> {
       print("Successfully created the post.");
     } else {
       print("there is something wrong.");
-      //TODO display error message
+      Flushbar(
+        title: "Something went wrong.",
+        message: "Post could not be published, please try again later.",
+        duration: Duration(seconds: 3),
+      )..show(context);
     }
     return null;
   }
@@ -238,9 +243,7 @@ class _CreatePostState extends State<CreatePost> {
         composing: TextRange.empty,
       );
     });
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void dispose() {
@@ -395,7 +398,11 @@ class _CreatePostState extends State<CreatePost> {
       print("Successfully edited the post with postID: " + postID.toString());
     } else {
       print("there is something wrong.");
-      //TODO display error message
+      Flushbar(
+        title: "Something went wrong.",
+        message: "Post could not be edited, please try again later.",
+        duration: Duration(seconds: 3),
+      )..show(context);
     }
     return null;
   }

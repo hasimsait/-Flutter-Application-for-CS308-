@@ -83,12 +83,14 @@ class _DynamicWidgetListState extends State<DynamicWidgetList> {
   Widget build(BuildContext context) {
     if (this.noAppBar!=null && this.noAppBar==true)
       return new Scaffold(
+        resizeToAvoidBottomInset: false,
         body: new Center(
           child: ListView(children: elementWidgets),
         ),
       );
     return new Scaffold(
       appBar: AppBar(),
+      resizeToAvoidBottomInset: false,
       body: new Center(
         child: ListView(children: elementWidgets),
       ),

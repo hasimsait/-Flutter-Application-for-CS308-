@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'helper/requests.dart';
+import 'package:flushbar/flushbar.dart';
 
 class CreateComment extends StatefulWidget {
   final int postID;
@@ -76,7 +77,11 @@ class _CreateCommentState extends State<CreateComment> {
       if (value) {
         Navigator.pop(context, true);
       } else {
-        //TODO display error message;
+        Flushbar(
+          title:  "Something went wrong.",
+          message:  "Comment could not be posted, please try again later.",
+          duration:  Duration(seconds: 3),
+        )..show(context);
       }
     });
   }

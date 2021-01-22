@@ -163,7 +163,7 @@ packages:
     source: hosted
     version: "0.10.11"
   flushbar:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flushbar
       url: "https://pub.dartlang.org"

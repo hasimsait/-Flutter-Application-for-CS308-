@@ -1,5 +1,4 @@
-//TODO basically search but you send request for feed,
-//TODO also add messages anchor
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:teamone_social_media/dynamic_widget_list.dart';
 import 'package:teamone_social_media/helper/requests.dart';
@@ -38,7 +37,6 @@ class _FeedState extends State<Feed> {
     setState(() {
       fml=Text("Please wait while we retrieve your feed");
     });
-    /*todo add some delay here so the old ones are deleted*/
 
     posts.forEach((key, value) {
       print('FEED.DART: ' + value.postID.toString() + 'will be rendered now');
@@ -106,6 +104,24 @@ class _FeedState extends State<Feed> {
 
               });
             } else {}
+            if(value!=null && value){
+              print('_______________'+value.toString()+'_______________________');
+              if (value) {
+                Flushbar(
+                  title: "Success!",
+                  message: "Post created successfully",
+                  duration: Duration(seconds: 1),
+                )..show(context);
+              } else if(value!=null){
+                Flushbar(
+                  title: "Something went wrong.",
+                  message:
+                  "Failed to create the post, please try again later.",
+                  duration: Duration(seconds: 3),
+                )..show(context);
+              }
+              setState(() {});
+            }
           });
         },
         tooltip: 'Create a new post',

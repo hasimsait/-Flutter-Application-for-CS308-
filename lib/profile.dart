@@ -11,6 +11,7 @@ import 'specificPost.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:teamone_social_media/recommendations.dart';
 import 'dart:io';
+import 'package:flushbar/flushbar.dart';
 
 class Profile extends StatefulWidget {
   final String userName;
@@ -144,7 +145,11 @@ class _ProfileState extends State<Profile> {
       if (value)
         isFollowing = true;
       else {
-        //todo display error message
+        Flushbar(
+          title:  "Something went wrong.",
+          message:  "User could not be followed, please try again later.",
+          duration:  Duration(seconds: 3),
+        )..show(context);
       }
       setState(() {});
     });
@@ -155,7 +160,11 @@ class _ProfileState extends State<Profile> {
       if (value)
         isFollowing = false;
       else {
-        //todo display error message
+        Flushbar(
+          title:  "Something went wrong.",
+          message:  "User could not be unfollowed, please try again later.",
+          duration:  Duration(seconds: 3),
+        )..show(context);
       }
       setState(() {});
     });
@@ -211,7 +220,19 @@ class _ProfileState extends State<Profile> {
             RaisedButton(
               onPressed: () {
                 Requests().deleteAccount(userName).then((value) {
-                  //todo display success message or failed
+                  if (value){
+                    Flushbar(
+                      title:  "Success!",
+                      message:  "Account successfully deleted!",
+                      duration:  Duration(seconds: 3),
+                    )..show(context);
+                  }else{
+                    Flushbar(
+                      title:  "Something went wrong.",
+                      message:  "Account could not be deleted, please try again later.",
+                      duration:  Duration(seconds: 3),
+                    )..show(context);
+                  }
                 });
               },
               child: Text("DELETE ACCOUNT"),
@@ -267,10 +288,18 @@ class _ProfileState extends State<Profile> {
                 onPressed: () {
                   Requests().reportUser(userName).then((value) {
                     if (value) {
-                      //todo create snackbar saying post has been reported or set it to deleted
+                      Flushbar(
+                        title:  "Success!.",
+                        message:  "You've reported this user, their account will be reviewed.",
+                        duration:  Duration(seconds: 3),
+                      )..show(context);
                       setState(() {}); //so that the post disappears
                     } else {
-                      //todo display error message
+                      Flushbar(
+                        title:  "Something went wrong.",
+                        message:  "User could not be reported, please try again later.",
+                        duration:  Duration(seconds: 3),
+                      )..show(context);
                       print("PROFILE.DART: Couldn't report user:" + userName);
                     }
                   });
@@ -296,10 +325,18 @@ class _ProfileState extends State<Profile> {
                   onPressed: () {
                     Requests().reportUser(userName).then((value) {
                       if (value) {
-                        //todo create snackbar saying post has been reported or set it to deleted
+                        Flushbar(
+                          title:  "Success!.",
+                          message:  "You've reported this user, their account will be reviewed.",
+                          duration:  Duration(seconds: 3),
+                        )..show(context);
                         setState(() {}); //so that the post disappears
                       } else {
-                        //todo display error message
+                        Flushbar(
+                          title:  "Something went wrong.",
+                          message:  "User could not be reported, please try again later.",
+                          duration:  Duration(seconds: 3),
+                        )..show(context);
                         print("PROFILE.DART: Couldn't report user:" + userName);
                       }
                     });
@@ -369,7 +406,21 @@ class _ProfileState extends State<Profile> {
       if (value != null) {
         setState(() => daysOfSuspension = value);
         Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
-          //todo display success message or failed
+          if (value) {
+            Flushbar(
+              title:  "Success!.",
+              message:  "User successfully suspended!",
+              duration:  Duration(seconds: 3),
+            )..show(context);
+            setState(() {}); //so that the post disappears
+          } else {
+            Flushbar(
+              title:  "Something went wrong.",
+              message:  "User could not be suspended, please try again later.",
+              duration:  Duration(seconds: 3),
+            )..show(context);
+            print("PROFILE.DART: Couldn't report user:" + userName);
+          }
         });
       }
     });

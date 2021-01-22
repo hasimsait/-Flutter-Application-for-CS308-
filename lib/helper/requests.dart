@@ -980,6 +980,7 @@ class Requests {
       );
       if (response.statusCode >= 400 || response.statusCode < 100) {
         print(response.body.toString());
+        return false;
       }
       var data = json.decode(response.body)['data'];
       print(

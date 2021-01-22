@@ -11,7 +11,7 @@ class User {
   String myProfilePicture =
       Constants.sampleProfilePictureBASE64; //null protection
   String myName =
-      ""; //Haşim Sait Göktan//null protection//TODO this field does not exist???
+      ""; //Haşim Sait Göktan//null protection
   String userName; //hasimsait
   bool isFollowing;
   int followerCt;

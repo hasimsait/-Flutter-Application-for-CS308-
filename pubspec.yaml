@@ -36,6 +36,7 @@ dependencies:
   video_thumbnail: ^0.2.4
   path_provider:
   place_picker: ^0.9.17
+  flushbar: ^1.10.4
   web_socket_channel:
   stomp_dart_client:
     git:

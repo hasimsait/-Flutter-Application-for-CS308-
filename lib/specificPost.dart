@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'create_post.dart';
@@ -91,22 +92,43 @@ class _SpecificPostState extends State<SpecificPost> {
                           style: TextStyle(fontSize: 20),
                         ),
                         topic != null && topic != "" && topic != 'null'
-                            ? Container(child: Flex(children:<Widget>[Text(
-                                topic,
-                                textAlign: TextAlign.start,
-                              ),],direction: Axis.vertical,),width: 150,alignment: Alignment.centerLeft,)
+                            ? Container(
+                                child: Flex(
+                                  children: <Widget>[
+                                    Text(
+                                      topic,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ],
+                                  direction: Axis.vertical,
+                                ),
+                                width: 150,
+                                alignment: Alignment.centerLeft,
+                              )
                             : SizedBox(),
                         placeName != null &&
                                 placeName != "" &&
                                 placeName != 'null'
-                            ? Container(child: Flex(children:<Widget>[Text(
-                                placeName,
-                              ),],direction: Axis.vertical,),width: 150,alignment: Alignment.centerLeft,)
+                            ? Container(
+                                child: Flex(
+                                  children: <Widget>[
+                                    Text(
+                                      placeName,
+                                    ),
+                                  ],
+                                  direction: Axis.vertical,
+                                ),
+                                width: 150,
+                                alignment: Alignment.centerLeft,
+                              )
                             : SizedBox(), //TODO topic and location are anchors which push a new route
                         postDate != null
                             ? Container(
                                 child: Text(
-                                  postDate.toString().substring(0, 16).replaceAll('T', ' '),
+                                  postDate
+                                      .toString()
+                                      .substring(0, 16)
+                                      .replaceAll('T', ' '),
                                   textAlign: TextAlign.left,
                                   style: TextStyle(fontSize: 12),
                                 ),
@@ -133,6 +155,11 @@ class _SpecificPostState extends State<SpecificPost> {
                                 Requests().deletePost(postID).then((value) {
                                   if (value) {
                                     //if post is deleted successfully
+                                    Flushbar(
+                                      title: "Success!",
+                                      message: "Post deleted successfully!",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
                                     print("SPECIFICPOST.DART: Post:" +
                                         postID.toString() +
                                         " deleted successfully");
@@ -140,7 +167,12 @@ class _SpecificPostState extends State<SpecificPost> {
                                     setState(
                                         () {}); //so that the post disappears
                                   } else {
-                                    //TODO display error message
+                                    Flushbar(
+                                      title: "Something went wrong.",
+                                      message:
+                                          "Post could not be deleted, please try again later.",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
                                     print(
                                         "SPECIFICPOST.DART: Couldn't delete post:" +
                                             postID.toString());
@@ -148,29 +180,40 @@ class _SpecificPostState extends State<SpecificPost> {
                                 });
                               }),
                         ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                       )
-                    : Row(children: <Widget>[
-                        followOptions,
-                        Padding(padding: EdgeInsets.all(25)),
-                        IconButton(
-                            icon: Icon(Icons.report),
-                            onPressed: () {
-                              Requests().reportPost(postID).then((value) {
-                                if (value) {
-                                  //todo create snackbar saying post has been reported or set it to deleted
-                                  setState(() {}); //so that the post disappears
-                                } else {
-                                  //todo display error message
-                                  print(
-                                      "SPECIFICPOST.DART: Couldn't report post:" +
-                                          postID.toString());
-                                }
-                              });
-                            }),
-                      ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
+                    : Row(
+                        children: <Widget>[
+                          followOptions,
+                          Padding(padding: EdgeInsets.all(25)),
+                          IconButton(
+                              icon: Icon(Icons.report),
+                              onPressed: () {
+                                Requests().reportPost(postID).then((value) {
+                                  if (value) {
+                                    Flushbar(
+                                      title: "Success.",
+                                      message: "Post successfully reported!.",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
+                                    setState(
+                                        () {}); //so that the post disappears
+                                  } else {
+                                    Flushbar(
+                                      title: "Something went wrong.",
+                                      message:
+                                          "Post could not be reported, please try again later.",
+                                      duration: Duration(seconds: 3),
+                                    )..show(context);
+                                    print(
+                                        "SPECIFICPOST.DART: Couldn't report post:" +
+                                            postID.toString());
+                                  }
+                                });
+                              }),
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
             ),
@@ -196,6 +239,11 @@ class _SpecificPostState extends State<SpecificPost> {
                       if (value) {
                         liked = true;
                         disliked = false;
+                        Flushbar(
+                          title: "Success!",
+                          message: "Post liked successfully!",
+                          duration: Duration(seconds: 1),
+                        )..show(context);
                         Requests()
                             .reloadPost(postID, oldPost: currPost)
                             .then((value) {
@@ -203,6 +251,13 @@ class _SpecificPostState extends State<SpecificPost> {
                           initializePost(value);
                         });
                         setState(() {});
+                      } else {
+                        Flushbar(
+                          title: "Something went wrong.",
+                          message:
+                              "Post could not be liked, please try again later.",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
                     });
                     setState(() {});
@@ -225,6 +280,11 @@ class _SpecificPostState extends State<SpecificPost> {
                       if (value) {
                         disliked = true;
                         liked = false;
+                        Flushbar(
+                          title: "Success!",
+                          message: "Post successfully disliked!",
+                          duration: Duration(seconds: 1),
+                        )..show(context);
                         Requests()
                             .reloadPost(postID, oldPost: currPost)
                             .then((value) {
@@ -232,6 +292,13 @@ class _SpecificPostState extends State<SpecificPost> {
                           initializePost(value);
                         });
                         setState(() {});
+                      } else {
+                        Flushbar(
+                          title: "Something went wrong.",
+                          message:
+                              "Post could not be disliked, please try again later.",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
                     });
                     setState(() {});
@@ -254,6 +321,14 @@ class _SpecificPostState extends State<SpecificPost> {
                           builder: (context) =>
                               CreateComment(postID, currentUserName)),
                     ).then((value) {
+                      if (value) {
+                        Flushbar(
+                          title: "Success!",
+                          message:
+                              "Comment posted successfully, reloading the post for you!",
+                          duration: Duration(seconds: 1),
+                        )..show(context);
+                      }
                       Requests()
                           .reloadPost(postID, oldPost: currPost)
                           .then((value) {
@@ -273,7 +348,6 @@ class _SpecificPostState extends State<SpecificPost> {
         elevation: 5,
         shadowColor: Colors.blue,
       );
-      //TODO check if card broke the feed
     }
   }
 
@@ -292,11 +366,13 @@ class _SpecificPostState extends State<SpecificPost> {
           "Currently there are no comments on this post. Be the first!");
     } else {
       List<Widget> comments = [];
+      int i = 0;
       postComments.forEach((key, value) {
         comments.add(Text(
-          key + ":" + value,
+          key.replaceFirst(i.toString(), '') + " : " + value,
           textAlign: TextAlign.left,
         ));
+        i += 1;
       });
       print('SPECIFICPOST.DART: ' +
           postID.toString() +
@@ -419,7 +495,23 @@ class _SpecificPostState extends State<SpecificPost> {
                 padding: EdgeInsets.all(0),
               ),
               onPressed: () {
-                Requests().unfollowLocation(placeGeoID);
+                Requests().unfollowLocation(placeGeoID).then((value) {
+                  if (value) {
+                    Flushbar(
+                      title: "Success!",
+                      message: "Post's location unfollowed successfully",
+                      duration: Duration(seconds: 1),
+                    )..show(context);
+                  } else {
+                    Flushbar(
+                      title: "Something went wrong.",
+                      message:
+                          "Post's location could not be unfollowed, please try again later.",
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                  }
+                  setState(() {});
+                });
               });
         } else {
           followOptions = RaisedButton(
@@ -430,7 +522,24 @@ class _SpecificPostState extends State<SpecificPost> {
                 padding: EdgeInsets.all(0),
               ),
               onPressed: () {
-                Requests().followLocation(postID);
+                Requests().followLocation(postID).then((value) {
+                  print('_______________'+value.toString()+'_______________________');
+                  if (value) {
+                    Flushbar(
+                      title: "Success!",
+                      message: "Post's location followed successfully",
+                      duration: Duration(seconds: 1),
+                    )..show(context);
+                  } else {
+                    Flushbar(
+                      title: "Something went wrong.",
+                      message:
+                      "Post's location could not be followed, please try again later.",
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                  }
+                  setState(() {});
+                });
               });
         }
         setState(() {});
@@ -440,16 +549,52 @@ class _SpecificPostState extends State<SpecificPost> {
         if (value) {
           followOptions = RaisedButton(
               padding: EdgeInsets.all(0),
-              child: Text('unfollow topic'),
+              child:Container(
+                width: 55,
+                child: Text('unfollow topic'),
+                padding: EdgeInsets.all(0),
+              ),
               onPressed: () {
-                Requests().unfollowTopic(topic);
+                Requests().unfollowTopic(topic).then((value) {
+                  if (value) {
+                    Flushbar(
+                      title: "Success!",
+                      message: "Post's topic unfollowed successfully",
+                      duration: Duration(seconds: 1),
+                    )..show(context);
+                  } else {
+                    Flushbar(
+                      title: "Something went wrong.",
+                      message:
+                      "Post's topic could not be unfollowed, please try again later.",
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                  }
+                  setState(() {});
+                });
               });
         } else {
           followOptions = RaisedButton(
               padding: EdgeInsets.all(0),
               child: Text('follow topic'),
               onPressed: () {
-                Requests().followTopic(postID);
+                Requests().followTopic(postID).then((value) {
+                  if (value) {
+                    Flushbar(
+                      title: "Success!",
+                      message: "Post's topic followed successfully",
+                      duration: Duration(seconds: 1),
+                    )..show(context);
+                  } else {
+                    Flushbar(
+                      title: "Something went wrong.",
+                      message:
+                      "Post's topic could not be followed, please try again later.",
+                      duration: Duration(seconds: 3),
+                    )..show(context);
+                  }
+                  setState(() {});
+                });
               });
         }
         setState(() {});

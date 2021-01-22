@@ -44,7 +44,8 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           children: <Widget>[
