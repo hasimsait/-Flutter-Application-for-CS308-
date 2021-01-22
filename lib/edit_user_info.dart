@@ -1,5 +1,6 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'helper/requests.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +22,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
   final picker = ImagePicker();
   _EditUserInfoState(this.userName, this.profilePicture);
   final _postFieldController = TextEditingController();
+  int daysOfSuspension = 0;
   void initState() {
     //this must stay here
     super.initState();
@@ -129,11 +131,7 @@ class _EditUserInfoState extends State<EditUserInfo> {
               ),
               RaisedButton(
                 onPressed: () {
-                  //TODO x is selected with a dropdown, x days of suspension
-                  //Requests().timeOutAccount(userName,X).then((value) {
-                  //todo display success message or failed
-                  //});
-                  //todo this is not implemented yet
+                  _showDialog();
                 },
                 child: Text("DEACTIVATE ACCOUNT"),
               ),
@@ -184,6 +182,40 @@ class _EditUserInfoState extends State<EditUserInfo> {
         });
       } else {
         print('No image selected.');
+      }
+    });
+  }
+
+  void _showDialog() {
+    showDialog<int>(
+        context: context,
+        builder: (BuildContext context) {
+          return new NumberPickerDialog.integer(
+            minValue: 0,
+            maxValue: 1000000000000,
+            title: new Text("Pick days of suspension"),
+            initialIntegerValue: daysOfSuspension,
+          );
+        }).then((value) {
+      if (value != null) {
+        setState(() => daysOfSuspension = value);
+        Requests().timeOutAccount(userName, daysOfSuspension).then((value) {
+          if (value) {
+            Flushbar(
+              title: "Success!.",
+              message: "User successfully suspended!",
+              duration: Duration(seconds: 3),
+            )..show(context);
+            setState(() {}); //so that the post disappears
+          } else {
+            Flushbar(
+              title: "Something went wrong.",
+              message: "User could not be suspended, please try again later.",
+              duration: Duration(seconds: 3),
+            )..show(context);
+            print("PROFILE.DART: Couldn't report user:" + userName);
+          }
+        });
       }
     });
   }

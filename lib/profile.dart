@@ -226,7 +226,6 @@ class _ProfileState extends State<Profile> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                //TODO x is selected with a dropdown, x days of suspension
                 _showDialog();
               },
               child: Text("DEACTIVATE ACCOUNT"),
