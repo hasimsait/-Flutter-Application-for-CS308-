@@ -18,6 +18,7 @@ class _MessageWithState extends State<MessageWith> {
   _MessageWithState(this.username);
   List<Message> messages = [];
   final _postFieldController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Timer timer;
   void initState() {
     super.initState();
@@ -49,10 +50,13 @@ class _MessageWithState extends State<MessageWith> {
       messages = value;
       setState(() {});
     });
+
   }
 
   void _sendMessage() {
-    if (_postFieldController.text.isNotEmpty) {}
+    if (_postFieldController.text.isNotEmpty) {
+      Requests().sendMessageTo(username, _postFieldController.text);
+    }
   }
 
   @override
@@ -71,7 +75,7 @@ class _MessageWithState extends State<MessageWith> {
             children: <Widget>[
               messageList(),
 
-              Container(color:Colors.blue,
+              Container(color:Colors.white,
                 child:Row(
                 children: <Widget>[
                   Container(
@@ -79,21 +83,22 @@ class _MessageWithState extends State<MessageWith> {
                       controller: _postFieldController,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Start a message',hintStyle: TextStyle(color: Colors.white)),
+                          hintText: 'Start a message'),
                       autofocus: false,
                       expands: true,
                       minLines: null,
                       maxLines: null,
                       textAlignVertical: TextAlignVertical.center,
-                      style: TextStyle(fontSize: 15,color: Colors.white,backgroundColor: Colors.blue,),
+                      style: TextStyle(fontSize: 15,),
                     ),
                     height: 60,
                     width: 340,
-                    color: Colors.blue,
+                    color: Colors.white,
                     alignment: Alignment.bottomCenter,
                   ),
                   IconButton(
-                    color: Colors.white,
+                    color: Colors.blue,
+                      enableFeedback: true,
                       icon: Icon(Icons.send),
                       onPressed: () {
                         _sendMessage();
@@ -115,13 +120,14 @@ class _MessageWithState extends State<MessageWith> {
     return Container(
       child: ListView.builder(
         itemCount: messages.length,
+        controller: _scrollController,
         itemBuilder: (BuildContext context, int index) {
           return row(context, index);
         },
-        reverse: true,
+
       ),
-      height: 565,
-      color: Colors.blue,
+      height: 563,
+      color: Colors.white,
     );
   }
 
@@ -143,7 +149,7 @@ class _MessageWithState extends State<MessageWith> {
                 )
               ]),
             ),
-            color: Colors.blueGrey[700],
+            color: messages[index].messageFrom == Requests.currUserName? Colors.blue[700]: Colors.blueGrey[700],
           ),
           width: 300,
           alignment: messages[index].messageFrom == Requests.currUserName
@@ -164,9 +170,14 @@ class _MessageWithState extends State<MessageWith> {
         messages = List.from(value);
       }
       if (messages.last.messageDate != value.last.messageDate)
-        messages = List.from(value);
-
+        {messages = List.from(value);
+        _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 200),
+            curve: Curves.fastOutSlowIn);
+        }
       setState(() {});
+
     });
   }
 }
