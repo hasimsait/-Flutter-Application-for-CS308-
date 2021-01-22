@@ -17,6 +17,7 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> {
   User currUser;
   List<Widget> postWidgets = [];
+  GlobalKey<RefreshIndicatorState> refreshKey;
   Widget fml =Text("Please wait while we retrieve your feed");
 
   Future<Widget> displayFeed(Map<int, Post> posts) async {
@@ -57,6 +58,7 @@ class _FeedState extends State<Feed> {
 
   @override
   void initState() {
+    refreshKey = GlobalKey<RefreshIndicatorState>();
     currUser = User(Requests.currUserName);
     _loadFeed();
     print('FEED.DART: initialized feed widget');
@@ -69,7 +71,6 @@ class _FeedState extends State<Feed> {
       appBar: new AppBar(
         title: new Text(Constants.appName),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.refresh), onPressed: _loadFeed),
           !Requests.isAdmin
               ? SizedBox()
               : IconButton(
@@ -86,12 +87,14 @@ class _FeedState extends State<Feed> {
                 ),
         ],
       ),
-      body: Center(
-        child: Container(
-          color: Colors.white,
-          child: fml,
+      body: RefreshIndicator(
+      key: refreshKey,
+      onRefresh: () async {
+        _loadFeed();
+      },
+      child: fml,
         ),
-      ),
+
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
           Navigator.push(
