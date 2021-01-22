@@ -1,70 +1,48 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-import 'package:stomp_dart_client/parser.dart';
-import 'package:stomp_dart_client/sock_js/sock_js_parser.dart';
-import 'package:stomp_dart_client/sock_js/sock_js_utils.dart';
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
-import 'package:stomp_dart_client/stomp_handler.dart';
-import 'package:stomp_dart_client/stomp_parser.dart';
+import 'package:teamone_social_media/user.dart';
+import 'message.dart';
 import 'helper/constants.dart';
 import 'helper/requests.dart';
+import 'myNotification.dart';
 
 class Notifications extends StatefulWidget {
-  final WebSocketChannel channel;
-
-  const Notifications({Key key, this.channel}) : super(key: key);
+  Notifications();
   @override
-  State<StatefulWidget> createState() => _NotificationsState(this.channel);
+  State<StatefulWidget> createState() => _NotificationsState();
 }
 
 class _NotificationsState extends State<Notifications> {
-  final WebSocketChannel channel;
-  _NotificationsState(this.channel);
-  Widget prewMessages = Padding(padding: EdgeInsets.all(0.3));
-  List<Widget> aaaaaaaaaaaa = [Padding(padding: EdgeInsets.all(0.3))];
-  var client;
-
+  _NotificationsState();
+  List<MyNotification> notificationList = [];
+  final ScrollController _scrollController = ScrollController();
+  Timer timer;
   void initState() {
-    client = StompClient(
-        config: StompConfig.SockJS(
-            url: Constants.socketUrL,
-            onConnect: onConnectCallback,
-            webSocketConnectHeaders: Requests.header,
-            stompConnectHeaders: Requests.header,
-            onWebSocketError: (frame) => print(frame.toString()),
-            onStompError: (frame) => print(frame.toString())));
-    //TODO ideally this would be a global client and we would create it in main and pass it as a param from the navigator. Makes it easier to disconnect too. Do it once you get it working.
-    aaaaaaaaaaaa = [Padding(padding: EdgeInsets.all(0.3))];
     super.initState();
-  }
-
-  void onConnectCallback(StompClient client, StompFrame connectFrame) {
-    print('NOTIFICATIONS.DART: connected');
-    /*TODO make input fields invisible till here to ensure that user can't send messages to the outer space.*/
-    client.activate();
-    client.subscribe(
-        destination: '/topic/notification',
-        headers: {},
-        callback: (frame) {
-          // Received a frame for this subscription
-          print(frame.body);
-          aaaaaaaaaaaa.add(Text(frame.body != null ? '${frame.body}' : ''));
-        });
+    _getNotifications();
+    const oneSec = const Duration(milliseconds: 500);
+    timer = Timer.periodic(oneSec, (Timer t) => _checkUpdates());
   }
 
   void dispose() {
-    widget.channel.sink.close();
-    client.deactivate();
+    timer.cancel();
     super.dispose();
+  }
+
+  void _getNotifications() {
+    notificationList.clear();
+    setState(() {});
+
+    Requests().getNotifications().then((value) {
+      notificationList = value;
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: new Text(
           'Notifications',
@@ -75,23 +53,70 @@ class _NotificationsState extends State<Notifications> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              StreamBuilder(
-                stream: widget.channel.stream,
-                builder: (context, snapshot) {
-                  aaaaaaaaaaaa
-                      .add(Text(snapshot.hasData ? '${snapshot.data}' : ''));
-                  print(snapshot.toString());
-                  return _displayMessages(aaaaaaaaaaaa);
-                },
-              ),
+              messageList(),
             ],
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
           ),
         ),
       ),
     );
   }
 
-  Widget _displayMessages(List<Widget> aaaaaaaaaaaa) {
-    return Column(children: aaaaaaaaaaaa);
+  Widget messageList() {
+    return Container(
+      child: ListView.builder(
+        itemCount: notificationList.length,
+        reverse: true,
+        controller: _scrollController,
+        itemBuilder: (BuildContext context, int index) {
+          return row(context, index);
+        },
+      ),
+      height: 620,
+      color: Colors.white,
+    );
+  }
+
+  Widget row(context, index) {
+    try {
+      if (notificationList != null && notificationList.isNotEmpty)
+        return Container(
+          child: RaisedButton(
+            onPressed: () {
+              //go to activity can be here
+            },
+            padding: EdgeInsets.all(10),
+            child: Container(
+              width: 500,
+              child: Flex(direction: Axis.vertical, children: <Widget>[
+                Text(
+                  notificationList[index].notificationContent.toString(),
+                  style: TextStyle(color: Colors.white),
+                )
+              ]),
+            ),
+            color: Colors.blue[700],
+          ),
+          width: 500,
+          alignment: Alignment.centerLeft,
+        );
+    } catch (e) {
+      return SizedBox();
+    }
+  }
+
+  _checkUpdates() {
+    Requests().getNotifications().then((value) {
+      if (notificationList == null || notificationList.isEmpty) {
+        if (notificationList == null) notificationList = [];
+        notificationList = List.from(value);
+      }
+      if (notificationList.last.notificationDate !=
+          value.last.notificationDate) {
+        notificationList = List.from(value);
+      }
+      setState(() {});
+    });
   }
 }

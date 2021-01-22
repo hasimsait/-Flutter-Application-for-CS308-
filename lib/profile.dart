@@ -480,7 +480,7 @@ class _ProfileState extends State<Profile> {
       setState(() {});
       print('PROFILE.DART: listed ' +
           userNames.length.toString() +
-          ' user recommendations_________________________________________________________________');
+          ' user recommendations');
     });
   }
 }

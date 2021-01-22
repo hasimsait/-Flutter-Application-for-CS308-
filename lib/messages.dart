@@ -119,7 +119,6 @@ class _MessagesState extends State<Messages> {
             child: RaisedButton(
               onPressed: () {
                 var name = people[index];
-                print('/*/*/*-/*-/-*/*-/-*/--*' + name);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MessageWith(name)),
@@ -159,7 +158,7 @@ class _MessagesState extends State<Messages> {
       value.forEach((element) {
         Requests().getMessages(element).then((value) {
           newMessages[element] = value;
-          print('MESSAGES: ' + value.toString());
+          //print('MESSAGES: ' + value.toString());
           if (messages == null ||
               messages.isEmpty ||
               messages[element] == null) {

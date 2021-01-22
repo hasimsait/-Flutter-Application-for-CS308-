@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'helper/requests.dart';
 import 'dart:io';
@@ -138,9 +139,22 @@ class _EditUserInfoState extends State<EditUserInfo> {
               ),
               RaisedButton(
                 onPressed: () {
-                  //Requests().deleteAccount(Requests.curUserName).then((value) {
-                  //todo this is not implemented yet
-                  //});
+                  Requests().deleteAccount(userName).then((value) {
+                    if (value) {
+                      Flushbar(
+                        title: "Success!",
+                        message: "Account successfully deleted!",
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+                    } else {
+                      Flushbar(
+                        title: "Something went wrong.",
+                        message:
+                            "Account could not be deleted, please try again later.",
+                        duration: Duration(seconds: 3),
+                      )..show(context);
+                    }
+                  });
                 },
                 child: Text("DELETE ACCOUNT"),
               ),

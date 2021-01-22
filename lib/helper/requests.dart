@@ -4,6 +4,7 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:teamone_social_media/helper/session.dart';
+import 'package:teamone_social_media/myNotification.dart';
 import 'constants.dart';
 import 'package:teamone_social_media/post.dart';
 import 'package:teamone_social_media/user.dart';
@@ -946,18 +947,25 @@ class Requests {
   Future<bool> deleteAccount(String userName) async {
     if (Constants.DEPLOYED) {
       print('REQUESTS.DART ATTEMPTING TO DELETE USER ' + userName + '.');
-      /*print('REQUESTS.DART: deleteAccount starts');
       var response = await http.delete(
-          Constants.backendURL + 'admin/'+'waitingReportedPosts/delete/'+,
-          headers: header);
-      if (response.statusCode >= 400 || response.statusCode < 100) {
-        print(jsonDecode(response.body).toString());
+        Constants.backendURL +
+            Constants.profileEndpoint +
+            currUserName +
+            '/delete',
+        headers: header,
+      );
+      if (response.statusCode < 400 && response.statusCode >= 200) {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to delete account has succeeded.");
+        return true;
+      } else {
+        print('REQUESTS.DART: ' +
+            currUserName +
+            "'s request to delete account has failed.");
+        print('REQUESTS.DART: ' + jsonDecode(response.body).toString());
+        return false;
       }
-      var data = json.decode(response.body)['data'];
-      print('REQUESTS.DART: deleteAccount received'+data.toString());
-       */
-      print('REQUESTS.DART: deleteAccount not implemented yet');
-      return false;
     } else {
       return true;
     }
@@ -965,28 +973,50 @@ class Requests {
 
   Future<bool> timeOutAccount(String userName, int daysOfSuspension) async {
     if (Constants.DEPLOYED) {
-      print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
-          userName +
-          ' for ' +
-          daysOfSuspension.toString() +
-          ' days.');
-      var response = await http.post(
-        Constants.backendURL +
-            'admin/' +
-            'waitingReportedUsers/suspend/' +
+      if (isAdmin) {
+        print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
             userName +
-            '?suspendedDaysAmount=' +
-            daysOfSuspension.toString(),
-        headers: header,
-      );
-      if (response.statusCode >= 400 || response.statusCode < 100) {
-        print(response.body.toString());
-        return false;
+            ' for ' +
+            daysOfSuspension.toString() +
+            ' days.');
+        var response = await http.post(
+          Constants.backendURL +
+              'admin/' +
+              'waitingReportedUsers/suspend/' +
+              userName +
+              '?suspendedDaysAmount=' +
+              daysOfSuspension.toString(),
+          headers: header,
+        );
+        if (response.statusCode >= 400 || response.statusCode < 100) {
+          print(response.body.toString());
+          return false;
+        }
+        var data = json.decode(response.body)['data'];
+        print('REQUESTS.DART: timeOutAccount received' + data.toString());
+        return true;
+      } else {
+        print('REQUESTS.DART ATTEMPTING TO TIMEOUT USER ' +
+            userName +
+            ' for ' +
+            daysOfSuspension.toString() +
+            ' days.');
+        var response = await http.post(
+          Constants.backendURL +
+              Constants.profileEndpoint +
+              currUserName +
+              '/deactivate?deactivatedDaysAmount=' +
+              daysOfSuspension.toString(),
+          headers: header,
+        );
+        if (response.statusCode >= 400 || response.statusCode < 100) {
+          print(response.body.toString());
+          return false;
+        }
+        var data = json.decode(response.body)['data'];
+        print('REQUESTS.DART: timeOutAccount received' + data.toString());
+        return true;
       }
-      var data = json.decode(response.body)['data'];
-      print(
-          'REQUESTS.DART: getWaitingReportedPosts received' + data.toString());
-      return true;
     } else {
       return true;
     }
@@ -1257,5 +1287,41 @@ class Requests {
     List<Message> result = [];
     if (data == 'Message is sent') return true;
     return false;
+  }
+
+  Future<List<MyNotification>> getNotifications() async {
+    String url;
+    url = Constants.backendURL + 'optnotif/allnotifications/' + currUserName;
+    var response = await http.get(url, headers: header);
+    if (response.statusCode >= 400 || response.statusCode < 100) {
+      print(jsonDecode(response.body).toString());
+      return null;
+    }
+    print('REQUESTS.DART: asked for notifications and received:' +
+        json.decode(response.body).toString());
+    var data = json.decode(response.body)['data'];
+    List<MyNotification> result = [];
+    if (data == null ||
+        data == [] ||
+        data.toString() == '[]' ||
+        data.length == 0) {
+      //if there are no messages
+      return [
+        MyNotification(
+            notificationFrom: Constants.appName,
+            notificationDate: '',
+            notificationContent: 'Your notifications will appear here.')
+      ];
+    }
+    for (int i = 0; i < data.length; i++) {
+      String notificationFrom = data[i]['notificationFrom'].toString();
+      String notificationDate = data[i]['notificationDate'].toString();
+      String notificationContent = data[i]['notificationContent'].toString();
+      result.add(MyNotification(
+          notificationFrom: notificationFrom,
+          notificationDate: notificationDate,
+          notificationContent: notificationContent));
+    }
+    return result;
   }
 }
