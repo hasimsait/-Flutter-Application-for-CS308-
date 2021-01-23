@@ -37,11 +37,10 @@ dependencies:
   path_provider:
   place_picker: ^0.9.17
   flushbar: ^1.10.4
+  flutter_local_notifications: ^3.0.3
+  rxdart: ^0.25.0
+  device_info:
 
-  web_socket_channel:
-  stomp_dart_client:
-    git:
-      https://github.com/blackhorse-one/stomp_dart_client.git
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
