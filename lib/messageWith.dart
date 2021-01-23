@@ -1,9 +1,7 @@
 //todo i could add a profile picture but i dont want to deal with it now.
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:teamone_social_media/user.dart';
 import 'message.dart';
-import 'helper/constants.dart';
 import 'helper/requests.dart';
 
 class MessageWith extends StatefulWidget {

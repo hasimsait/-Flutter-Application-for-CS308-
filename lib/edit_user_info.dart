@@ -160,9 +160,10 @@ class _EditUserInfoState extends State<EditUserInfo> {
                     } else {
                       Flushbar(
                         title: "Something went wrong",
-                        message: value.message == null || value.message == 'null'
-                            ? 'Please try again later'
-                            : value.message,
+                        message:
+                            value.message == null || value.message == 'null'
+                                ? 'Please try again later'
+                                : value.message,
                         duration: Duration(seconds: 3),
                       )..show(context);
                     }

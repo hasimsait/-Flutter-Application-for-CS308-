@@ -4,7 +4,6 @@ import 'package:teamone_social_media/dynamic_widget_list.dart';
 import 'package:teamone_social_media/helper/requests.dart';
 import 'create_post.dart';
 import 'helper/constants.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'user.dart';
 import 'post.dart';
 import 'specificPost.dart';

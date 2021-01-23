@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:teamone_social_media/user.dart';
 import 'message.dart';
-import 'helper/constants.dart';
 import 'helper/requests.dart';
 import 'messageWith.dart';
 
@@ -19,7 +16,7 @@ class _MessagesState extends State<Messages> {
   Map<String, List<Message>> messages = {};
   GlobalKey<RefreshIndicatorState> refreshKey;
   final _postFieldController = TextEditingController();
-
+  Timer timer;
   void initState() {
     super.initState();
     refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -35,12 +32,12 @@ class _MessagesState extends State<Messages> {
 
     _getMessages();
     const oneSec = const Duration(seconds: 1);
-    new Timer.periodic(oneSec, (Timer t) => _checkUpdates());
+    timer = Timer.periodic(oneSec, (Timer t) => _checkUpdates());
   }
 
   void dispose() {
     _postFieldController.dispose();
-
+    timer.cancel();
     //ideally you would dispose the timer here but whatever
     super.dispose();
   }

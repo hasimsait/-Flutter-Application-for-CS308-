@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:teamone_social_media/user.dart';
 import 'main.dart';
-import 'message.dart';
 import 'helper/constants.dart';
 import 'helper/requests.dart';
 import 'myNotification.dart';
@@ -108,7 +106,7 @@ class _NotificationsState extends State<Notifications> {
     }
   }
 
-  _checkUpdates(){
+  _checkUpdates() {
     Requests().getNotifications().then((value) {
       if (notificationList == null || notificationList.isEmpty) {
         if (notificationList == null) notificationList = [];
@@ -128,22 +126,22 @@ class _NotificationsState extends State<Notifications> {
             break;
           }
         }
-        List<MyNotification> toDisplay=[];
-        for (int i = index+1; i <value.length ; i++) {
+        List<MyNotification> toDisplay = [];
+        for (int i = index + 1; i < value.length; i++) {
           toDisplay.add(value[i]);
         }
         notificationList = List.from(value);
         toDisplay.forEach((notif) {
           const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-              'your channel id', 'your channel name', 'your channel description',
-              importance: Importance.max,
-              priority: Priority.high,
-              showWhen: true);
+              AndroidNotificationDetails('your channel id', 'your channel name',
+                  'your channel description',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                  showWhen: true);
           const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-          flutterLocalNotificationsPlugin.show(
-              0, Constants.appName, notif.notificationContent, platformChannelSpecifics,
+              NotificationDetails(android: androidPlatformChannelSpecifics);
+          flutterLocalNotificationsPlugin.show(0, Constants.appName,
+              notif.notificationContent, platformChannelSpecifics,
               payload: 'item x');
         });
       }

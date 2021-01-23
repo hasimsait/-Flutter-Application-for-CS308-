@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teamone_social_media/create_post.dart';
-import 'package:teamone_social_media/helper/constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:teamone_social_media/create_post.dart' as cp;
 import 'package:mockito/mockito.dart';
 class MockClient extends Mock implements http.Client {}
 

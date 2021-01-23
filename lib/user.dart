@@ -1,10 +1,5 @@
-import 'dart:io';
 import 'package:teamone_social_media/helper/requests.dart';
-
 import 'helper/constants.dart';
-import 'dart:convert';
-import 'package:flutter/widgets.dart';
-import 'profile_picture.dart';
 import 'post.dart';
 
 class User {

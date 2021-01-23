@@ -8,7 +8,6 @@ import 'user.dart';
 import 'profile.dart';
 import 'dart:convert';
 import 'create_comment.dart';
-import 'helper/constants.dart';
 import 'helper/requests.dart';
 
 class SpecificPost extends StatefulWidget {

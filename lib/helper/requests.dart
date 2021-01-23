@@ -893,8 +893,6 @@ class Requests {
         data.toString());
     var followingUserList = data['followingNamesList'];
     //print(followingUserList.length.toString());
-    var followerUserList = data['followerNamesList'];
-    //print(followerUserList.length.toString());
     var subscribedTopicNamesList = data['subscribedTopicNamesList'];
     //print(subscribedTopicNamesList.length.toString());
     var subscribedLocationIdsList = data['subscribedLocationIdsList'];
@@ -921,7 +919,6 @@ class Requests {
 
   Future<List<List<String>>> getFollowersOf(String userName) async {
     //if (userName == currUserName) return getFollowersOfCurrentUser();
-    User thisUser = User(userName);
     var response = await http.get(
         Constants.backendURL + Constants.profileEndpoint + userName,
         headers: header);
@@ -1285,7 +1282,6 @@ class Requests {
     var data = json.decode(response.body)['data'];
     //print(json.decode(response.body));
     //[{userId: 1, username: admin}]
-    List<Message> result = [];
     if (data == 'Message is sent') return true;
     return false;
   }
@@ -1324,5 +1320,17 @@ class Requests {
           notificationContent: notificationContent));
     }
     return result;
+  }
+
+  void nullify() {
+    token = null;
+    header = null;
+    currUserName = null;
+    password = null;
+    isAdmin = false;
+    followedTopics = null;
+    followedLocations = null;
+    followerUsers = null;
+    followedUsers = null;
   }
 }

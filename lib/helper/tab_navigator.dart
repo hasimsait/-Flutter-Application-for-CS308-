@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teamone_social_media/helper/requests.dart';
-import 'package:web_socket_channel/io.dart';
 import '../feed.dart';
 import '../search.dart';
 import '../profile.dart';
 import '../notifications.dart';
 import '../messages.dart';
-import 'constants.dart';
 
 class TabNavigatorRoutes {
   static const String root = '/';
@@ -30,7 +27,7 @@ class TabNavigator extends StatelessWidget {
       child = Messages();
     else if (tabItem == "Notifications")
       child = Notifications();
-    else if (tabItem == "Profile") child = Profile("");
+    else if (tabItem == "Profile") child = Profile("", parentContext: context);
     return Navigator(
       key: navigatorKey,
       onGenerateRoute: (routeSettings) {

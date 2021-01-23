@@ -1,28 +1,30 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:flutter/material.dart';
 import 'package:teamone_social_media/dynamic_widget_list.dart';
 import 'helper/constants.dart';
+import 'helper/custom_route.dart';
 import 'helper/requests.dart';
+import 'login.dart';
 import 'user.dart';
 import 'edit_user_info.dart';
 import 'specificPost.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:teamone_social_media/recommendations.dart';
-import 'dart:io';
 import 'package:flushbar/flushbar.dart';
 
 class Profile extends StatefulWidget {
   final String userName;
-  Profile(this.userName);
+  final BuildContext parentContext;
+  Profile(this.userName, {this.parentContext});
 
   @override
-  State<StatefulWidget> createState() => _ProfileState(userName);
+  State<StatefulWidget> createState() => _ProfileState(userName, parentContext);
 }
 
 class _ProfileState extends State<Profile> {
   String userName; //"" if self profile
+  BuildContext parentContext;
   String currUser;
   bool isMyProfile = false;
   String myName = "Loading, please wait.";
@@ -33,7 +35,7 @@ class _ProfileState extends State<Profile> {
   int followerCt = 0;
   int followingCt = 0;
   User thisUser;
-  _ProfileState(this.userName);
+  _ProfileState(this.userName, this.parentContext);
   List<Widget> postWidgets;
   int daysOfSuspension = 0;
   Widget recommendations =
@@ -81,6 +83,18 @@ class _ProfileState extends State<Profile> {
         centerTitle: true,
         actions: isMyProfile
             ? <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Requests().nullify();
+                    Navigator.of(parentContext).pushAndRemoveUntil(
+                        FadePageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
+                        (Route<dynamic> route) => false);
+                  },
+                  icon: Icon(Icons.logout),
+                ),
+
                 //user shouldn't be able to edit someone else's profile info
                 IconButton(
                     icon: Icon(Icons.settings),
